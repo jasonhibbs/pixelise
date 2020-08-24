@@ -1,11 +1,14 @@
 <template lang="pug">
 
   .mask(
+    :data-id="data.id"
     :style="styles"
-    @mousedown="onMaskMousedown"
+    @mousedown.stop="onMousedownMask"
+    @touchstart.stop.prevent="onTouchstartMask"
   )
     .handle(
-      @mousedown.stop="onHandleMousedown"
+      @mousedown.stop="onMousedownHandle"
+      @touchstart.stop.prevent="onTouchstartHandle"
     )
 
 </template>
@@ -25,12 +28,7 @@ export default class ImageMask extends Vue {
     }
   }
 
-  onMouseup(e: MouseEvent) {
-    document.removeEventListener('mousemove', this.onMaskMove)
-    document.removeEventListener('mousemove', this.onHandleMove)
-    document.removeEventListener('mouseup', this.onMouseup)
-    console.log('mouseup')
-  }
+  // Drag & Resize
 
   dragStartX = 0
   dragStartY = 0
@@ -39,48 +37,100 @@ export default class ImageMask extends Vue {
   maskStartW = 0
   maskStartH = 0
 
-  onMaskMove(e: MouseEvent) {
-    const dragNewX = e.clientX
-    const dragNewY = e.clientY
-    const maskNewX = this.maskStartX + (dragNewX - this.dragStartX)
-    const maskNewY = this.maskStartY + (dragNewY - this.dragStartY)
+  onMouseup(e: MouseEvent) {
+    document.removeEventListener('mousemove', this.onMousemoveMask)
+    document.removeEventListener('mousemove', this.onMousemoveHandle)
+    document.removeEventListener('mouseup', this.onMouseup)
+  }
+
+  onTouchend(e: TouchEvent) {
+    document.removeEventListener('touchmove', this.onTouchmoveMask)
+    document.removeEventListener('touchmove', this.onTouchmoveHandle)
+    document.removeEventListener('touchend', this.onTouchend)
+  }
+
+  // Drag
+
+  emitFromDragCoordinates(x: number, y: number) {
     this.$emit('drag', {
       id: this.data.id,
-      x: maskNewX,
-      y: maskNewY,
+      x: this.maskStartX + (x - this.dragStartX),
+      y: this.maskStartY + (y - this.dragStartY),
     })
   }
 
-  onMaskMousedown(e: MouseEvent) {
+  // Drag Mouse
+
+  onMousemoveMask(e: MouseEvent) {
+    this.emitFromDragCoordinates(e.clientX, e.clientY)
+  }
+
+  onMousedownMask(e: MouseEvent) {
     this.dragStartX = e.clientX
     this.dragStartY = e.clientY
     this.maskStartX = this.data.x
     this.maskStartY = this.data.y
 
-    document.addEventListener('mousemove', this.onMaskMove)
+    document.addEventListener('mousemove', this.onMousemoveMask)
     document.addEventListener('mouseup', this.onMouseup)
   }
 
-  onHandleMove(e: MouseEvent) {
-    const dragNewX = e.clientX
-    const dragNewY = e.clientY
-    const maskNewW = this.maskStartW + (dragNewX - this.dragStartX)
-    const maskNewH = this.maskStartH + (dragNewY - this.dragStartY)
+  // Drag Touch
+
+  onTouchmoveMask(e: TouchEvent) {
+    this.emitFromDragCoordinates(e.touches[0].pageX, e.touches[0].pageY)
+  }
+
+  onTouchstartMask(e: TouchEvent) {
+    this.dragStartX = e.touches[0].pageX
+    this.dragStartY = e.touches[0].pageY
+    this.maskStartX = this.data.x
+    this.maskStartY = this.data.y
+
+    document.addEventListener('touchmove', this.onTouchmoveMask)
+    document.addEventListener('touchend', this.onTouchend)
+  }
+
+  // Resize
+
+  emitFromResizeCoordinates(x: number, y: number) {
     this.$emit('resize', {
       id: this.data.id,
-      w: maskNewW,
-      h: maskNewH,
+      w: this.maskStartW + (x - this.dragStartX),
+      h: this.maskStartH + (y - this.dragStartY),
     })
   }
 
-  onHandleMousedown(e: MouseEvent) {
+  // Resize Mouse
+
+  onMousemoveHandle(e: MouseEvent) {
+    this.emitFromResizeCoordinates(e.clientX, e.clientY)
+  }
+
+  onMousedownHandle(e: MouseEvent) {
     this.dragStartX = e.clientX
     this.dragStartY = e.clientY
     this.maskStartW = this.data.w
     this.maskStartH = this.data.h
 
-    document.addEventListener('mousemove', this.onHandleMove)
+    document.addEventListener('mousemove', this.onMousemoveHandle)
     document.addEventListener('mouseup', this.onMouseup)
+  }
+
+  // Resize Touch
+
+  onTouchmoveHandle(e: TouchEvent) {
+    this.emitFromResizeCoordinates(e.touches[0].pageX, e.touches[0].pageY)
+  }
+
+  onTouchstartHandle(e: TouchEvent) {
+    this.dragStartX = e.touches[0].pageX
+    this.dragStartY = e.touches[0].pageY
+    this.maskStartW = this.data.w
+    this.maskStartH = this.data.h
+
+    document.addEventListener('touchmove', this.onTouchmoveHandle)
+    document.addEventListener('touchend', this.onTouchend)
   }
 }
 </script>

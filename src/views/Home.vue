@@ -13,6 +13,7 @@
         .context
           img(
             ref="image"
+            draggable="false"
             :src="readerImage"
           )
           template(v-for="mask in masks")
@@ -52,26 +53,8 @@ export default class Home extends Vue {
     const mask = this.masks.find(x => x.id === e.id)
     const maxX = (this.$refs.image as HTMLImageElement).width - mask.w
     const maxY = (this.$refs.image as HTMLImageElement).height - mask.h
-    let { x, y } = e
-
-    if (e.x < 0) {
-      x = 0
-    }
-
-    if (e.x > maxX) {
-      x = maxX
-    }
-
-    if (e.y < 0) {
-      y = 0
-    }
-
-    if (e.y > maxY) {
-      y = maxY
-    }
-
-    mask.x = x
-    mask.y = y
+    mask.x = Math.max(0, Math.min(maxX, e.x))
+    mask.y = Math.max(0, Math.min(maxY, e.y))
   }
 
   onMaskResize(e) {
@@ -80,26 +63,8 @@ export default class Home extends Vue {
     const min = 10
     const maxW = (this.$refs.image as HTMLImageElement).width - mask.x
     const maxH = (this.$refs.image as HTMLImageElement).height - mask.y
-    let { w, h } = e
-
-    if (e.w < min) {
-      w = min
-    }
-
-    if (e.w > maxW) {
-      w = maxW
-    }
-
-    if (e.h < min) {
-      h = min
-    }
-
-    if (e.h > maxH) {
-      h = maxH
-    }
-
-    mask.w = w
-    mask.h = h
+    mask.w = Math.max(min, Math.min(maxW, e.w))
+    mask.h = Math.max(min, Math.min(maxH, e.h))
   }
 
   onClickAddMask() {
