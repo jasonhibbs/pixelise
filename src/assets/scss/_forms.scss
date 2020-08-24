@@ -1,0 +1,65 @@
+// Forms ———————————————————————————————————————————————————————————————
+
+.form-blocks {
+  padding: var(--rem-space-big) 0;
+  margin-bottom: rem(#{'var(--space-biggest) * 2'});
+}
+
+.form-block {
+  + & {
+    margin-top: var(--rem-space-big);
+  }
+
+  &._submit {
+    margin-top: rem(var(--space-biggest));
+  }
+}
+
+.form-block._inline {
+  display: flex;
+
+  > .form-block {
+    flex: auto;
+    margin-top: 0;
+
+    & + .form-block {
+      margin-left: rem(var(--space-small));
+    }
+  }
+}
+
+.form-block-label {
+  display: block;
+  padding-bottom: var(--rem-space-small);
+}
+
+.form-block-hint {
+  color: var(--contrast-darker);
+}
+
+.form-block-controls {
+  display: flex;
+  position: relative;
+
+  button,
+  .button {
+    & + button,
+    & + .button {
+      margin-left: var(--rem-space-small);
+    }
+  }
+}
+
+.form-block-control {
+  display: flex;
+  flex: auto;
+  min-width: 0;
+
+  .input,
+  input:not([type='checkbox']):not([type='radio']),
+  select,
+  textarea {
+    flex: auto;
+    width: 100%;
+  }
+}
