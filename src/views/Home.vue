@@ -8,63 +8,69 @@
         @change="onFileChange"
       )
 
-    .stage
-      .stage-inner
-        .context
-          img(
-            ref="image"
-            draggable="false"
-            :src="readerImage"
-          )
-          template(v-for="mask in masks")
-            image-mask(
-              :data="mask"
-              @drag="onMaskDrag"
-              @resize="onMaskResize"
-            )
+    stage(
+      :image="readerImage"
+      v-model="masks"
+      @maskmouseenter="onMouseenterMask"
+      @maskmouseleave="onMouseleaveMask"
+    )
 
     .layers
       .layer(v-if="this.readerImage")
         button(@click="onClickAddMask") Add Mask
       template(v-for="mask in masks")
-        .layer
-          .span Mask
-          button Select
-          button Delete
+        .layer(
+          :class="{_highlight: mask.id === maskHighlighted}"
+          @mouseenter="onMouseenterMask(mask.id)"
+          @mouseleave="onMouseleaveMask(mask.id)"
+        )
+          h2 Mask
+          span id: {{ mask.id }}
+          | &puncsp;
+          span w: {{ mask.w }}
+          | &puncsp;
+          span h: {{ mask.h }}
+          | &puncsp;
+          span x: {{ mask.x }}
+          | &puncsp;
+          span y: {{ mask.y }}
+          | &puncsp;
+
+          button(@click="onClickDeleteMask(mask.id)") Delete
 
 
 </template>
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import Loader from '@/components/Loader.vue'
+import Stage from '@/components/Stage.vue'
 import ImageMask from '@/components/ImageMask.vue'
 
 @Component({
   components: {
     Loader,
+    Stage,
     ImageMask,
   },
 })
 export default class Home extends Vue {
-  readerImage: FileReader['result'] = ''
+  readerImage: FileReader['result'] = null
   masks: any[] = []
 
-  onMaskDrag(e) {
-    const mask = this.masks.find(x => x.id === e.id)
-    const maxX = (this.$refs.image as HTMLImageElement).width - mask.w
-    const maxY = (this.$refs.image as HTMLImageElement).height - mask.h
-    mask.x = Math.max(0, Math.min(maxX, e.x))
-    mask.y = Math.max(0, Math.min(maxY, e.y))
+  maskHighlighted: number | null = null
+
+  onMouseenterMask(id: number) {
+    console.log(id)
+    this.maskHighlighted = id
+  }
+  onMouseleaveMask(id: number) {
+    this.maskHighlighted = null
   }
 
-  onMaskResize(e) {
-    console.log(e)
-    const mask = this.masks.find(x => x.id === e.id)
-    const min = 10
-    const maxW = (this.$refs.image as HTMLImageElement).width - mask.x
-    const maxH = (this.$refs.image as HTMLImageElement).height - mask.y
-    mask.w = Math.max(min, Math.min(maxW, e.w))
-    mask.h = Math.max(min, Math.min(maxH, e.h))
+  onClickDeleteMask(id: number) {
+    const i = this.masks.findIndex(x => x.id === id)
+    console.log(id, i)
+    this.masks.splice(i, 1)
   }
 
   onClickAddMask() {
@@ -113,5 +119,13 @@ export default class Home extends Vue {
 
 .stage img {
   user-select: none;
+}
+
+.layer {
+  background-color: var(--color-root);
+
+  &._highlight {
+    background-color: var(--grey-lightest);
+  }
 }
 </style>
