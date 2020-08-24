@@ -15,6 +15,7 @@
             @resize="onResizeMask"
             @mouseenter="$emit('maskmouseenter', mask.id)"
             @mouseleave="$emit('maskmouseleave', mask.id)"
+            @change="$emit('change')"
           )
 
 </template>

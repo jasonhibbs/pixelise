@@ -59,6 +59,7 @@ export default class ImageMask extends Vue {
     document.removeEventListener('mousemove', this.onMousemoveMask)
     document.removeEventListener('mousemove', this.onMousemoveHandle)
     document.removeEventListener('mouseup', this.onMouseup)
+    this.$emit('change')
   }
 
   onTouchend(e: TouchEvent) {
@@ -67,6 +68,7 @@ export default class ImageMask extends Vue {
     document.removeEventListener('touchmove', this.onTouchmoveMask)
     document.removeEventListener('touchmove', this.onTouchmoveHandle)
     document.removeEventListener('touchend', this.onTouchend)
+    this.$emit('change')
   }
 
   // Drag
@@ -159,7 +161,7 @@ export default class ImageMask extends Vue {
 }
 </script>
 <style lang="scss">
-$mask-box-color: #445;
+$mask-box-color: #447;
 $mask-handle-color: #0f6;
 $mask-handle-inset: 10px;
 
@@ -186,19 +188,22 @@ $mask-handle-inset: 10px;
 }
 
 .mask .handle {
-  cursor: nwse-resize;
   --handle-touch-size: 36px;
   --handle-dot-size: 10px;
+
+  cursor: nwse-resize;
+
   position: absolute;
-  width: var(--handle-touch-size);
-  height: var(--handle-touch-size);
   left: 100%;
   top: 100%;
-  // opacity: 0.8;
-  transition: opacity 0.1s;
-  margin: (-$mask-handle-inset) 0 0 (-$mask-handle-inset);
-  mix-blend-mode: exclusion;
   z-index: 0;
+
+  width: var(--handle-touch-size);
+  height: var(--handle-touch-size);
+  margin: (-$mask-handle-inset) 0 0 (-$mask-handle-inset);
+
+  mix-blend-mode: exclusion;
+  transition: opacity 0.1s;
 
   &:hover {
     opacity: 1;
@@ -208,18 +213,17 @@ $mask-handle-inset: 10px;
   &:after {
     content: '';
     display: block;
-    width: calc(32px - var(--handle-dot-size));
-    height: 0;
-    // border-top: 1px solid $mask-handle-color;
-    box-shadow: 0 0 0 1px $mask-handle-color;
-    transform: rotateZ(45deg);
-    transform-origin: 0 0;
-
-    backdrop-filter: blur(4px);
-    background-color: $mask-handle-color;
     position: absolute;
     left: $mask-handle-inset - 0.5px;
     top: $mask-handle-inset;
+
+    width: calc(32px - var(--handle-dot-size));
+    height: 0;
+    transform: rotateZ(45deg);
+    transform-origin: 0 0;
+
+    background-color: $mask-handle-color;
+    box-shadow: 0 0 0 0.5px $mask-handle-color;
 
     transition: width 0.1s;
     will-change: width;
@@ -230,15 +234,14 @@ $mask-handle-inset: 10px;
   position: absolute;
   bottom: 2px;
   right: 2px;
+
   width: var(--handle-dot-size);
   height: var(--handle-dot-size);
-  // margin-top: 12px;
-  // margin-left: 12px;
-  border-radius: 100px;
-  backdrop-filter: blur(4px);
 
   background-color: black;
   border: 1.5px solid $mask-handle-color;
+  border-radius: 100px;
+
   transition: width 0.1s, height 0.1s;
   will-change: width, height;
 }

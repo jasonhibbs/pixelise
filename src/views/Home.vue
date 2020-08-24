@@ -13,6 +13,7 @@
       v-model="masks"
       @maskmouseenter="onMouseenterMask"
       @maskmouseleave="onMouseleaveMask"
+      @chnge="onStageChange"
     )
 
     .layers
@@ -67,7 +68,6 @@ export default class Home extends Vue {
   maskHighlighted: number | null = null
 
   onMouseenterMask(id: number) {
-    console.log(id)
     this.maskHighlighted = id
   }
   onMouseleaveMask(id: number) {
@@ -76,7 +76,6 @@ export default class Home extends Vue {
 
   onClickDeleteMask(id: number) {
     const i = this.masks.findIndex(x => x.id === id)
-    console.log(id, i)
     this.masks.splice(i, 1)
   }
 
@@ -90,29 +89,60 @@ export default class Home extends Vue {
     })
   }
 
+  onStageChange() {
+    this.updateCanvas()
+  }
+
   canvasContext!: CanvasRenderingContext2D | null
 
   mounted() {
     this.canvasContext = (this.$refs.canvas as HTMLCanvasElement).getContext(
       '2d'
     )
-    console.log(this.canvasContext)
   }
 
   imageDownloadName = 'pixelated'
   imageDownloadHref = ''
 
   updateCanvas() {
-    if (this.canvasContext) {
-      const img = new Image()
-      img.onload = e => {
-        this.canvasContext!.canvas.width = img.width
-        this.canvasContext!.canvas.height = img.height
-        this.canvasContext!.drawImage(img, 0, 0)
-        this.imageDownloadHref = this.canvasContext!.canvas.toDataURL()
+    const ctx = this.canvasContext
+    const img = new Image()
+    img.onload = e => {
+      if (ctx) {
+        ctx.canvas.width = img.width
+        ctx.canvas.height = img.height
+        ctx.drawImage(img, 0, 0)
+
+        const newCanvas = document.createElement('canvas')
+        const f = 0.2
+        const ow = 117
+        const oh = 33
+        const x = 35
+        const y = 143
+        // const ow = 100
+        // const oh = 12
+        // const x = 17
+        // const y = 22
+        // const ow = 360
+        // const oh = 43
+        // const x = 45
+        // const y = 19
+        const w = ow * f
+        const h = oh * f
+        newCanvas.width = w
+        newCanvas.height = h
+        document.getElementsByTagName('body')[0].appendChild(newCanvas)
+        const nctx = newCanvas.getContext('2d')
+        console.log(nctx)
+        nctx!.drawImage(img, x, y, ow, oh, 0, 0, w, h)
+
+        ctx!.imageSmoothingEnabled = false
+        ctx.drawImage(newCanvas, x, y, ow, oh)
+
+        this.imageDownloadHref = ctx.canvas.toDataURL()
       }
-      img.src = this.readerImage as string
     }
+    img.src = this.readerImage as string
   }
 
   onLoadReader(result: FileReader['result']) {
@@ -125,7 +155,6 @@ export default class Home extends Vue {
     const reader = new FileReader()
     reader.onload = e => {
       this.onLoadReader(reader.result)
-      console.log(reader)
     }
     reader.readAsDataURL(file)
   }
