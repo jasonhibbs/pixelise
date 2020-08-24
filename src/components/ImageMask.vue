@@ -159,8 +159,9 @@ export default class ImageMask extends Vue {
 }
 </script>
 <style lang="scss">
-$color-mask-box: #445;
-$color-mask-handle: #f0f;
+$mask-box-color: #445;
+$mask-handle-color: #0f6;
+$mask-handle-inset: 10px;
 
 .mask {
   position: absolute;
@@ -168,7 +169,7 @@ $color-mask-handle: #f0f;
 
 .mask .box {
   cursor: grab;
-  background-color: $color-mask-box;
+  background-color: $mask-box-color;
   box-shadow: 0 0 0 1px transparent;
   width: 100%;
   height: 100%;
@@ -180,39 +181,65 @@ $color-mask-handle: #f0f;
 }
 
 .mask:hover .box {
-  background-color: fade-out($color-mask-box, 0.4);
-  // box-shadow: inset 0 0 0 1px $color-mask-box;
+  background-color: fade-out($mask-box-color, 0.4);
+  // box-shadow: inset 0 0 0 1px $mask-box-color;
 }
 
 .mask .handle {
   cursor: nwse-resize;
-  --size: 36px;
+  --handle-touch-size: 36px;
+  --handle-dot-size: 10px;
   position: absolute;
-  width: var(--size);
-  height: var(--size);
+  width: var(--handle-touch-size);
+  height: var(--handle-touch-size);
   left: 100%;
   top: 100%;
-  opacity: 0.8;
+  // opacity: 0.8;
   transition: opacity 0.1s;
-  margin: -10px 0 0 -10px;
+  margin: (-$mask-handle-inset) 0 0 (-$mask-handle-inset);
+  mix-blend-mode: exclusion;
+  z-index: 0;
 
   &:hover {
     opacity: 1;
+    --handle-dot-size: 16px;
+  }
 
-    .handle-actual {
-      --size: 14px;
-    }
+  &:after {
+    content: '';
+    display: block;
+    width: calc(32px - var(--handle-dot-size));
+    height: 0;
+    // border-top: 1px solid $mask-handle-color;
+    box-shadow: 0 0 0 1px $mask-handle-color;
+    transform: rotateZ(45deg);
+    transform-origin: 0 0;
+
+    backdrop-filter: blur(4px);
+    background-color: $mask-handle-color;
+    position: absolute;
+    left: $mask-handle-inset - 0.5px;
+    top: $mask-handle-inset;
+
+    transition: width 0.1s;
+    will-change: width;
   }
 }
 
 .mask .handle-actual {
-  --size: 8px;
-  width: var(--size);
-  height: var(--size);
-  margin-top: 12px;
-  margin-left: 12px;
-  border-radius: 1px;
-  background-color: $color-mask-handle;
-  transition: width 0.2s, height 0.2s;
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: var(--handle-dot-size);
+  height: var(--handle-dot-size);
+  // margin-top: 12px;
+  // margin-left: 12px;
+  border-radius: 100px;
+  backdrop-filter: blur(4px);
+
+  background-color: black;
+  border: 1.5px solid $mask-handle-color;
+  transition: width 0.1s, height 0.1s;
+  will-change: width, height;
 }
 </style>
