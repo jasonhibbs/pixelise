@@ -36,8 +36,15 @@
           span y: {{ mask.y }}
           | &puncsp;
 
-          button(@click="onClickDeleteMask(mask.id)") Delete
+          button(@click="onClickDeleteMask") Delete
 
+
+    .output
+      canvas(ref="canvas")
+      a(
+        :download="imageDownloadName"
+        :href="imageDownloadHref"
+      ) Download
 
 </template>
 <script lang="ts">
@@ -83,14 +90,42 @@ export default class Home extends Vue {
     })
   }
 
+  canvasContext!: CanvasRenderingContext2D | null
+
+  mounted() {
+    this.canvasContext = (this.$refs.canvas as HTMLCanvasElement).getContext(
+      '2d'
+    )
+    console.log(this.canvasContext)
+  }
+
+  imageDownloadName = 'pixelated'
+  imageDownloadHref = ''
+
+  updateCanvas() {
+    if (this.canvasContext) {
+      const img = new Image()
+      img.onload = e => {
+        this.canvasContext!.canvas.width = img.width
+        this.canvasContext!.canvas.height = img.height
+        this.canvasContext!.drawImage(img, 0, 0)
+        this.imageDownloadHref = this.canvasContext!.canvas.toDataURL()
+      }
+      img.src = this.readerImage as string
+    }
+  }
+
   onLoadReader(result: FileReader['result']) {
     this.readerImage = result
+    this.updateCanvas()
   }
 
   updateImage(file: File) {
+    this.imageDownloadName = `pixelated-${file.name}`
     const reader = new FileReader()
     reader.onload = e => {
       this.onLoadReader(reader.result)
+      console.log(reader)
     }
     reader.readAsDataURL(file)
   }
