@@ -178,6 +178,12 @@ $mask-handle-inset: 10px;
   transition: background-color 0.2s, box-shadow 0.1s;
 }
 
+.mask:hover,
+.mask._drag,
+.mask._resize {
+  z-index: 1;
+}
+
 .mask._drag .box {
   cursor: grabbing;
 }

@@ -7,6 +7,7 @@
           ref="baseImage"
           draggable="false"
           :src="baseImage"
+          @load="$emit('imageload', imgBase)"
         )
         img.stage-image-preview(
           ref="previewImage"
@@ -68,11 +69,11 @@ export default class Stage extends Vue {
   background-color: var(--grey-lightest);
   overflow: auto;
   width: 100%;
-  min-height: 58vh;
+  height: 58vh;
 }
 .stage-inner {
   padding: 2rem;
-  padding-top: calc(2rem + env(safe-area-inset-top));
+  padding-top: calc(4rem + env(safe-area-inset-top));
   margin: auto;
 }
 .stage-context {

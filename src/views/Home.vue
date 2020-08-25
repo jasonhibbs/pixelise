@@ -23,11 +23,10 @@
         @maskmouseenter="onMouseenterMask"
         @maskmouseleave="onMouseleaveMask"
         @change="onStageChange"
+        @imageload="onLoadStageImage"
       )
 
     .context
-
-
 
       .layers
         .layer(v-if="this.readerImage")
@@ -91,6 +90,16 @@ export default class Home extends Vue {
 
   // Upload
 
+  onLoadStageImage(image: HTMLImageElement) {
+    const windowCentreX = window.innerWidth / 2
+    const imageRect = image.getBoundingClientRect()
+    const x = Math.floor(windowCentreX - imageRect.x - 64)
+    const y = Math.floor(window.innerHeight * 0.22)
+    if (!this.masks.length) {
+      this.addMask(x, y)
+    }
+  }
+
   onLoadReader(result: FileReader['result']) {
     this.readerImage = result
     this.updateOutput()
@@ -123,6 +132,11 @@ export default class Home extends Vue {
 
   // Layers
 
+  addMask(x = 40, y = 40, w = 128, h = 32) {
+    this.masks.push({ id: new Date().getTime(), x, y, w, h })
+    this.updateOutput()
+  }
+
   onClickDeleteMask(id: number) {
     const i = this.masks.findIndex(x => x.id === id)
     this.masks.splice(i, 1)
@@ -130,14 +144,7 @@ export default class Home extends Vue {
   }
 
   onClickAddMask() {
-    this.masks.push({
-      id: new Date().getTime(),
-      x: 0,
-      y: 0,
-      w: 100,
-      h: 30,
-    })
-    this.updateOutput()
+    this.addMask()
   }
 
   // Stage
