@@ -17,6 +17,7 @@
 
         template(v-for="mask in value")
           image-mask(
+            :class="{ _highlight: highlight === mask.id}"
             :data="mask"
             @drag="onDragMask"
             @resize="onResizeMask"
@@ -38,6 +39,7 @@ import ImageMask from '@/components/ImageMask.vue'
 export default class Stage extends Vue {
   @Prop() baseImage!: FileReader['result']
   @Prop() previewImage!: string
+  @Prop() highlight?: number
   @Prop() value!: any[]
 
   @Ref('baseImage') readonly imgBase!: HTMLImageElement

@@ -195,7 +195,8 @@ $mask-handle-inset: 10px;
   cursor: grabbing;
 }
 
-.mask:hover .box {
+.mask:hover .box,
+.mask._highlight .box {
   background-color: fade-out($mask-inner-color, 0.4);
   // box-shadow: inset 0 0 0 1px $mask-inner-color;
 }

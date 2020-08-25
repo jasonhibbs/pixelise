@@ -20,26 +20,31 @@
         v-model="masks"
         :base-image="readerImage"
         :preview-image="finalImage"
+        :highlight="maskHighlighted"
         @maskmouseenter="onMouseenterMask"
         @maskmouseleave="onMouseleaveMask"
         @change="onStageChange"
         @imageload="onLoadStageImage"
       )
 
+      canvas#canvas(ref="baseCanvas")
+
     .context
 
       button(
         v-if="finalImage"
+        :disabled="!masks.length"
         @click="onClickPreviewToggle"
       )
         span(v-if="isPreviewing") Edit
         span(v-if="!isPreviewing") Preview
 
-      .layers
+      .layers(v-if="!isPreviewing")
         .layer(v-if="this.readerImage")
           button(@click="onClickAddMask") Add Mask
-        template(v-for="mask in masks")
           .layer(
+            v-for="mask in masks"
+            :key="mask.id"
             :class="{_highlight: mask.id === maskHighlighted}"
             @mouseenter="onMouseenterMask(mask.id)"
             @mouseleave="onMouseleaveMask(mask.id)"
@@ -53,12 +58,12 @@
             span y: {{ mask.y }}
             | &puncsp;
 
-            button(@click="onClickDeleteMask") Delete
+            button(@click="onClickDeleteMask(mask.id)") Delete
 
 
-      .output
-        canvas(ref="canvas")
-        a(
+      .output(v-if="isPreviewing")
+
+        a.button(
           v-if="finalImage"
           :download="imageDownloadName"
           :href="finalImage"
@@ -66,7 +71,7 @@
 
 </template>
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Ref, Vue } from 'vue-property-decorator'
 import Loader from '@/components/Loader.vue'
 import Stage from '@/components/Stage.vue'
 import ImageMask from '@/components/ImageMask.vue'
@@ -79,6 +84,8 @@ import ImageMask from '@/components/ImageMask.vue'
   },
 })
 export default class Home extends Vue {
+  @Ref('baseCanvas') readonly canvasElement!: HTMLCanvasElement
+
   readerImage: FileReader['result'] = null
   imageDownloadName = 'pixelated'
   finalImage = ''
@@ -90,9 +97,7 @@ export default class Home extends Vue {
 
   canvasContext!: CanvasRenderingContext2D | null
   mounted() {
-    this.canvasContext = (this.$refs.canvas as HTMLCanvasElement).getContext(
-      '2d'
-    )
+    this.canvasContext = this.canvasElement.getContext('2d')
   }
 
   // Preview
@@ -248,7 +253,7 @@ export default class Home extends Vue {
   }
 }
 
-.output canvas {
+#canvas {
   display: none;
 }
 </style>
