@@ -91,5 +91,13 @@ export default class Stage extends Vue {
   width: 100%;
   height: auto;
   opacity: 0;
+  will-change: opacity;
+  transition: opacity 0.2s;
+}
+
+._preview {
+  .stage-image-preview {
+    opacity: 1;
+  }
 }
 </style>

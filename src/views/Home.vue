@@ -2,7 +2,7 @@
 
   main
 
-    .editor
+    .editor(:class="{ _preview: isPreviewing }")
 
       label.editor-uploader(
         for="file-input"
@@ -27,6 +27,13 @@
       )
 
     .context
+
+      button(
+        v-if="finalImage"
+        @click="onClickPreviewToggle"
+      )
+        span(v-if="isPreviewing") Edit
+        span(v-if="!isPreviewing") Preview
 
       .layers
         .layer(v-if="this.readerImage")
@@ -88,14 +95,22 @@ export default class Home extends Vue {
     )
   }
 
+  // Preview
+
+  isPreviewing = false
+
+  onClickPreviewToggle() {
+    this.isPreviewing = !this.isPreviewing
+  }
+
   // Upload
 
   onLoadStageImage(image: HTMLImageElement) {
-    const windowCentreX = window.innerWidth / 2
-    const imageRect = image.getBoundingClientRect()
-    const x = Math.floor(windowCentreX - imageRect.x - 64)
-    const y = Math.floor(window.innerHeight * 0.22)
     if (!this.masks.length) {
+      const windowCentreX = window.innerWidth / 2
+      const imageRect = image.getBoundingClientRect()
+      const x = Math.floor(windowCentreX - imageRect.x - 64)
+      const y = Math.floor(window.innerHeight * 0.28 - imageRect.y)
       this.addMask(x, y)
     }
   }

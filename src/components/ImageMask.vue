@@ -167,6 +167,13 @@ $mask-handle-inset: 10px;
 
 .mask {
   position: absolute;
+  will-change: opacity;
+  transition: opacity 0.2s;
+
+  ._preview & {
+    pointer-events: none;
+    opacity: 0;
+  }
 }
 
 .mask .box {
