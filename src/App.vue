@@ -3,8 +3,7 @@
   #app
 
     header
-      .layout
-        h1 vue-paratus
+      h1 Pixelator
 
     router-view
 
@@ -18,3 +17,21 @@ import { Component, Vue } from 'vue-property-decorator'
 @Component
 export default class App extends Vue {}
 </script>
+
+<style lang="scss">
+#app > header {
+  position: absolute;
+  top: 0;
+  top: env(safe-area-inset-top);
+  left: 0;
+  z-index: 2;
+  padding: 1rem;
+
+  h1 {
+    font-size: 1.25rem;
+    margin: 0;
+    text-shadow: 0 0 0.5em var(--color-root), 0 0 0.25em var(--color-root),
+      0 0 0.125em var(--color-root);
+  }
+}
+</style>

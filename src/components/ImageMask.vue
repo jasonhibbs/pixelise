@@ -161,8 +161,8 @@ export default class ImageMask extends Vue {
 }
 </script>
 <style lang="scss">
-$mask-box-color: #447;
-$mask-handle-color: #0f6;
+$mask-inner-color: black;
+$mask-outer-color: white;
 $mask-handle-inset: 10px;
 
 .mask {
@@ -171,8 +171,8 @@ $mask-handle-inset: 10px;
 
 .mask .box {
   cursor: grab;
-  background-color: $mask-box-color;
-  box-shadow: 0 0 0 1px transparent;
+  background-color: $mask-inner-color;
+  box-shadow: 0 0 0 1px fade-out($mask-outer-color, 0.6);
   width: 100%;
   height: 100%;
   transition: background-color 0.2s, box-shadow 0.1s;
@@ -183,13 +183,13 @@ $mask-handle-inset: 10px;
 }
 
 .mask:hover .box {
-  background-color: fade-out($mask-box-color, 0.4);
-  // box-shadow: inset 0 0 0 1px $mask-box-color;
+  background-color: fade-out($mask-inner-color, 0.4);
+  // box-shadow: inset 0 0 0 1px $mask-inner-color;
 }
 
 .mask .handle {
-  --handle-touch-size: 36px;
-  --handle-dot-size: 10px;
+  --handle-touch-size: 44px;
+  --handle-dot-size: 12px;
 
   cursor: nwse-resize;
 
@@ -202,7 +202,7 @@ $mask-handle-inset: 10px;
   height: var(--handle-touch-size);
   margin: (-$mask-handle-inset) 0 0 (-$mask-handle-inset);
 
-  mix-blend-mode: exclusion;
+  // mix-blend-mode: exclusion;
   transition: opacity 0.1s;
 
   &:hover {
@@ -214,16 +214,15 @@ $mask-handle-inset: 10px;
     content: '';
     display: block;
     position: absolute;
-    left: $mask-handle-inset - 0.5px;
+    left: $mask-handle-inset;
     top: $mask-handle-inset;
 
-    width: calc(32px - var(--handle-dot-size));
+    width: calc(var(--handle-touch-size) - var(--handle-dot-size));
     height: 0;
     transform: rotateZ(45deg);
     transform-origin: 0 0;
-
-    background-color: $mask-handle-color;
-    box-shadow: 0 0 0 0.5px $mask-handle-color;
+    box-shadow: 0 0 0 0.5px $mask-inner-color,
+      1px 0 0 1px fade-out($mask-outer-color, 0);
 
     transition: width 0.1s;
     will-change: width;
@@ -234,12 +233,14 @@ $mask-handle-inset: 10px;
   position: absolute;
   bottom: 2px;
   right: 2px;
+  z-index: 1;
 
   width: var(--handle-dot-size);
   height: var(--handle-dot-size);
 
-  background-color: black;
-  border: 1.5px solid $mask-handle-color;
+  background-color: $mask-inner-color;
+  box-shadow: 0 0 0 1px fade-out($mask-outer-color, 0.4);
+  // border: 1px solid $mask-handle-color;
   border-radius: 100px;
 
   transition: width 0.1s, height 0.1s;

@@ -1,51 +1,62 @@
 <template lang="pug">
 
   main
-    .layout
-      input(
-        type="file"
-        accept="image/*"
-        @change="onFileChange"
+
+    .editor
+
+      label.editor-uploader(
+        for="file-input"
+        v-if="!readerImage"
+      )
+        span Upload an image
+        input#file-input(
+          type="file"
+          accept="image/*"
+          @change="onFileChange"
+        )
+
+
+      stage(
+        v-model="masks"
+        :base-image="readerImage"
+        :preview-image="finalImage"
+        @maskmouseenter="onMouseenterMask"
+        @maskmouseleave="onMouseleaveMask"
+        @change="onStageChange"
       )
 
-    stage(
-      :image="readerImage"
-      v-model="masks"
-      @maskmouseenter="onMouseenterMask"
-      @maskmouseleave="onMouseleaveMask"
-      @change="onStageChange"
-    )
-
-    .layers
-      .layer(v-if="this.readerImage")
-        button(@click="onClickAddMask") Add Mask
-      template(v-for="mask in masks")
-        .layer(
-          :class="{_highlight: mask.id === maskHighlighted}"
-          @mouseenter="onMouseenterMask(mask.id)"
-          @mouseleave="onMouseleaveMask(mask.id)"
-        )
-          h2 Mask
-          span id: {{ mask.id }}
-          | &puncsp;
-          span w: {{ mask.w }}
-          | &puncsp;
-          span h: {{ mask.h }}
-          | &puncsp;
-          span x: {{ mask.x }}
-          | &puncsp;
-          span y: {{ mask.y }}
-          | &puncsp;
-
-          button(@click="onClickDeleteMask") Delete
+    .context
 
 
-    .output
-      canvas(ref="canvas")
-      a(
-        :download="imageDownloadName"
-        :href="imageDownloadHref"
-      ) Download
+
+      .layers
+        .layer(v-if="this.readerImage")
+          button(@click="onClickAddMask") Add Mask
+        template(v-for="mask in masks")
+          .layer(
+            :class="{_highlight: mask.id === maskHighlighted}"
+            @mouseenter="onMouseenterMask(mask.id)"
+            @mouseleave="onMouseleaveMask(mask.id)"
+          )
+            span w: {{ mask.w }}
+            | &puncsp;
+            span h: {{ mask.h }}
+            | &puncsp;
+            span x: {{ mask.x }}
+            | &puncsp;
+            span y: {{ mask.y }}
+            | &puncsp;
+
+            button(@click="onClickDeleteMask") Delete
+
+
+      .output
+        canvas(ref="canvas")
+        a(
+          v-if="finalImage"
+          :download="imageDownloadName"
+          :href="finalImage"
+        ) Download
 
 </template>
 <script lang="ts">
@@ -63,9 +74,45 @@ import ImageMask from '@/components/ImageMask.vue'
 })
 export default class Home extends Vue {
   readerImage: FileReader['result'] = null
+  imageDownloadName = 'pixelated'
+  finalImage = ''
+  pixelScale = 0.22
   masks: any[] = []
-
   maskHighlighted: number | null = null
+
+  // Lifecycle
+
+  canvasContext!: CanvasRenderingContext2D | null
+  mounted() {
+    this.canvasContext = (this.$refs.canvas as HTMLCanvasElement).getContext(
+      '2d'
+    )
+  }
+
+  // Upload
+
+  onLoadReader(result: FileReader['result']) {
+    this.readerImage = result
+    this.updateOutput()
+  }
+
+  updateImage(file: File) {
+    this.imageDownloadName = `pixelated-${file.name}`
+    const reader = new FileReader()
+    reader.onload = e => {
+      this.onLoadReader(reader.result)
+    }
+    reader.readAsDataURL(file)
+  }
+
+  onFileChange(e: InputEvent) {
+    const files = (e.target as HTMLInputElement).files
+    if (files?.length) {
+      this.updateImage(files[0])
+    }
+  }
+
+  // Mask Highlight
 
   onMouseenterMask(id: number) {
     this.maskHighlighted = id
@@ -74,10 +121,12 @@ export default class Home extends Vue {
     this.maskHighlighted = null
   }
 
+  // Layers
+
   onClickDeleteMask(id: number) {
     const i = this.masks.findIndex(x => x.id === id)
     this.masks.splice(i, 1)
-    this.updateCanvas()
+    this.updateOutput()
   }
 
   onClickAddMask() {
@@ -88,25 +137,31 @@ export default class Home extends Vue {
       w: 100,
       h: 30,
     })
-    this.updateCanvas()
+    this.updateOutput()
   }
+
+  // Stage
 
   onStageChange() {
-    this.updateCanvas()
+    this.updateOutput()
   }
 
-  canvasContext!: CanvasRenderingContext2D | null
+  // Output
 
-  mounted() {
-    this.canvasContext = (this.$refs.canvas as HTMLCanvasElement).getContext(
-      '2d'
-    )
+  updateOutput() {
+    const ctx = this.canvasContext
+    const img = new Image()
+    img.onload = e => {
+      if (ctx) {
+        ctx.canvas.width = img.width
+        ctx.canvas.height = img.height
+        ctx.drawImage(img, 0, 0)
+        this.addMasks(ctx, img)
+        this.finalImage = ctx.canvas.toDataURL()
+      }
+    }
+    img.src = this.readerImage as string
   }
-
-  imageDownloadName = 'pixelated'
-  imageDownloadHref = ''
-
-  pixelScale = 0.22
 
   addMasks(
     originalContext: CanvasRenderingContext2D,
@@ -135,60 +190,32 @@ export default class Home extends Vue {
       originalContext.drawImage(newCanvas, x, y, w, h)
     })
   }
-
-  updateCanvas() {
-    const ctx = this.canvasContext
-    const img = new Image()
-    img.onload = e => {
-      if (ctx) {
-        ctx.canvas.width = img.width
-        ctx.canvas.height = img.height
-        ctx.drawImage(img, 0, 0)
-        this.addMasks(ctx, img)
-        this.imageDownloadHref = ctx.canvas.toDataURL()
-      }
-    }
-    img.src = this.readerImage as string
-  }
-
-  onLoadReader(result: FileReader['result']) {
-    this.readerImage = result
-    this.updateCanvas()
-  }
-
-  updateImage(file: File) {
-    this.imageDownloadName = `pixelated-${file.name}`
-    const reader = new FileReader()
-    reader.onload = e => {
-      this.onLoadReader(reader.result)
-    }
-    reader.readAsDataURL(file)
-  }
-
-  onFileChange(e: InputEvent) {
-    const files = (e.target as HTMLInputElement).files
-    if (files?.length) {
-      this.updateImage(files[0])
-    }
-  }
 }
 </script>
 <style lang="scss">
-.stage {
-  display: flex;
-  background-color: var(--grey-lightest);
-  overflow: auto;
-}
-.stage-inner {
-  padding: 2rem;
-  margin: auto;
-}
-.context {
+.editor {
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.stage img {
-  user-select: none;
+.editor-uploader {
+  text-align: center;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+
+  input {
+    position: absolute;
+    clip: rect(0 0 0 0);
+  }
 }
 
 .layer {
@@ -197,5 +224,9 @@ export default class Home extends Vue {
   &._highlight {
     background-color: var(--grey-lightest);
   }
+}
+
+.output canvas {
+  display: none;
 }
 </style>
