@@ -13,7 +13,7 @@
       v-model="masks"
       @maskmouseenter="onMouseenterMask"
       @maskmouseleave="onMouseleaveMask"
-      @chnge="onStageChange"
+      @change="onStageChange"
     )
 
     .layers
@@ -77,6 +77,7 @@ export default class Home extends Vue {
   onClickDeleteMask(id: number) {
     const i = this.masks.findIndex(x => x.id === id)
     this.masks.splice(i, 1)
+    this.updateCanvas()
   }
 
   onClickAddMask() {
@@ -87,6 +88,7 @@ export default class Home extends Vue {
       w: 100,
       h: 30,
     })
+    this.updateCanvas()
   }
 
   onStageChange() {
@@ -104,6 +106,36 @@ export default class Home extends Vue {
   imageDownloadName = 'pixelated'
   imageDownloadHref = ''
 
+  pixelScale = 0.22
+
+  addMasks(
+    originalContext: CanvasRenderingContext2D,
+    originalImage: HTMLImageElement
+  ) {
+    originalContext.imageSmoothingEnabled = false
+    this.masks.forEach(mask => {
+      const { x, y, w, h } = mask
+      const newWidth = w * this.pixelScale
+      const newHeight = h * this.pixelScale
+      const newCanvas = document.createElement('canvas')
+      newCanvas.width = newWidth
+      newCanvas.height = newHeight
+      const newContext = newCanvas.getContext('2d')
+      newContext!.drawImage(
+        originalImage,
+        x,
+        y,
+        w,
+        h,
+        0,
+        0,
+        newWidth,
+        newHeight
+      )
+      originalContext.drawImage(newCanvas, x, y, w, h)
+    })
+  }
+
   updateCanvas() {
     const ctx = this.canvasContext
     const img = new Image()
@@ -112,33 +144,7 @@ export default class Home extends Vue {
         ctx.canvas.width = img.width
         ctx.canvas.height = img.height
         ctx.drawImage(img, 0, 0)
-
-        const newCanvas = document.createElement('canvas')
-        const f = 0.2
-        const ow = 117
-        const oh = 33
-        const x = 35
-        const y = 143
-        // const ow = 100
-        // const oh = 12
-        // const x = 17
-        // const y = 22
-        // const ow = 360
-        // const oh = 43
-        // const x = 45
-        // const y = 19
-        const w = ow * f
-        const h = oh * f
-        newCanvas.width = w
-        newCanvas.height = h
-        document.getElementsByTagName('body')[0].appendChild(newCanvas)
-        const nctx = newCanvas.getContext('2d')
-        console.log(nctx)
-        nctx!.drawImage(img, x, y, ow, oh, 0, 0, w, h)
-
-        ctx!.imageSmoothingEnabled = false
-        ctx.drawImage(newCanvas, x, y, ow, oh)
-
+        this.addMasks(ctx, img)
         this.imageDownloadHref = ctx.canvas.toDataURL()
       }
     }
