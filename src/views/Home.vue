@@ -40,8 +40,8 @@
             v-for="mask in masks"
             :key="mask.id"
             :class="{_highlight: mask.id === ui.maskHighlight}"
-            @mouseenter="onMouseenterMask(mask.id)"
-            @mouseleave="onMouseleaveMask(mask.id)"
+            @mouseenter="onMouseenterLayer(mask.id)"
+            @mouseleave="onMouseleaveLayer(mask.id)"
           )
             span w: {{ mask.w }}
             | &puncsp;
@@ -139,13 +139,18 @@ export default class Home extends Vue {
 
   // Upload
 
+  getStageImageCentre(image: HTMLImageElement) {
+    const windowCentreX = window.innerWidth / 2
+    const imageRect = image.getBoundingClientRect()
+    const x = Math.floor(windowCentreX - imageRect.x)
+    const y = Math.floor(window.innerHeight * 0.28 - imageRect.y)
+    return { x, y }
+  }
+
   onLoadStageImage(image: HTMLImageElement) {
     if (!this.masks.length) {
-      const windowCentreX = window.innerWidth / 2
-      const imageRect = image.getBoundingClientRect()
-      const x = Math.floor(windowCentreX - imageRect.x - 64)
-      const y = Math.floor(window.innerHeight * 0.28 - imageRect.y)
-      this.addMask(x, y)
+      const { x, y } = this.getStageImageCentre(image)
+      this.addMask(x - 64, y)
     }
   }
 
@@ -187,6 +192,13 @@ export default class Home extends Vue {
 
   onClickAddMask() {
     this.addMask()
+  }
+
+  onMouseenterLayer(id: number) {
+    this.$store.commit('updateUI', { key: 'maskHighlight', value: id })
+  }
+  onMouseleaveLayer(id: number) {
+    this.$store.commit('updateUI', { key: 'maskHighlight', value: null })
   }
 
   // Stage

@@ -21,8 +21,8 @@
             :data="mask"
             @drag="onDragMask"
             @resize="onResizeMask"
-            @mouseenter="onMouseenterMask"
-            @mouseleave="onMouseleaveMask"
+            @mouseenter="onMouseenterMask(mask.id)"
+            @mouseleave="onMouseleaveMask(mask.id)"
             @change="$emit('change')"
           )
 
