@@ -6,41 +6,42 @@
         img.stage-image-base(
           ref="baseImage"
           draggable="false"
-          :src="baseImage"
+          :src="images.input"
           @load="$emit('imageload', imgBase)"
         )
         img.stage-image-preview(
           ref="previewImage"
           draggable="false"
-          :src="previewImage"
+          :src="images.output"
         )
 
         template(v-for="mask in value")
           image-mask(
-            :class="{ _highlight: highlight === mask.id}"
+            :class="{ _highlight: mask.id === ui.maskHighlight}"
             :data="mask"
             @drag="onDragMask"
             @resize="onResizeMask"
-            @mouseenter="$emit('maskmouseenter', mask.id)"
-            @mouseleave="$emit('maskmouseleave', mask.id)"
+            @mouseenter="onMouseenterMask"
+            @mouseleave="onMouseleaveMask"
             @change="$emit('change')"
           )
 
 </template>
 <script lang="ts">
 import { Component, Prop, Ref, Vue } from 'vue-property-decorator'
+import { mapState } from 'vuex'
 import ImageMask from '@/components/ImageMask.vue'
 
 @Component({
   components: {
     ImageMask,
   },
+  computed: mapState(['ui', 'images']),
 })
 export default class Stage extends Vue {
-  @Prop() baseImage!: FileReader['result']
-  @Prop() previewImage!: string
-  @Prop() highlight?: number
   @Prop() value!: any[]
+
+  images!: any
 
   @Ref('baseImage') readonly imgBase!: HTMLImageElement
   @Ref('previewImage') readonly imgPreview!: HTMLImageElement
@@ -62,6 +63,13 @@ export default class Stage extends Vue {
     mask.w = Math.max(min, Math.min(maxW, e.w))
     mask.h = Math.max(min, Math.min(maxH, e.h))
     this.$emit('input', this.value)
+  }
+
+  onMouseenterMask(id: number) {
+    this.$store.commit('updateUI', { key: 'maskHighlight', value: id })
+  }
+  onMouseleaveMask(id: number) {
+    this.$store.commit('updateUI', { key: 'maskHighlight', value: null })
   }
 }
 </script>

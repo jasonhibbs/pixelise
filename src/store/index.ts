@@ -14,13 +14,23 @@ interface StoreImages {
   context: CanvasRenderingContext2D | null
 }
 
+interface StoreMask {
+  id: number
+  x: number
+  y: number
+  w: number
+  h: number
+}
+
 const images: StoreImages = {
   input: null,
   output: '',
   context: null,
 }
 
-const drawMasks = (state: any) => {
+const masks: StoreMask[] = []
+
+const drawMasks = (state: any, img: HTMLImageElement) => {
   state.images.context.imageSmoothingEnabled = false
   state.masks.forEach((mask: any) => {
     const { x, y, w, h } = mask
@@ -30,17 +40,7 @@ const drawMasks = (state: any) => {
     newCanvas.width = newWidth
     newCanvas.height = newHeight
     const newContext = newCanvas.getContext('2d')
-    newContext!.drawImage(
-      state.images.input,
-      x,
-      y,
-      w,
-      h,
-      0,
-      0,
-      newWidth,
-      newHeight
-    )
+    newContext!.drawImage(img, x, y, w, h, 0, 0, newWidth, newHeight)
     state.images.context.drawImage(newCanvas, x, y, w, h)
   })
 }
@@ -49,7 +49,7 @@ export default new Vuex.Store({
   state: {
     ui: {
       isPreview: false,
-      isHighlight: null,
+      maskHighlight: null,
     },
     settings: {
       pixelScale: 0.22,
@@ -58,7 +58,7 @@ export default new Vuex.Store({
       download: 'pixelated',
     },
     images,
-    masks: [],
+    masks,
   },
   mutations: {
     updateUI(state, m: GenericMutation) {
@@ -77,6 +77,17 @@ export default new Vuex.Store({
       const { images } = state as any
       images[m.key] = m.value
     },
+    updateMasks(state, masks) {
+      state.masks = masks
+    },
+    addMask(state, mask: any) {
+      const { x, y, w, h } = mask
+      state.masks.push({ id: new Date().getTime(), x, y, w, h })
+    },
+    removeMask(state, id: number) {
+      const i = state.masks.findIndex(x => x.id === id)
+      state.masks.splice(i, 1)
+    },
   },
   actions: {
     updateOutput({ commit, state }) {
@@ -87,7 +98,7 @@ export default new Vuex.Store({
           ctx.canvas.width = img.width
           ctx.canvas.height = img.height
           ctx.drawImage(img, 0, 0)
-          drawMasks(state)
+          drawMasks(state, img)
           commit('updateImage', {
             key: 'output',
             value: ctx.canvas.toDataURL(),
