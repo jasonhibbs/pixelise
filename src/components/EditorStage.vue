@@ -3,6 +3,7 @@
   .stage
     .stage-inner
       .stage-context(
+        @click="onClickStage"
         @dblclick="onDblclickStage"
       )
         img.stage-image-base(
@@ -41,12 +42,36 @@ import ImageMask from '@/components/ImageMask.vue'
   computed: mapState(['ui', 'images']),
 })
 export default class EditorStage extends Vue {
-  @Prop() value!: any[]
-
-  images!: any
-
   @Ref('baseImage') readonly imgBase!: HTMLImageElement
   @Ref('previewImage') readonly imgPreview!: HTMLImageElement
+
+  @Prop() value!: any[]
+
+  ui!: any
+  images!: any
+
+  // Stage
+
+  onClickStage(e: MouseEvent) {
+    if (this.ui.isPreview) {
+      this.$store.commit('updateUI', { key: 'isPreview', value: false })
+    }
+  }
+
+  onDblclickStage(e: MouseEvent) {
+    this.$store.commit('updateUI', { key: 'isPreview', value: false })
+    const box = (e.target as HTMLElement).getBoundingClientRect()
+    const w = 128
+    const h = 32
+    const maxX = this.imgBase.width - w
+    const maxY = this.imgBase.height - h
+    const x = Math.max(0, Math.min(maxX, e.clientX - box.x - w / 2))
+    const y = Math.max(0, Math.min(maxY, e.clientY - box.y - h / 2))
+    this.$store.commit('addMask', { x, y })
+    this.$store.dispatch('updateOutput')
+  }
+
+  // Masks
 
   onDragMask(e: any) {
     const mask = this.value.find(x => x.id === e.id)
@@ -74,17 +99,6 @@ export default class EditorStage extends Vue {
   onMouseleaveMask(id: number) {
     this.$store.commit('updateUI', { key: 'maskHighlight', value: null })
   }
-
-  onDblclickStage(e: MouseEvent) {
-    const box = (e.target as HTMLElement).getBoundingClientRect()
-    const w = 128
-    const h = 32
-    const maxX = this.imgBase.width - w
-    const maxY = this.imgBase.height - h
-    const x = Math.max(0, Math.min(maxX, e.clientX - box.x - w / 2))
-    const y = Math.max(0, Math.min(maxY, e.clientY - box.y - h / 2))
-    this.$store.commit('addMask', { x, y })
-  }
 }
 </script>
 <style lang="scss">
@@ -94,17 +108,21 @@ export default class EditorStage extends Vue {
   width: 100%;
   height: 58vh;
 }
+
 .stage-inner {
   padding: 2rem;
   padding-top: calc(4rem + env(safe-area-inset-top));
+  padding-right: 2.5rem;
   margin: auto;
 }
+
 .stage-context {
   position: relative;
 }
 
 .stage img {
   user-select: none;
+  box-shadow: 0 0 0 1px var(--contrast-lightest);
 }
 
 .stage-image-preview {

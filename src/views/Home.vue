@@ -18,54 +18,52 @@
 
     .context
 
-      button(
-        v-if="images.output"
-        :disabled="!masks.length"
-        @click="onClickPreviewToggle"
-      )
-        span(v-if="isPreview") Edit
-        span(v-if="!isPreview") Preview
+      .context-steps
+        button(
+          v-if="images.input"
+        ) New Image
 
-      .layers(v-if="!isPreview")
-        .layer(v-if="images.input")
-          button(@click="onClickAddMask") Add Mask
-          .layer(
+        button(
+          v-if="images.output"
+          :disabled="!masks.length"
+          @click="onClickPreviewToggle"
+        )
+          span(v-if="isPreview") Edit
+          span(v-if="!isPreview") Preview
+
+      .layout
+
+        .layers(v-if="!isPreview")
+          layer-mask(
             v-for="mask in masks"
             :key="mask.id"
-            :class="{_highlight: mask.id === ui.maskHighlight}"
-            @mouseenter="onMouseenterLayer(mask.id)"
-            @mouseleave="onMouseleaveLayer(mask.id)"
-          )
-            span w: {{ mask.w }}
-            | &puncsp;
-            span h: {{ mask.h }}
-            | &puncsp;
-            span x: {{ mask.x }}
-            | &puncsp;
-            span y: {{ mask.y }}
-            | &puncsp;
-
-            button(@click="onClickDeleteMask(mask.id)") Delete
-
-
-      .output(v-if="isPreview")
-
-        p
-          input(
-            type="range"
-            min="0.05"
-            max="0.3"
-            step="0.01"
-            v-model="pixelScale"
-            @input="updateOutput"
+            :data="mask"
           )
 
-        p
-          a.button(
-            v-if="images.output"
-            :href="images.output"
-            :download="strings.download"
-          ) Download
+        button(
+          v-if="!isPreview && images.input"
+          @click="onClickAddMask"
+        ) Add Mask
+
+
+        .output(v-if="isPreview")
+
+          p
+            input(
+              type="range"
+              min="0.05"
+              max="0.3"
+              step="0.01"
+              v-model="pixelScale"
+              @input="updateOutput"
+            )
+
+          p
+            a.button(
+              v-if="images.output"
+              :href="images.output"
+              :download="strings.download"
+            ) Download
 
 </template>
 <script lang="ts">
@@ -75,6 +73,7 @@ import Loader from '@/components/Loader.vue'
 import EditorUploader from '@/components/EditorUploader.vue'
 import EditorStage from '@/components/EditorStage.vue'
 import ImageMask from '@/components/ImageMask.vue'
+import LayerMask from '@/components/LayerMask.vue'
 
 @Component({
   components: {
@@ -82,6 +81,7 @@ import ImageMask from '@/components/ImageMask.vue'
     EditorUploader,
     EditorStage,
     ImageMask,
+    LayerMask,
   },
   computed: mapState(['ui', 'settings', 'strings', 'images']),
 })
@@ -180,20 +180,8 @@ export default class Home extends Vue {
     this.$store.dispatch('updateOutput')
   }
 
-  onClickDeleteMask(id: number) {
-    this.$store.commit('removeMask', id)
-    this.$store.dispatch('updateOutput')
-  }
-
   onClickAddMask() {
     this.addMask()
-  }
-
-  onMouseenterLayer(id: number) {
-    this.$store.commit('updateUI', { key: 'maskHighlight', value: id })
-  }
-  onMouseleaveLayer(id: number) {
-    this.$store.commit('updateUI', { key: 'maskHighlight', value: null })
   }
 
   // Stage
@@ -211,7 +199,7 @@ export default class Home extends Vue {
 </script>
 <style lang="scss">
 .editor {
-  background-color: var(--grey-lighter);
+  background-color: var(--grey-lightest);
   position: relative;
   display: flex;
   align-items: center;
@@ -236,15 +224,17 @@ export default class Home extends Vue {
   }
 }
 
-.layer {
-  background-color: var(--color-root);
-
-  &._highlight {
-    background-color: var(--grey-lightest);
-  }
-}
-
 #canvas {
   display: none;
+}
+
+.context-steps {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-gap: 1px;
+}
+
+.layers {
+  margin: 1rem 0;
 }
 </style>
