@@ -2,7 +2,9 @@
 
   .stage
     .stage-inner
-      .stage-context
+      .stage-context(
+        @dblclick="onDblclickStage"
+      )
         img.stage-image-base(
           ref="baseImage"
           draggable="false"
@@ -68,8 +70,20 @@ export default class EditorStage extends Vue {
   onMouseenterMask(id: number) {
     this.$store.commit('updateUI', { key: 'maskHighlight', value: id })
   }
+
   onMouseleaveMask(id: number) {
     this.$store.commit('updateUI', { key: 'maskHighlight', value: null })
+  }
+
+  onDblclickStage(e: MouseEvent) {
+    const box = (e.target as HTMLElement).getBoundingClientRect()
+    const w = 128
+    const h = 32
+    const maxX = this.imgBase.width - w
+    const maxY = this.imgBase.height - h
+    const x = Math.max(0, Math.min(maxX, e.clientX - box.x - w / 2))
+    const y = Math.max(0, Math.min(maxY, e.clientY - box.y - h / 2))
+    this.$store.commit('addMask', { x, y })
   }
 }
 </script>

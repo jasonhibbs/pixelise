@@ -81,8 +81,7 @@ export default new Vuex.Store({
     updateMasks(state, masks) {
       state.masks = masks
     },
-    addMask(state, mask: any) {
-      const { x, y, w, h } = mask
+    addMask(state, { x = 10, y = 10, w = 128, h = 32 }) {
       state.masks.push({ id: new Date().getTime(), x, y, w, h })
     },
     removeMask(state, id: number) {

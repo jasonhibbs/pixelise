@@ -6,6 +6,7 @@
     :style="styles"
     @mouseenter="$emit('mouseenter')"
     @mouseleave="$emit('mouseleave')"
+    @dblclick.stop.prevent="onDblclick"
   )
     .box(
       @mousedown.stop="onMousedownMask"
@@ -69,6 +70,10 @@ export default class ImageMask extends Vue {
     document.removeEventListener('touchmove', this.onTouchmoveHandle)
     document.removeEventListener('touchend', this.onTouchend)
     this.$emit('change')
+  }
+
+  onDblclick(e: MouseEvent) {
+    this.$store.commit('removeMask', this.data.id)
   }
 
   // Drag
