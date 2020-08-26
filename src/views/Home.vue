@@ -4,18 +4,11 @@
 
     .editor(:class="{ _preview: isPreview }")
 
-      label.editor-uploader(
-        for="file-input"
-        v-if="!images.input"
+      editor-uploader(
+        :hidden="images.input"
       )
-        span Upload an image
-        input#file-input(
-          type="file"
-          accept="image/*"
-          @change="onFileChange"
-        )
 
-      stage(
+      editor-stage(
         v-model="masks"
         @change="onStageChange"
         @imageload="onLoadStageImage"
@@ -79,13 +72,15 @@
 import { Component, Ref, Vue } from 'vue-property-decorator'
 import { mapState } from 'vuex'
 import Loader from '@/components/Loader.vue'
-import Stage from '@/components/Stage.vue'
+import EditorUploader from '@/components/EditorUploader.vue'
+import EditorStage from '@/components/EditorStage.vue'
 import ImageMask from '@/components/ImageMask.vue'
 
 @Component({
   components: {
     Loader,
-    Stage,
+    EditorUploader,
+    EditorStage,
     ImageMask,
   },
   computed: mapState(['ui', 'settings', 'strings', 'images']),
@@ -216,6 +211,7 @@ export default class Home extends Vue {
 </script>
 <style lang="scss">
 .editor {
+  background-color: var(--grey-lighter);
   position: relative;
   display: flex;
   align-items: center;

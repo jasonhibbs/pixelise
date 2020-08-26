@@ -38,7 +38,7 @@ import ImageMask from '@/components/ImageMask.vue'
   },
   computed: mapState(['ui', 'images']),
 })
-export default class Stage extends Vue {
+export default class EditorStage extends Vue {
   @Prop() value!: any[]
 
   images!: any
@@ -76,7 +76,6 @@ export default class Stage extends Vue {
 <style lang="scss">
 .stage {
   display: flex;
-  background-color: var(--grey-lightest);
   overflow: auto;
   width: 100%;
   height: 58vh;
