@@ -63,11 +63,22 @@
 
       .output(v-if="isPreviewing")
 
-        a.button(
-          v-if="finalImage"
-          :download="imageDownloadName"
-          :href="finalImage"
-        ) Download
+        p
+          input(
+            type="range"
+            min="0.05"
+            max="0.3"
+            step="0.01"
+            v-model="pixelScale"
+            @input="updateOutput"
+          )
+
+        p
+          a.button(
+            v-if="finalImage"
+            :download="imageDownloadName"
+            :href="finalImage"
+          ) Download
 
 </template>
 <script lang="ts">

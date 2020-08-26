@@ -76,6 +76,10 @@ input[type='file'] {
   max-width: 100%;
 }
 
+input[type='range'] {
+  --padding-x: 0;
+}
+
 input[type='date'],
 input[type='time'] {
   --padding-x: 12;
