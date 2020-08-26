@@ -77,8 +77,8 @@ export default class EditorStage extends Vue {
     const mask = this.value.find(x => x.id === e.id)
     const maxX = this.imgBase.width - mask.w
     const maxY = this.imgBase.height - mask.h
-    mask.x = Math.max(0, Math.min(maxX, e.x))
-    mask.y = Math.max(0, Math.min(maxY, e.y))
+    mask.x = Math.max(0, Math.min(maxX, Math.floor(e.x)))
+    mask.y = Math.max(0, Math.min(maxY, Math.floor(e.y)))
     this.$emit('input', this.value)
   }
 
@@ -87,8 +87,8 @@ export default class EditorStage extends Vue {
     const min = 10
     const maxW = this.imgBase.width - mask.x
     const maxH = this.imgBase.height - mask.y
-    mask.w = Math.max(min, Math.min(maxW, e.w))
-    mask.h = Math.max(min, Math.min(maxH, e.h))
+    mask.w = Math.max(min, Math.min(maxW, Math.floor(e.w)))
+    mask.h = Math.max(min, Math.min(maxH, Math.floor(e.h)))
     this.$emit('input', this.value)
   }
 
