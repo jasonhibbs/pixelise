@@ -16,9 +16,7 @@
 
   --button-light-primary-color: var(--color-primary);
   --button-light-primary-background-color: var(--color-primary-10);
-  --button-light-primary-hover-background-color: var(
-    --color-primary-20
-  );
+  --button-light-primary-hover-background-color: var(--color-primary-20);
   --button-light-primary-focus-color: var(--color-focus);
 
   --button-good-color: var(--color-text-good);
@@ -50,6 +48,7 @@
   display: inline-block;
   line-height: (20/16);
   padding: rem(var(--padding-y)) rem(var(--padding-x));
+  text-align: center;
   transition: border-color 0.1s, background-color 0.1s, box-shadow 0.1s;
 
   &[aria-pressed='true'],
@@ -110,9 +109,7 @@
 %button[type='submit'] {
   --color: var(--button-primary-color);
   --background-color: var(--button-primary-background-color);
-  --hover-background-color: var(
-    --button-primary-hover-background-color
-  );
+  --hover-background-color: var(--button-primary-hover-background-color);
   --focus-color: var(--button-primary-focus-color);
 }
 
