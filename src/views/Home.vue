@@ -2,11 +2,11 @@
 
   main
 
-    .editor(:class="{ _preview: isPreviewing }")
+    .editor(:class="{ _preview: isPreview }")
 
       label.editor-uploader(
         for="file-input"
-        v-if="!readerImage"
+        v-if="!images.input"
       )
         span Upload an image
         input#file-input(
@@ -15,14 +15,8 @@
           @change="onFileChange"
         )
 
-
       stage(
         v-model="masks"
-        :base-image="readerImage"
-        :preview-image="finalImage"
-        :highlight="maskHighlighted"
-        @maskmouseenter="onMouseenterMask"
-        @maskmouseleave="onMouseleaveMask"
         @change="onStageChange"
         @imageload="onLoadStageImage"
       )
@@ -32,20 +26,20 @@
     .context
 
       button(
-        v-if="finalImage"
+        v-if="images.output"
         :disabled="!masks.length"
         @click="onClickPreviewToggle"
       )
-        span(v-if="isPreviewing") Edit
-        span(v-if="!isPreviewing") Preview
+        span(v-if="isPreview") Edit
+        span(v-if="!isPreview") Preview
 
-      .layers(v-if="!isPreviewing")
-        .layer(v-if="this.readerImage")
+      .layers(v-if="!isPreview")
+        .layer(v-if="images.input")
           button(@click="onClickAddMask") Add Mask
           .layer(
             v-for="mask in masks"
             :key="mask.id"
-            :class="{_highlight: mask.id === maskHighlighted}"
+            :class="{_highlight: mask.id === ui.maskHighlight}"
             @mouseenter="onMouseenterMask(mask.id)"
             @mouseleave="onMouseleaveMask(mask.id)"
           )
@@ -61,7 +55,7 @@
             button(@click="onClickDeleteMask(mask.id)") Delete
 
 
-      .output(v-if="isPreviewing")
+      .output(v-if="isPreview")
 
         p
           input(
@@ -75,14 +69,15 @@
 
         p
           a.button(
-            v-if="finalImage"
-            :download="imageDownloadName"
-            :href="finalImage"
+            v-if="images.output"
+            :href="images.output"
+            :download="strings.download"
           ) Download
 
 </template>
 <script lang="ts">
 import { Component, Ref, Vue } from 'vue-property-decorator'
+import { mapState } from 'vuex'
 import Loader from '@/components/Loader.vue'
 import Stage from '@/components/Stage.vue'
 import ImageMask from '@/components/ImageMask.vue'
@@ -93,30 +88,53 @@ import ImageMask from '@/components/ImageMask.vue'
     Stage,
     ImageMask,
   },
+  computed: mapState(['ui', 'settings', 'strings', 'images']),
 })
 export default class Home extends Vue {
   @Ref('baseCanvas') readonly canvasElement!: HTMLCanvasElement
 
-  readerImage: FileReader['result'] = null
-  imageDownloadName = 'pixelated'
-  finalImage = ''
-  pixelScale = 0.22
-  masks: any[] = []
-  maskHighlighted: number | null = null
+  ui!: any
+  settings!: any
+  strings!: any
+  images!: any
+
+  get masks() {
+    return this.$store.state.masks
+  }
+
+  set masks(value) {
+    this.$store.commit('updateMasks', value)
+  }
+
+  get pixelScale() {
+    return this.settings.pixelScale
+  }
+
+  set pixelScale(value: number) {
+    this.$store.commit('updateSetting', { key: 'pixelScale', value })
+  }
 
   // Lifecycle
 
-  canvasContext!: CanvasRenderingContext2D | null
   mounted() {
-    this.canvasContext = this.canvasElement.getContext('2d')
+    this.$store.commit('updateImage', {
+      key: 'context',
+      value: this.canvasElement.getContext('2d'),
+    })
   }
 
   // Preview
 
-  isPreviewing = false
+  get isPreview() {
+    return this.ui.isPreview
+  }
+
+  set isPreview(value: boolean) {
+    this.$store.commit('updateUI', { key: 'isPreview', value })
+  }
 
   onClickPreviewToggle() {
-    this.isPreviewing = !this.isPreviewing
+    this.isPreview = !this.isPreview
   }
 
   // Upload
@@ -132,17 +150,20 @@ export default class Home extends Vue {
   }
 
   onLoadReader(result: FileReader['result']) {
-    this.readerImage = result
+    this.$store.commit('updateImage', { key: 'input', value: result })
     this.updateOutput()
   }
 
   updateImage(file: File) {
-    this.imageDownloadName = `pixelated-${file.name}`
     const reader = new FileReader()
     reader.onload = e => {
       this.onLoadReader(reader.result)
     }
     reader.readAsDataURL(file)
+    this.$store.commit('updateString', {
+      key: 'download',
+      value: `pixelated-${file.name}`,
+    })
   }
 
   onFileChange(e: InputEvent) {
@@ -152,26 +173,16 @@ export default class Home extends Vue {
     }
   }
 
-  // Mask Highlight
-
-  onMouseenterMask(id: number) {
-    this.maskHighlighted = id
-  }
-  onMouseleaveMask(id: number) {
-    this.maskHighlighted = null
-  }
-
   // Layers
 
   addMask(x = 40, y = 40, w = 128, h = 32) {
-    this.masks.push({ id: new Date().getTime(), x, y, w, h })
-    this.updateOutput()
+    this.$store.commit('addMask', { x, y, w, h })
+    this.$store.dispatch('updateOutput')
   }
 
   onClickDeleteMask(id: number) {
-    const i = this.masks.findIndex(x => x.id === id)
-    this.masks.splice(i, 1)
-    this.updateOutput()
+    this.$store.commit('removeMask', id)
+    this.$store.dispatch('updateOutput')
   }
 
   onClickAddMask() {
@@ -181,52 +192,13 @@ export default class Home extends Vue {
   // Stage
 
   onStageChange() {
-    this.updateOutput()
+    this.$store.dispatch('updateOutput')
   }
 
   // Output
 
   updateOutput() {
-    const ctx = this.canvasContext
-    const img = new Image()
-    img.onload = e => {
-      if (ctx) {
-        ctx.canvas.width = img.width
-        ctx.canvas.height = img.height
-        ctx.drawImage(img, 0, 0)
-        this.addMasks(ctx, img)
-        this.finalImage = ctx.canvas.toDataURL()
-      }
-    }
-    img.src = this.readerImage as string
-  }
-
-  addMasks(
-    originalContext: CanvasRenderingContext2D,
-    originalImage: HTMLImageElement
-  ) {
-    originalContext.imageSmoothingEnabled = false
-    this.masks.forEach(mask => {
-      const { x, y, w, h } = mask
-      const newWidth = w * this.pixelScale
-      const newHeight = h * this.pixelScale
-      const newCanvas = document.createElement('canvas')
-      newCanvas.width = newWidth
-      newCanvas.height = newHeight
-      const newContext = newCanvas.getContext('2d')
-      newContext!.drawImage(
-        originalImage,
-        x,
-        y,
-        w,
-        h,
-        0,
-        0,
-        newWidth,
-        newHeight
-      )
-      originalContext.drawImage(newCanvas, x, y, w, h)
-    })
+    this.$store.dispatch('updateOutput')
   }
 }
 </script>
