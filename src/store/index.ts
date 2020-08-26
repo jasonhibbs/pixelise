@@ -49,6 +49,7 @@ export default new Vuex.Store({
   state: {
     ui: {
       isPreview: false,
+      isDragging: false,
       maskHighlight: null,
     },
     settings: {

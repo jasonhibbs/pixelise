@@ -13,9 +13,20 @@
 </template>
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
+import { mapState } from 'vuex'
 
-@Component
+@Component({ computed: mapState(['ui']) })
 export default class EditorUploader extends Vue {
+  ui!: any
+
+  get isDragging() {
+    return this.ui.isDragging
+  }
+
+  set isDragging(value: boolean) {
+    this.$store.commit('updateUI', { key: 'isDragging', value })
+  }
+
   // Lifecycle
 
   mounted() {
@@ -52,8 +63,6 @@ export default class EditorUploader extends Vue {
   }
 
   // Dragging
-
-  isDragging = false
 
   onDragenterDocument(e: DragEvent) {
     e.preventDefault()
