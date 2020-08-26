@@ -30,8 +30,8 @@ export default class App extends Vue {}
   h1 {
     font-size: 1.25rem;
     margin: 0;
-    text-shadow: 0 0 0.5em var(--color-root), 0 0 0.25em var(--color-root),
-      0 0 0.125em var(--color-root);
+    text-shadow: 0 0 0.75em var(--color-root), 0 0 0.25em var(--color-root),
+      0 0 1px var(--color-root);
   }
 }
 </style>

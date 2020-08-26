@@ -187,6 +187,7 @@ export default class Home extends Vue {
       .querySelector('.stage-context')
       ?.getBoundingClientRect()
     if (stage && context) {
+      console.log(stage, context)
       const stageCentreX = stage.clientWidth / 2
       const stageCentreY = stage.clientHeight / 2
       x = Math.floor(stageCentreX - context.x)
@@ -220,7 +221,8 @@ export default class Home extends Vue {
 </script>
 <style lang="scss">
 .editor {
-  background-color: var(--grey-lightest);
+  background-color: var(--grey-light);
+  height: 58vh;
   position: relative;
   display: flex;
   align-items: center;
@@ -229,6 +231,10 @@ export default class Home extends Vue {
 
 #canvas {
   display: none;
+}
+
+.context {
+  padding-bottom: 8rem;
 }
 
 .context-controls {
@@ -244,5 +250,23 @@ export default class Home extends Vue {
 .fields,
 .field + .field {
   margin-top: 1rem;
+}
+
+@media (min-width: 768px) {
+  html,
+  body,
+  #app,
+  main {
+    height: 100%;
+  }
+
+  main {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 20rem;
+  }
+
+  .editor {
+    height: 100vh;
+  }
 }
 </style>

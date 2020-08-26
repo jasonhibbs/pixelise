@@ -106,13 +106,12 @@ export default class EditorStage extends Vue {
   display: flex;
   overflow: auto;
   width: 100%;
-  height: 58vh;
+  height: 100%;
 }
 
 .stage-inner {
-  padding: 2rem;
+  padding: 4rem 2.5rem;
   padding-top: calc(4rem + env(safe-area-inset-top));
-  padding-right: 2.5rem;
   margin: auto;
 }
 
@@ -122,7 +121,7 @@ export default class EditorStage extends Vue {
 
 .stage img {
   user-select: none;
-  box-shadow: 0 0 0 1px var(--contrast-lightest);
+  box-shadow: 0 0 0 0.5px var(--contrast-lighter);
 }
 
 .stage-image-preview {

@@ -75,6 +75,8 @@ export default class ContextUploader extends Vue {
   input {
     position: absolute;
     clip: rect(0 0 0 0);
+    width: 0;
+    height: 1px;
   }
 }
 </style>
