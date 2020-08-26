@@ -194,14 +194,14 @@ export default class Home extends Vue {
         ctx.canvas.width = img.width
         ctx.canvas.height = img.height
         ctx.drawImage(img, 0, 0)
-        this.addMasks(ctx, img)
+        this.drawMasks(ctx, img)
         this.finalImage = ctx.canvas.toDataURL()
       }
     }
     img.src = this.readerImage as string
   }
 
-  addMasks(
+  drawMasks(
     originalContext: CanvasRenderingContext2D,
     originalImage: HTMLImageElement
   ) {
