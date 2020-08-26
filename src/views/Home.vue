@@ -18,8 +18,8 @@
 
     .context
 
-      .context-steps
-        button(
+      .context-controls
+        context-uploader(
           v-if="images.input"
         ) New Image
 
@@ -33,43 +33,54 @@
 
       .layout
 
-        .layers(v-if="!isPreview")
-          layer-mask(
-            v-for="mask in masks"
-            :key="mask.id"
-            :data="mask"
-          )
+        .starting(v-if="!images.input")
+          ol
+            li Add an image
+            li Cover it up
+            li Download
 
-        button(
-          v-if="!isPreview && images.input"
-          @click="onClickAddMask"
-        ) Add Mask
+        .editing(v-if="!isPreview")
 
-
-        .output(v-if="isPreview")
-
-          p
-            input(
-              type="range"
-              min="0.05"
-              max="0.3"
-              step="0.01"
-              v-model="pixelScale"
-              @input="updateOutput"
+          .layers
+            layer-mask(
+              v-for="mask in masks"
+              :key="mask.id"
+              :data="mask"
             )
 
-          p
-            a.button(
-              v-if="images.output"
-              :href="images.output"
-              :download="strings.download"
-            ) Download
+          button(
+            v-if="!isPreview && images.input"
+            @click="onClickAddMask"
+          ) Add Mask
+
+        .exporting(v-if="isPreview")
+          .fields
+            .field
+              label.field-label(for="input-density") Pixel Density
+              .field-controls
+                input#input-density(
+                  type="range"
+                  min="0.05"
+                  max="0.3"
+                  step="0.01"
+                  v-model="pixelScale"
+                  @input="updateOutput"
+                )
+
+            .field
+              .field-controls
+                a.button(
+                  v-if="images.output"
+                  :href="images.output"
+                  :download="strings.download"
+                ) Download
 
 </template>
 <script lang="ts">
 import { Component, Ref, Vue } from 'vue-property-decorator'
 import { mapState } from 'vuex'
 import Loader from '@/components/Loader.vue'
+import ContextUploader from '@/components/ContextUploader.vue'
 import EditorUploader from '@/components/EditorUploader.vue'
 import EditorStage from '@/components/EditorStage.vue'
 import ImageMask from '@/components/ImageMask.vue'
@@ -78,6 +89,7 @@ import LayerMask from '@/components/LayerMask.vue'
 @Component({
   components: {
     Loader,
+    ContextUploader,
     EditorUploader,
     EditorStage,
     ImageMask,
@@ -134,18 +146,10 @@ export default class Home extends Vue {
 
   // Upload
 
-  getStageImageCentre(image: HTMLImageElement) {
-    const windowCentreX = window.innerWidth / 2
-    const imageRect = image.getBoundingClientRect()
-    const x = Math.floor(windowCentreX - imageRect.x)
-    const y = Math.floor(window.innerHeight * 0.28 - imageRect.y)
-    return { x, y }
-  }
-
   onLoadStageImage(image: HTMLImageElement) {
     if (!this.masks.length) {
-      const { x, y } = this.getStageImageCentre(image)
-      this.addMask(x - 64, y)
+      const { x, y } = this.getStageCentre()
+      this.addMask(x - 64, y - 16)
     }
   }
 
@@ -175,13 +179,30 @@ export default class Home extends Vue {
 
   // Layers
 
+  getStageCentre() {
+    let x = 20
+    let y = 20
+    const stage = document.querySelector('.stage') as HTMLElement
+    const context = document
+      .querySelector('.stage-context')
+      ?.getBoundingClientRect()
+    if (stage && context) {
+      const stageCentreX = stage.clientWidth / 2
+      const stageCentreY = stage.clientHeight / 2
+      x = Math.floor(stageCentreX - context.x)
+      y = Math.floor(stageCentreY - context.y)
+    }
+    return { x, y }
+  }
+
   addMask(x = 40, y = 40, w = 128, h = 32) {
     this.$store.commit('addMask', { x, y, w, h })
     this.$store.dispatch('updateOutput')
   }
 
   onClickAddMask() {
-    this.addMask()
+    const { x, y } = this.getStageCentre()
+    this.addMask(x - 64, y - 16)
   }
 
   // Stage
@@ -206,29 +227,11 @@ export default class Home extends Vue {
   justify-content: center;
 }
 
-.editor-uploader {
-  text-align: center;
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-
-  input {
-    position: absolute;
-    clip: rect(0 0 0 0);
-  }
-}
-
 #canvas {
   display: none;
 }
 
-.context-steps {
+.context-controls {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   grid-gap: 1px;
@@ -236,5 +239,10 @@ export default class Home extends Vue {
 
 .layers {
   margin: 1rem 0;
+}
+
+.fields,
+.field + .field {
+  margin-top: 1rem;
 }
 </style>

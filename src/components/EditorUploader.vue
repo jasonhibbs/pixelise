@@ -1,10 +1,11 @@
 <template lang="pug">
 
   label.editor-uploader(
-    for="file-input"
+    :for="id"
   )
     span Upload an image
-    input#file-input(
+    input(
+      :id="id"
       type="file"
       accept="image/*"
       @change="onFileChange"
@@ -18,6 +19,10 @@ import { mapState } from 'vuex'
 @Component({ computed: mapState(['ui']) })
 export default class EditorUploader extends Vue {
   ui!: any
+
+  get id() {
+    return 'input-editor'
+  }
 
   get isDragging() {
     return this.ui.isDragging
@@ -90,7 +95,7 @@ export default class EditorUploader extends Vue {
     }
   }
 
-  // Load from Input
+  // Input
 
   onFileChange(e: InputEvent) {
     const files = (e.target as HTMLInputElement).files
@@ -100,3 +105,26 @@ export default class EditorUploader extends Vue {
   }
 }
 </script>
+<style lang="scss">
+.editor-uploader {
+  text-align: center;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+
+  input {
+    position: absolute;
+    clip: rect(0 0 0 0);
+  }
+
+  &[hidden] {
+    display: none;
+  }
+}
+</style>
