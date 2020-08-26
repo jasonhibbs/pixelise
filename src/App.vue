@@ -3,7 +3,7 @@
   #app
 
     header
-      h1 Pixelator
+      h1 Pixelise
 
     router-view
 
