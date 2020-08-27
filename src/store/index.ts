@@ -72,7 +72,7 @@ export default new Vuex.Store({
       maskHighlight: null,
     },
     settings: {
-      pixelScale: 0.22,
+      pixelScale: 0.18,
     },
     strings: {
       download: 'pixelated',

@@ -6,7 +6,7 @@
 
       editor-uploader(
         :hidden="images.input"
-      )
+      ) Choose an image or drag one here
 
       editor-stage(
         v-model="masks"
@@ -63,8 +63,8 @@
               .field-controls
                 input#input-density(
                   type="range"
-                  min="0.05"
-                  max="0.3"
+                  min="0.03"
+                  max="0.26"
                   step="0.01"
                   v-model="pixelScale"
                   @input="updateOutput"

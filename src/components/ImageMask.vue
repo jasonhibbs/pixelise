@@ -6,15 +6,14 @@
     :style="styles"
     @mouseenter="$emit('mouseenter')"
     @mouseleave="$emit('mouseleave')"
-    @dblclick.stop.prevent="onDblclick"
-    @touchstart.stop
+    @dblclick.stop="onDblclick"
   )
     .box(
-      @mousedown.stop="onMousedownMask"
-      @touchstart.prevent.stop="onTouchstartMask"
+      @mousedown.left.stop="onMousedownMask"
+      @touchstart.prevent="onTouchstartMask"
     )
     .handle(
-      @mousedown.stop="onMousedownHandle"
+      @mousedown.left.stop="onMousedownHandle"
       @touchstart.prevent.stop="onTouchstartHandle"
     )
       .handle-actual
@@ -73,7 +72,7 @@ export default class ImageMask extends Vue {
     this.$emit('change')
   }
 
-  onDblclick(e: MouseEvent) {
+  onDblclick() {
     this.$store.commit('removeMask', this.data.id)
   }
 
@@ -110,7 +109,19 @@ export default class ImageMask extends Vue {
     this.emitFromDragCoordinates(e.touches[0].pageX, e.touches[0].pageY)
   }
 
+  dblclickTouchAwait = false
+  dblclickTouchTimer: any
+
   onTouchstartMask(e: TouchEvent) {
+    if (this.dblclickTouchAwait) {
+      this.onDblclick()
+    } else {
+      this.dblclickTouchAwait = true
+      this.dblclickTouchTimer = setTimeout(() => {
+        this.dblclickTouchAwait = false
+      }, 200)
+    }
+
     this.isDragging = true
     this.dragStartX = e.touches[0].pageX
     this.dragStartY = e.touches[0].pageY
@@ -243,8 +254,8 @@ $mask-handle-inset: 10px;
     top: $mask-handle-inset;
     width: calc(var(--handle-touch-size) - var(--handle-dot-size));
     height: 0.5px;
-    transform: rotateZ(45deg);
-    transform-origin: 0 100%;
+    transform: translateY(-0.25px) rotateZ(45deg);
+    transform-origin: 0 50%;
     box-shadow: inset 0 0 0 1px $mask-inner-color,
       1px 0 0 1px fade-out($mask-outer-color, 0.4);
 

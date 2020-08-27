@@ -3,7 +3,8 @@
   label.editor-uploader(
     :for="id"
   )
-    span Upload an image
+    span
+      slot Upload an image
     input(
       :id="id"
       type="file"

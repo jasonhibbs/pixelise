@@ -212,6 +212,7 @@ export default class EditorStage extends Vue {
   overflow: auto;
   width: 100%;
   height: 100%;
+  user-select: none;
 }
 
 .stage-inner {
@@ -227,6 +228,10 @@ export default class EditorStage extends Vue {
 .stage img {
   user-select: none;
   box-shadow: 0 0 0 0.5px var(--contrast-lighter);
+}
+
+.stage-image-base {
+  -webkit-touch-callout: none;
 }
 
 .stage-image-preview {
