@@ -34,8 +34,8 @@ const drawMasks = (state: any, img: HTMLImageElement) => {
   state.images.context.imageSmoothingEnabled = false
   state.masks.forEach((mask: any) => {
     const { x, y, w, h } = mask
-    const newWidth = w * state.settings.pixelScale
-    const newHeight = h * state.settings.pixelScale
+    const newWidth = Math.max(1, w * state.settings.pixelScale)
+    const newHeight = Math.max(1, h * state.settings.pixelScale)
     const newCanvas = document.createElement('canvas')
     newCanvas.width = newWidth
     newCanvas.height = newHeight
