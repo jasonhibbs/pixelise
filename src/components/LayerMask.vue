@@ -49,7 +49,6 @@ export default class NewComponent extends Vue {
 
   onClickDeleteMask() {
     this.$store.commit('removeMask', this.id)
-    this.$store.dispatch('updateOutput')
   }
 
   onMouseenterLayer() {

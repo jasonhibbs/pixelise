@@ -1,10 +1,11 @@
 <template lang="pug">
 
-  .stage
+  .stage(:class="classes")
     .stage-inner
       .stage-context(
         @click="onClickStage"
         @dblclick="onDblclickStage"
+        @mousedown="onMousedownStage"
       )
         img.stage-image-base(
           ref="baseImage"
@@ -17,6 +18,13 @@
           draggable="false"
           :src="images.output"
         )
+
+        .mask._drawn(
+          v-if="isDrawing"
+          ref="drawnMask"
+          :style="drawnMaskStyles"
+        )
+          .box
 
         template(v-for="mask in value")
           image-mask(
@@ -50,9 +58,85 @@ export default class EditorStage extends Vue {
   ui!: any
   images!: any
 
+  get classes() {
+    return {
+      _drawing: this.isDrawing,
+    }
+  }
+
+  // Image Rect
+
+  refreshRect = 0
+
+  get imageRect() {
+    const refresh = this.refreshRect
+    return this.imgBase.getBoundingClientRect()
+  }
+
+  // Drawing
+
+  isDrawing = false
+  drawingTimeout: any = null
+
+  drawnMask = {
+    x: 0,
+    y: 0,
+    w: 0,
+    h: 0,
+  }
+
+  get drawnMaskStyles() {
+    const { x, y, w, h } = this.drawnMask
+    return {
+      left: `${x}px`,
+      top: `${y}px`,
+      width: `${w}px`,
+      height: `${h}px`,
+    }
+  }
+
+  onMousedownStage(e: MouseEvent) {
+    if (this.images.input) {
+      this.refreshRect++
+      this.drawnMask.x = e.clientX - this.imageRect.x
+      this.drawnMask.y = e.clientY - this.imageRect.y
+      this.drawnMask.w = 12
+      this.drawnMask.h = 12
+      document.addEventListener('mousemove', this.onMousemoveDrawing)
+      document.addEventListener('mouseup', this.onMouseupDrawing)
+
+      this.drawingTimeout = setTimeout(() => {
+        this.isDrawing = true
+        this.$store.commit('updateUI', { key: 'isPreview', value: false })
+      }, 200)
+    }
+  }
+
+  onMousemoveDrawing(e: MouseEvent) {
+    const w = e.clientX - this.imageRect.x - this.drawnMask.x
+    const h = e.clientY - this.imageRect.y - this.drawnMask.y
+    const maxW = this.imgBase.width - this.drawnMask.x
+    const maxH = this.imgBase.height - this.drawnMask.y
+    this.drawnMask.w = Math.max(1, Math.min(maxW, Math.floor(w)))
+    this.drawnMask.h = Math.max(1, Math.min(maxH, Math.floor(h)))
+  }
+
+  onMouseupDrawing(e: MouseEvent) {
+    document.removeEventListener('mousemove', this.onMousemoveDrawing)
+    document.removeEventListener('mouseup', this.onMouseupDrawing)
+
+    if (this.isDrawing && this.drawnMask.w >= 12 && this.drawnMask.h >= 12) {
+      this.$store.commit('addMask', this.drawnMask)
+    }
+
+    clearTimeout(this.drawingTimeout)
+    this.isDrawing = false
+  }
+
   // Stage
 
   onClickStage(e: MouseEvent) {
+    clearTimeout(this.drawingTimeout)
     if (this.ui.isPreview) {
       this.$store.commit('updateUI', { key: 'isPreview', value: false })
     }
@@ -70,7 +154,6 @@ export default class EditorStage extends Vue {
     const x = Math.max(0, Math.min(maxX, targetX))
     const y = Math.max(0, Math.min(maxY, targetY))
     this.$store.commit('addMask', { x, y })
-    this.$store.dispatch('updateOutput')
   }
 
   // Masks

@@ -52,7 +52,6 @@ export default class EditorUploader extends Vue {
 
   onLoadReader(result: FileReader['result']) {
     this.$store.commit('updateImage', { key: 'input', value: result })
-    this.$store.dispatch('updateOutput')
   }
 
   updateImage(file: File) {

@@ -2,7 +2,7 @@
 
   main
 
-    .editor(:class="{ _preview: isPreview }")
+    .editor(:class="{ _preview: isPreview,  _loading: this.ui.isLoadingPreview }")
 
       editor-uploader(
         :hidden="images.input"
@@ -10,11 +10,12 @@
 
       editor-stage(
         v-model="masks"
-        @change="onStageChange"
         @imageload="onLoadStageImage"
       )
 
       canvas#canvas(ref="baseCanvas")
+
+      loader(v-if="this.ui.isLoadingPreview") Loading Preview
 
     .context
 
@@ -24,7 +25,6 @@
         ) New Image
 
         button(
-          v-if="images.output"
           :disabled="!masks.length"
           @click="onClickPreviewToggle"
         )
@@ -54,6 +54,7 @@
           ) Add Mask
 
         .exporting(v-if="isPreview")
+
           .fields
             .field
               label.field-label(for="input-density") Pixel Density
@@ -140,7 +141,12 @@ export default class Home extends Vue {
     this.$store.commit('updateUI', { key: 'isPreview', value })
   }
 
+  isLoadingPreview = false
+
   onClickPreviewToggle() {
+    if (!this.isPreview) {
+      this.updateOutput()
+    }
     this.isPreview = !this.isPreview
   }
 
@@ -150,30 +156,6 @@ export default class Home extends Vue {
     if (!this.masks.length) {
       const { x, y } = this.getStageCentre()
       this.addMask(x - 64, y - 16)
-    }
-  }
-
-  onLoadReader(result: FileReader['result']) {
-    this.$store.commit('updateImage', { key: 'input', value: result })
-    this.updateOutput()
-  }
-
-  updateImage(file: File) {
-    const reader = new FileReader()
-    reader.onload = e => {
-      this.onLoadReader(reader.result)
-    }
-    reader.readAsDataURL(file)
-    this.$store.commit('updateString', {
-      key: 'download',
-      value: `pixelated-${file.name}`,
-    })
-  }
-
-  onFileChange(e: InputEvent) {
-    const files = (e.target as HTMLInputElement).files
-    if (files?.length) {
-      this.updateImage(files[0])
     }
   }
 
@@ -187,7 +169,6 @@ export default class Home extends Vue {
       .querySelector('.stage-context')
       ?.getBoundingClientRect()
     if (stage && context) {
-      console.log(stage, context)
       const stageCentreX = stage.clientWidth / 2
       const stageCentreY = stage.clientHeight / 2
       x = Math.floor(stageCentreX - context.x)
@@ -198,18 +179,11 @@ export default class Home extends Vue {
 
   addMask(x = 40, y = 40, w = 128, h = 32) {
     this.$store.commit('addMask', { x, y, w, h })
-    this.$store.dispatch('updateOutput')
   }
 
   onClickAddMask() {
     const { x, y } = this.getStageCentre()
     this.addMask(x - 64, y - 16)
-  }
-
-  // Stage
-
-  onStageChange() {
-    this.$store.dispatch('updateOutput')
   }
 
   // Output
@@ -227,6 +201,13 @@ export default class Home extends Vue {
   display: flex;
   align-items: center;
   justify-content: center;
+
+  .loader {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    margin: 1rem;
+  }
 }
 
 #canvas {

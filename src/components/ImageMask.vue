@@ -179,6 +179,14 @@ $mask-handle-inset: 10px;
     pointer-events: none;
     opacity: 0;
   }
+
+  ._drawing & {
+    pointer-events: none;
+
+    .handle {
+      opacity: 0;
+    }
+  }
 }
 
 .mask .box {
@@ -191,6 +199,8 @@ $mask-handle-inset: 10px;
 }
 
 .mask:hover,
+.mask._drawn,
+.mask._highlight,
 .mask._drag,
 .mask._resize {
   z-index: 1;
@@ -201,6 +211,7 @@ $mask-handle-inset: 10px;
 }
 
 .mask:hover .box,
+.mask._drawn .box,
 .mask._highlight .box {
   background-color: fade-out($mask-inner-color, 0.4);
   // box-shadow: inset 0 0 0 1px $mask-inner-color;
@@ -222,7 +233,7 @@ $mask-handle-inset: 10px;
   margin: (-$mask-handle-inset) 0 0 (-$mask-handle-inset);
 
   // mix-blend-mode: exclusion;
-  transition: opacity 0.1s;
+  transition: opacity 0.4s;
 
   &:hover {
     opacity: 1;
