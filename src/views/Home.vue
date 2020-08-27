@@ -15,7 +15,8 @@
 
       canvas#canvas(ref="baseCanvas")
 
-      loader(v-if="this.ui.isLoadingPreview") Loading Preview
+      transition(name="fade-delayed")
+        loader(v-if="this.ui.isLoadingPreview") Loading Preview
 
     .context
 
@@ -82,6 +83,7 @@
 <script lang="ts">
 import { Component, Ref, Vue } from 'vue-property-decorator'
 import { mapState } from 'vuex'
+import throttle from 'lodash.throttle'
 import Loader from '@/components/Loader.vue'
 import ContextUploader from '@/components/ContextUploader.vue'
 import EditorUploader from '@/components/EditorUploader.vue'
@@ -192,9 +194,9 @@ export default class Home extends Vue {
 
   // Output
 
-  updateOutput() {
+  updateOutput = throttle(() => {
     this.$store.dispatch('updateOutput')
-  }
+  }, 100)
 }
 </script>
 <style lang="scss">
@@ -259,5 +261,10 @@ export default class Home extends Vue {
     box-shadow: -3px 0 0 var(--contrast-lightest),
       -0.5px 0 0 var(--contrast-lighter);
   }
+}
+
+.fade-delayed-enter {
+  opacity: 0;
+  transition: opacity 0.2s 0.2s;
 }
 </style>

@@ -3,9 +3,9 @@
   .stage(:class="classes")
     .stage-inner
       .stage-context(
-        @click="onClickStage"
-        @dblclick="onDblclickStage"
-        @mousedown="onMousedownStage"
+        @click.left="onClickStage"
+        @dblclick.left="onDblclickStage"
+        @mousedown.left="onMousedownStage"
       )
         img.stage-image-base(
           ref="baseImage"

@@ -7,14 +7,15 @@
     @mouseenter="$emit('mouseenter')"
     @mouseleave="$emit('mouseleave')"
     @dblclick.stop.prevent="onDblclick"
+    @touchstart.stop
   )
     .box(
       @mousedown.stop="onMousedownMask"
-      @touchstart.stop.prevent="onTouchstartMask"
+      @touchstart.prevent.stop="onTouchstartMask"
     )
     .handle(
       @mousedown.stop="onMousedownHandle"
-      @touchstart.stop.prevent="onTouchstartHandle"
+      @touchstart.prevent.stop="onTouchstartHandle"
     )
       .handle-actual
 
@@ -214,30 +215,24 @@ $mask-handle-inset: 10px;
 .mask._drawn .box,
 .mask._highlight .box {
   background-color: fade-out($mask-inner-color, 0.4);
-  // box-shadow: inset 0 0 0 1px $mask-inner-color;
 }
 
 .mask .handle {
   --handle-touch-size: 44px;
   --handle-dot-size: 12px;
-
   cursor: nwse-resize;
-
   position: absolute;
   left: 100%;
   top: 100%;
   z-index: 0;
-
   width: var(--handle-touch-size);
   height: var(--handle-touch-size);
   margin: (-$mask-handle-inset) 0 0 (-$mask-handle-inset);
-
-  // mix-blend-mode: exclusion;
   transition: opacity 0.4s;
 
   &:hover {
-    opacity: 1;
     --handle-dot-size: 16px;
+    opacity: 1;
   }
 
   &:after {
@@ -246,13 +241,12 @@ $mask-handle-inset: 10px;
     position: absolute;
     left: $mask-handle-inset;
     top: $mask-handle-inset;
-
     width: calc(var(--handle-touch-size) - var(--handle-dot-size));
-    height: 0;
+    height: 0.5px;
     transform: rotateZ(45deg);
-    transform-origin: 0 0;
-    box-shadow: 0 0 0 0.5px $mask-inner-color,
-      1px 0 0 1px fade-out($mask-outer-color, 0);
+    transform-origin: 0 100%;
+    box-shadow: inset 0 0 0 1px $mask-inner-color,
+      1px 0 0 1px fade-out($mask-outer-color, 0.4);
 
     transition: width 0.1s;
     will-change: width;
@@ -264,15 +258,11 @@ $mask-handle-inset: 10px;
   bottom: 2px;
   right: 2px;
   z-index: 1;
-
   width: var(--handle-dot-size);
   height: var(--handle-dot-size);
-
   background-color: $mask-inner-color;
   box-shadow: 0 0 0 1px fade-out($mask-outer-color, 0.4);
-  // border: 1px solid $mask-handle-color;
   border-radius: 100px;
-
   transition: width 0.1s, height 0.1s;
   will-change: width, height;
 }
