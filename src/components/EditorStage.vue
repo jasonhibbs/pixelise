@@ -79,6 +79,8 @@ export default class EditorStage extends Vue {
   drawingTimeout: any = null
 
   drawnMask = {
+    startX: 0,
+    startY: 0,
     x: 0,
     y: 0,
     w: 0,
@@ -98,10 +100,12 @@ export default class EditorStage extends Vue {
   onMousedownStage(e: MouseEvent) {
     if (this.images.input) {
       this.refreshRect++
-      this.drawnMask.x = e.clientX - this.imageRect.x
-      this.drawnMask.y = e.clientY - this.imageRect.y
-      this.drawnMask.w = 12
-      this.drawnMask.h = 12
+      this.drawnMask.startX = e.clientX - this.imageRect.x
+      this.drawnMask.startY = e.clientY - this.imageRect.y
+      this.drawnMask.x = this.drawnMask.startX
+      this.drawnMask.y = this.drawnMask.startY
+      this.drawnMask.w = 0
+      this.drawnMask.h = 0
       document.addEventListener('mousemove', this.onMousemoveDrawing)
       document.addEventListener('mouseup', this.onMouseupDrawing)
 
@@ -113,12 +117,28 @@ export default class EditorStage extends Vue {
   }
 
   onMousemoveDrawing(e: MouseEvent) {
-    const w = e.clientX - this.imageRect.x - this.drawnMask.x
-    const h = e.clientY - this.imageRect.y - this.drawnMask.y
+    const newX = e.clientX - this.imageRect.x
+    const newY = e.clientY - this.imageRect.y
     const maxW = this.imgBase.width - this.drawnMask.x
     const maxH = this.imgBase.height - this.drawnMask.y
-    this.drawnMask.w = Math.max(1, Math.min(maxW, Math.floor(w)))
-    this.drawnMask.h = Math.max(1, Math.min(maxH, Math.floor(h)))
+
+    if (newX < this.drawnMask.startX) {
+      this.drawnMask.x = Math.max(0, newX)
+      this.drawnMask.w = this.drawnMask.startX - newX
+    } else {
+      const w = newX - this.drawnMask.startX
+      this.drawnMask.x = this.drawnMask.startX
+      this.drawnMask.w = Math.max(1, Math.min(maxW, Math.floor(w)))
+    }
+
+    if (newY < this.drawnMask.startY) {
+      this.drawnMask.y = Math.max(0, newY)
+      this.drawnMask.h = this.drawnMask.startY - newY
+    } else {
+      const h = newY - this.drawnMask.startY
+      this.drawnMask.y = this.drawnMask.startY
+      this.drawnMask.h = Math.max(1, Math.min(maxH, Math.floor(h)))
+    }
   }
 
   onMouseupDrawing(e: MouseEvent) {
@@ -144,13 +164,13 @@ export default class EditorStage extends Vue {
 
   onDblclickStage(e: MouseEvent) {
     this.$store.commit('updateUI', { key: 'isPreview', value: false })
-    const box = (e.target as HTMLElement).getBoundingClientRect()
+    this.refreshRect++
     const w = 128
     const h = 32
     const maxX = this.imgBase.width - w
     const maxY = this.imgBase.height - h
-    const targetX = Math.floor(e.clientX - box.x - w / 2)
-    const targetY = Math.floor(e.clientY - box.y - h / 2)
+    const targetX = Math.floor(e.clientX - this.imageRect.x - w / 2)
+    const targetY = Math.floor(e.clientY - this.imageRect.y - h / 2)
     const x = Math.max(0, Math.min(maxX, targetX))
     const y = Math.max(0, Math.min(maxY, targetY))
     this.$store.commit('addMask', { x, y })
