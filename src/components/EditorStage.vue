@@ -117,26 +117,26 @@ export default class EditorStage extends Vue {
   }
 
   onMousemoveDrawing(e: MouseEvent) {
-    const newX = e.clientX - this.imageRect.x
-    const newY = e.clientY - this.imageRect.y
+    const newX = Math.max(0, e.clientX - this.imageRect.x)
+    const newY = Math.max(0, e.clientY - this.imageRect.y)
     const maxW = this.imgBase.width - this.drawnMask.x
     const maxH = this.imgBase.height - this.drawnMask.y
 
     if (newX < this.drawnMask.startX) {
-      this.drawnMask.x = Math.max(0, newX)
-      this.drawnMask.w = this.drawnMask.startX - newX
+      this.drawnMask.x = Math.max(0, Math.floor(newX))
+      this.drawnMask.w = Math.floor(this.drawnMask.startX - newX)
     } else {
       const w = newX - this.drawnMask.startX
-      this.drawnMask.x = this.drawnMask.startX
+      this.drawnMask.x = Math.floor(this.drawnMask.startX)
       this.drawnMask.w = Math.max(1, Math.min(maxW, Math.floor(w)))
     }
 
     if (newY < this.drawnMask.startY) {
-      this.drawnMask.y = Math.max(0, newY)
-      this.drawnMask.h = this.drawnMask.startY - newY
+      this.drawnMask.y = Math.max(0, Math.floor(newY))
+      this.drawnMask.h = Math.floor(this.drawnMask.startY - newY)
     } else {
       const h = newY - this.drawnMask.startY
-      this.drawnMask.y = this.drawnMask.startY
+      this.drawnMask.y = Math.floor(this.drawnMask.startY)
       this.drawnMask.h = Math.max(1, Math.min(maxH, Math.floor(h)))
     }
   }
