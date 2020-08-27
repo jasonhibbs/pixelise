@@ -25,6 +25,7 @@
         ) New Image
 
         button(
+          v-if="images.input"
           :disabled="!masks.length"
           @click="onClickPreviewToggle"
         )
@@ -67,6 +68,7 @@
                   v-model="pixelScale"
                   @input="updateOutput"
                 )
+              p.field-message(v-if="isLargeImage") Big images take longer to update
 
             .field
               .field-controls
@@ -152,11 +154,13 @@ export default class Home extends Vue {
 
   // Upload
 
+  isLargeImage = false
+
   onLoadStageImage(image: HTMLImageElement) {
-    if (!this.masks.length) {
-      const { x, y } = this.getStageCentre()
-      this.addMask(x - 64, y - 16)
-    }
+    this.isLargeImage = image.width > 999 || image.height > 999
+    this.$store.commit('removeAllMasks')
+    const { x, y } = this.getStageCentre()
+    this.addMask(x - 64, y - 16)
   }
 
   // Layers
@@ -248,6 +252,12 @@ export default class Home extends Vue {
 
   .editor {
     height: 100vh;
+  }
+
+  .context {
+    z-index: 1;
+    box-shadow: -3px 0 0 var(--contrast-lightest),
+      -0.5px 0 0 var(--contrast-lighter);
   }
 }
 </style>

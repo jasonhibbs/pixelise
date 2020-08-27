@@ -108,7 +108,7 @@ export default class EditorStage extends Vue {
       this.drawingTimeout = setTimeout(() => {
         this.isDrawing = true
         this.$store.commit('updateUI', { key: 'isPreview', value: false })
-      }, 200)
+      }, 100)
     }
   }
 
@@ -217,12 +217,13 @@ export default class EditorStage extends Vue {
   height: auto;
   opacity: 0;
   will-change: opacity;
-  transition: opacity 0.2s;
+  transition: opacity 0.4s;
 }
 
 ._preview {
   .stage-image-preview {
     opacity: 1;
+    transition: opacity 0.1s;
   }
 }
 </style>

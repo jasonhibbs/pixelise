@@ -97,6 +97,10 @@ export default new Vuex.Store({
     updateImage(state, m: GenericMutation) {
       const { images } = state as any
       images[m.key] = m.value
+      if (m.key === 'input') {
+        images.output = ''
+        state.ui.hasChanges = true
+      }
     },
     updateMasks(state, masks) {
       state.masks = masks
@@ -109,6 +113,10 @@ export default new Vuex.Store({
     removeMask(state, id: number) {
       const i = state.masks.findIndex(x => x.id === id)
       state.masks.splice(i, 1)
+      state.ui.hasChanges = true
+    },
+    removeAllMasks(state) {
+      state.masks = []
       state.ui.hasChanges = true
     },
   },
