@@ -82,8 +82,8 @@
               p.field-message(v-if="isLargeImage") Big images take longer to update
 
           a.button(
-            v-if="images.output"
             title="Save Image"
+            :disabled="!images.output"
             :href="images.output"
             :download="strings.download"
           )
@@ -234,6 +234,8 @@ export default class Home extends Vue {
 }
 </script>
 <style lang="scss">
+@import '@/assets/scss/_util';
+
 .editor {
   background-color: var(--contrast-lightest);
   background-image: linear-gradient(

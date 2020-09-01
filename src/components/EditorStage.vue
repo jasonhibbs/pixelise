@@ -216,16 +216,18 @@ export default class EditorStage extends Vue {
 }
 
 .stage-inner {
-  padding: 4rem 2.5rem;
-  padding-top: calc(4rem + env(safe-area-inset-top));
+  padding: 6rem 2.5rem;
+  padding-top: calc(6rem + env(safe-area-inset-top));
   margin: auto;
 }
 
 .stage-context {
   position: relative;
+  box-shadow: 0 0 60px var(--contrast-lighter);
 }
 
 .stage img {
+  display: block;
   user-select: none;
   box-shadow: 0 0 0 0.5px var(--contrast-lighter);
 }
