@@ -6,7 +6,7 @@
 
       editor-uploader(
         :hidden="images.input"
-      ) Choose an image or drag one here
+      )
 
       editor-stage(
         v-model="masks"
@@ -18,28 +18,39 @@
       transition(name="fade-delayed")
         loader(v-if="this.ui.isLoadingPreview") Loading Preview
 
+
+
+
     .context
 
-      .context-controls
-        context-uploader(
-          v-if="images.input"
-        ) New Image
-
-        button(
-          v-if="images.input"
-          :disabled="!masks.length"
-          @click="onClickPreviewToggle"
-        )
-          span(v-if="isPreview") Edit
-          span(v-if="!isPreview") Preview
 
       .layout
 
+        .context-controls
+          context-uploader(
+            v-if="images.input"
+          ) New Image
+
+          button(
+            v-if="images.input"
+            :disabled="!masks.length"
+            @click="onClickPreviewToggle"
+          )
+            span(v-if="isPreview") Edit
+            span(v-if="!isPreview") Preview
+
         .starting(v-if="!images.input")
           ol
-            li Add an image
-            li Cover it up
-            li Download
+            li
+              h2
+                label.link(for="input-editor") Add an image
+              p #[label.link(for="input-editor") Choose one from your device] or drag one in, any time.
+            li
+              h2 Mask it
+              p Place and size rectangles over the bits to pixelised.
+            li
+              h2 Save it
+              p Tap done to adjust the pixels, and download your image.
 
         .editing(v-if="!isPreview")
 
@@ -202,7 +213,7 @@ export default class Home extends Vue {
 <style lang="scss">
 .editor {
   background-color: var(--grey-light);
-  height: 58vh;
+  height: 100%;
   position: relative;
   display: flex;
   align-items: center;
@@ -221,6 +232,9 @@ export default class Home extends Vue {
 }
 
 .context {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
   padding-bottom: 8rem;
 }
 
@@ -237,30 +251,6 @@ export default class Home extends Vue {
 .fields,
 .field + .field {
   margin-top: 1rem;
-}
-
-@media (min-width: 768px) {
-  html,
-  body,
-  #app,
-  main {
-    height: 100%;
-  }
-
-  main {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) 20rem;
-  }
-
-  .editor {
-    height: 100vh;
-  }
-
-  .context {
-    z-index: 1;
-    box-shadow: -3px 0 0 var(--contrast-lightest),
-      -0.5px 0 0 var(--contrast-lighter);
-  }
 }
 
 .fade-delayed-enter {

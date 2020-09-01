@@ -2,9 +2,10 @@
 
   label.editor-uploader(
     :for="id"
+    aria-label="Upload image from device"
   )
     span
-      slot Upload an image
+      slot
     input(
       :id="id"
       type="file"

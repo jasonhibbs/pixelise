@@ -19,6 +19,13 @@ export default class App extends Vue {}
 </script>
 
 <style lang="scss">
+html,
+body,
+#app,
+main {
+  height: 100%;
+}
+
 #app > header {
   position: absolute;
   top: 0;
