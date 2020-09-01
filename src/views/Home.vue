@@ -1,8 +1,10 @@
 <template lang="pug">
 
-  main
+  main(
+    :data-step="step"
+  )
 
-    .editor(:class="{ _preview: isPreview,  _loading: this.ui.isLoadingPreview }")
+    .editor(:class="{ _preview: showingPreview,  _loading: this.ui.isLoadingPreview }")
 
       editor-uploader(
         :hidden="images.input"
@@ -22,24 +24,9 @@
 
 
     .context
-
-
       .layout
 
-        .context-controls
-          context-uploader(
-            v-if="images.input"
-          ) New Image
-
-          button(
-            v-if="images.input"
-            :disabled="!masks.length"
-            @click="onClickPreviewToggle"
-          )
-            span(v-if="isPreview") Edit
-            span(v-if="!isPreview") Preview
-
-        .starting(v-if="!images.input")
+        .context-intro(v-if="step === 'start'")
           ol
             li
               h2
@@ -52,21 +39,33 @@
               h2 Save it
               p Tap done to adjust the pixels, and download your image.
 
-        .editing(v-if="!isPreview")
 
-          .layers
-            layer-mask(
-              v-for="mask in masks"
-              :key="mask.id"
-              :data="mask"
-            )
+        .context-masks(v-if="step === 'mask'")
 
           button(
-            v-if="!isPreview && images.input"
+            v-if="!showingPreview && images.input"
+            title="Add Mask"
             @click="onClickAddMask"
-          ) Add Mask
+          )
+            icon-svg(name="plus")
 
-        .exporting(v-if="isPreview")
+          .tip
+
+          button(
+            v-if="images.input"
+            title="Next"
+            :disabled="!masks.length"
+            @click="onClickGoToSave"
+          )
+            icon-svg(name="arrow-right")
+
+        .context-save(v-if="step === 'save'")
+
+          button(
+            title="Back"
+            @click="onClickBackToMask"
+          )
+            icon-svg(name="arrow-left")
 
           .fields
             .field
@@ -82,13 +81,13 @@
                 )
               p.field-message(v-if="isLargeImage") Big images take longer to update
 
-            .field
-              .field-controls
-                a.button(
-                  v-if="images.output"
-                  :href="images.output"
-                  :download="strings.download"
-                ) Download
+          a.button(
+            v-if="images.output"
+            title="Save Image"
+            :href="images.output"
+            :download="strings.download"
+          )
+            icon-svg(name="download")
 
 </template>
 <script lang="ts">
@@ -101,9 +100,11 @@ import EditorUploader from '@/components/EditorUploader.vue'
 import EditorStage from '@/components/EditorStage.vue'
 import ImageMask from '@/components/ImageMask.vue'
 import LayerMask from '@/components/LayerMask.vue'
+import IconSvg from '@/components/IconSvg.vue'
 
 @Component({
   components: {
+    IconSvg,
     Loader,
     ContextUploader,
     EditorUploader,
@@ -120,6 +121,19 @@ export default class Home extends Vue {
   settings!: any
   strings!: any
   images!: any
+
+  get step(): 'start' | 'mask' | 'save' {
+    switch (true) {
+      case !this.images.input:
+        return 'start'
+      case !this.showingPreview:
+        return 'mask'
+      case this.showingPreview:
+        return 'save'
+      default:
+        return 'start'
+    }
+  }
 
   get masks() {
     return this.$store.state.masks
@@ -148,21 +162,30 @@ export default class Home extends Vue {
 
   // Preview
 
-  get isPreview() {
-    return this.ui.isPreview
+  get showingPreview() {
+    return this.ui.showingPreview
   }
 
-  set isPreview(value: boolean) {
-    this.$store.commit('updateUI', { key: 'isPreview', value })
+  set showingPreview(value: boolean) {
+    this.$store.commit('updateUI', { key: 'showingPreview', value })
   }
 
   isLoadingPreview = false
 
   onClickPreviewToggle() {
-    if (!this.isPreview) {
+    if (!this.showingPreview) {
       this.updateOutput()
     }
-    this.isPreview = !this.isPreview
+    this.showingPreview = !this.showingPreview
+  }
+
+  onClickGoToSave() {
+    this.updateOutput()
+    this.showingPreview = true
+  }
+
+  onClickBackToMask() {
+    this.showingPreview = false
   }
 
   // Upload
@@ -212,7 +235,11 @@ export default class Home extends Vue {
 </script>
 <style lang="scss">
 .editor {
-  background-color: var(--grey-light);
+  background-color: var(--contrast-lightest);
+  background-image: linear-gradient(
+    var(--color-root) 50%,
+    var(--contrast-lightest)
+  );
   height: 100%;
   position: relative;
   display: flex;
@@ -235,13 +262,24 @@ export default class Home extends Vue {
   position: absolute;
   bottom: 0;
   width: 100%;
-  padding-bottom: 8rem;
+  padding-bottom: max(2rem, env(safe-area-inset-bottom));
 }
 
-.context-controls {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  grid-gap: 1px;
+.context button,
+.context .button {
+  --background-color: var(--color-root);
+  --hover-background-color: var(--contrast-lighter);
+
+  padding: em(13);
+  border-radius: rem(48);
+  box-shadow: 0 0 0 0.5px var(--contrast-lightest);
+}
+
+.context-masks,
+.context-save {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .layers {
