@@ -111,7 +111,7 @@ export default class EditorStage extends Vue {
 
       this.drawingTimeout = setTimeout(() => {
         this.isDrawing = true
-        this.$store.commit('updateUI', { key: 'isPreview', value: false })
+        this.$store.commit('updateUI', { key: 'showingPreview', value: false })
       }, 100)
     }
   }
@@ -157,13 +157,13 @@ export default class EditorStage extends Vue {
 
   onClickStage(e: MouseEvent) {
     clearTimeout(this.drawingTimeout)
-    if (this.ui.isPreview) {
-      this.$store.commit('updateUI', { key: 'isPreview', value: false })
+    if (this.ui.showingPreview) {
+      this.$store.commit('updateUI', { key: 'showingPreview', value: false })
     }
   }
 
   onDblclickStage(e: MouseEvent) {
-    this.$store.commit('updateUI', { key: 'isPreview', value: false })
+    this.$store.commit('updateUI', { key: 'showingPreview', value: false })
     this.refreshRect++
     const w = 128
     const h = 32

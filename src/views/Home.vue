@@ -21,72 +21,68 @@
         loader(v-if="this.ui.isLoadingPreview") Loading Preview
 
 
+    .intro(v-if="step === 'start'")
+      .layout
+        ol
+          li
+            h2
+              label.link(for="input-editor") Add an image
+            p #[label.link(for="input-editor") Choose one from your device] or drag one in, any time.
+          li
+            h2 Mask it
+            p Place and size rectangles over the bits to pixelised.
+          li
+            h2 Save it
+            p Tap done to adjust the pixels, and download your image.
+
+    .context._masks(v-if="step === 'mask'")
+      .context-controls
+        button(
+          v-if="!showingPreview && images.input"
+          title="Add Mask"
+          @click="onClickAddMask"
+        )
+          icon-svg(name="plus")
+
+        .tip
+
+        button._primary(
+          v-if="images.input"
+          title="Next"
+          :disabled="!masks.length"
+          @click="onClickGoToSave"
+        )
+          icon-svg(name="arrow-right")
+
+    .context._save(v-if="step === 'save'")
+      .context-controls
+        button(
+          title="Back"
+          @click="onClickBackToMask"
+        )
+          icon-svg(name="arrow-left")
 
 
-    .context
-      .context-intro(v-if="step === 'start'")
-        .layout
-          ol
-            li
-              h2
-                label.link(for="input-editor") Add an image
-              p #[label.link(for="input-editor") Choose one from your device] or drag one in, any time.
-            li
-              h2 Mask it
-              p Place and size rectangles over the bits to pixelised.
-            li
-              h2 Save it
-              p Tap done to adjust the pixels, and download your image.
+        .field.field-range
+          .field-control
+            input#input-density(
+              type="range"
+              min="0.03"
+              max="0.26"
+              step="0.01"
+              title="Pixel Density"
+              v-model="pixelScale"
+              @input="updateOutput"
+            )
+          //- p.field-message(v-if="isLargeImage") Big images take longer to update
 
-
-      .context-masks(v-if="step === 'mask'")
-        .context-controls
-          button(
-            v-if="!showingPreview && images.input"
-            title="Add Mask"
-            @click="onClickAddMask"
-          )
-            icon-svg(name="plus")
-
-          .tip
-
-          button._primary(
-            v-if="images.input"
-            title="Next"
-            :disabled="!masks.length"
-            @click="onClickGoToSave"
-          )
-            icon-svg(name="arrow-right")
-
-      .context-save(v-if="step === 'save'")
-        .context-controls
-          button(
-            title="Back"
-            @click="onClickBackToMask"
-          )
-            icon-svg(name="arrow-left")
-
-
-          .field.field-range
-            .field-control
-              input#input-density(
-                type="range"
-                min="0.03"
-                max="0.26"
-                step="0.01"
-                title="Pixel Density"
-                v-model="pixelScale"
-                @input="updateOutput"
-              )
-            //- p.field-message(v-if="isLargeImage") Big images take longer to update
-
-          a.button._primary(
-            title="Save Image"
-            :disabled="!images.output"
-            :href="images.output"
-            :download="strings.download"
-          )
-            icon-svg(name="download")
+        a.button._primary(
+          title="Save Image"
+          :disabled="!images.output"
+          :href="images.output"
+          :download="strings.download"
+        )
+          icon-svg(name="download")
 
 </template>
 <script lang="ts">
@@ -259,7 +255,54 @@ export default class Home extends Vue {
   display: none;
 }
 
+.intro {
+  position: absolute;
+  top: 12rem;
+  width: 100%;
+
+  .layout {
+    max-width: em(280);
+  }
+
+  h2 {
+    position: relative;
+    line-height: 1;
+    font-weight: 900;
+    margin: 0;
+
+    &:before {
+      vertical-align: baseline;
+      position: absolute;
+      bottom: 0;
+      left: rem(-40);
+      font-size: em(12);
+      font-weight: 900;
+      line-height: inherit;
+      content: counter(counter-intro);
+    }
+  }
+
+  p {
+    margin: rem(10) 0;
+  }
+
+  ol {
+    counter-reset: counter-intro;
+    padding-left: rem(40);
+    list-style: none;
+    margin-left: rem(-20);
+  }
+
+  li {
+    position: relative;
+    counter-increment: counter-intro;
+    margin-bottom: rem(32);
+  }
+}
+
 .context {
+  display: flex;
+  justify-content: center;
   position: absolute;
   bottom: 0;
   width: 100%;
@@ -274,18 +317,24 @@ export default class Home extends Vue {
   border-radius: rem(48);
   box-shadow: 0 0 0 1px var(--color-contrast-alpha-10);
 
-  &._primary {
-    color: var(--color-white);
-    background-color: var(--color-key);
-  }
-
   &:focus,
   &:hover {
     outline: none;
     box-shadow: 0 0 0 3px var(--color-key-alpha-30);
   }
+
   &:active {
     animation: pulse 0.2s ease 1;
+  }
+
+  &._primary {
+    color: var(--color-white);
+    background-color: var(--color-key);
+
+    &:focus,
+    &:hover {
+      background-color: var(--color-key-70);
+    }
   }
 }
 
@@ -299,12 +348,6 @@ export default class Home extends Vue {
   100% {
     transform: scale(1);
   }
-}
-
-.context-masks,
-.context-save {
-  display: flex;
-  justify-content: center;
 }
 
 .context-controls {
@@ -339,7 +382,7 @@ export default class Home extends Vue {
     padding: 0 rem(18);
 
     input {
-      padding: 0;
+      padding: rem(16) 0;
       border: none;
       display: block;
       width: 100%;
