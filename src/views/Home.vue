@@ -278,6 +278,27 @@ export default class Home extends Vue {
     color: var(--color-white);
     background-color: var(--color-key);
   }
+
+  &:focus,
+  &:hover {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--color-key-alpha-30);
+  }
+  &:active {
+    animation: pulse 0.2s ease 1;
+  }
+}
+
+@keyframes pulse {
+  30% {
+    transform: scale(0.9);
+  }
+  60% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 .context-masks,
