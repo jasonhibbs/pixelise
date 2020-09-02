@@ -20,7 +20,6 @@
       transition(name="fade-delayed")
         loader(v-if="this.ui.isLoadingPreview") Loading Preview
 
-
     .intro(v-if="step === 'start'")
       .layout
         ol
@@ -33,7 +32,7 @@
             p Place and size rectangles over the bits to pixelised.
           li
             h2 Save it
-            p Tap done to adjust the pixels, and download your image.
+            p Tap next, adjust the pixels, and download your image.
 
     .context._masks(v-if="step === 'mask'")
       .context-controls
@@ -283,7 +282,8 @@ export default class Home extends Vue {
   }
 
   p {
-    margin: rem(10) 0;
+    line-height: (24/16);
+    margin: rem(12) 0;
   }
 
   ol {
