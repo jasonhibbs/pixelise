@@ -18,8 +18,8 @@ export default class Loader extends Vue {}
 .loader {
   --size: 1.25em;
   --width: 1px;
-  --ring-color: var(--contrast-light, #{fade-out(black, 0.88)});
-  --segment-color: var(--contrast-darker, #{fade-out(black, 0.25)});
+  --ring-color: var(--color-contrast-light, #{fade-out(black, 0.88)});
+  --segment-color: var(--color-contrast-darker, #{fade-out(black, 0.25)});
   --speed: #{(1s/2)};
 
   display: flex;

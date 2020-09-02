@@ -24,9 +24,8 @@
 
 
     .context
-      .layout
-
-        .context-intro(v-if="step === 'start'")
+      .context-intro(v-if="step === 'start'")
+        .layout
           ol
             li
               h2
@@ -40,8 +39,8 @@
               p Tap done to adjust the pixels, and download your image.
 
 
-        .context-masks(v-if="step === 'mask'")
-
+      .context-masks(v-if="step === 'mask'")
+        .context-controls
           button(
             v-if="!showingPreview && images.input"
             title="Add Mask"
@@ -51,7 +50,7 @@
 
           .tip
 
-          button(
+          button._primary(
             v-if="images.input"
             title="Next"
             :disabled="!masks.length"
@@ -59,29 +58,29 @@
           )
             icon-svg(name="arrow-right")
 
-        .context-save(v-if="step === 'save'")
-
+      .context-save(v-if="step === 'save'")
+        .context-controls
           button(
             title="Back"
             @click="onClickBackToMask"
           )
             icon-svg(name="arrow-left")
 
-          .fields
-            .field
-              label.field-label(for="input-density") Pixel Density
-              .field-controls
-                input#input-density(
-                  type="range"
-                  min="0.03"
-                  max="0.26"
-                  step="0.01"
-                  v-model="pixelScale"
-                  @input="updateOutput"
-                )
-              p.field-message(v-if="isLargeImage") Big images take longer to update
 
-          a.button(
+          .field.field-range
+            .field-control
+              input#input-density(
+                type="range"
+                min="0.03"
+                max="0.26"
+                step="0.01"
+                title="Pixel Density"
+                v-model="pixelScale"
+                @input="updateOutput"
+              )
+            //- p.field-message(v-if="isLargeImage") Big images take longer to update
+
+          a.button._primary(
             title="Save Image"
             :disabled="!images.output"
             :href="images.output"
@@ -237,10 +236,10 @@ export default class Home extends Vue {
 @import '@/assets/scss/_util';
 
 .editor {
-  background-color: var(--contrast-lightest);
+  background-color: var(--color-contrast-5);
   background-image: linear-gradient(
-    var(--color-root) 50%,
-    var(--contrast-lightest)
+    var(--color-root) 60%,
+    var(--color-contrast-10)
   );
   height: 100%;
   position: relative;
@@ -264,24 +263,67 @@ export default class Home extends Vue {
   position: absolute;
   bottom: 0;
   width: 100%;
-  padding-bottom: max(2rem, env(safe-area-inset-bottom));
+  padding-bottom: clamp(max(2rem, env(safe-area-inset-bottom)), 5vw, 3rem);
+  pointer-events: none;
 }
 
 .context button,
 .context .button {
-  --background-color: var(--color-root);
-  --hover-background-color: var(--contrast-lighter);
-
+  background-color: var(--color-root);
   padding: em(13);
   border-radius: rem(48);
-  box-shadow: 0 0 0 0.5px var(--contrast-lightest);
+  box-shadow: 0 0 0 1px var(--color-contrast-alpha-10);
+
+  &._primary {
+    color: var(--color-white);
+    background-color: var(--color-key);
+  }
 }
 
 .context-masks,
 .context-save {
   display: flex;
-  align-items: center;
   justify-content: center;
+}
+
+.context-controls {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 1rem;
+  width: 100%;
+  max-width: 20rem;
+
+  > *:not(:last-child) {
+    margin-inline-end: rem(12);
+  }
+
+  .field {
+    background-color: var(--color-root);
+    border-radius: rem(48);
+    box-shadow: 0 0 0 1px var(--color-contrast-alpha-10);
+    display: flex;
+    align-items: center;
+    min-height: rem(48);
+    flex: auto;
+    padding: 0 rem(12);
+  }
+
+  .field-control {
+    flex: auto;
+  }
+
+  .field-range {
+    padding: 0 rem(18);
+
+    input {
+      padding: 0;
+      border: none;
+      display: block;
+      width: 100%;
+    }
+  }
 }
 
 .layers {
