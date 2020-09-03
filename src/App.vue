@@ -46,8 +46,6 @@ main {
     font-size: 1.25rem;
     font-weight: 900;
     margin: 0;
-    text-shadow: 0 0 0.75em var(--color-root), 0 0 0.25em var(--color-root),
-      0 0 1px var(--color-root);
     will-change: font-size;
     transition: font-size 0.5s cubic-bezier(0.25, 0.83, 0.1, 1);
   }

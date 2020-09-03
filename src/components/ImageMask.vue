@@ -21,10 +21,15 @@
 </template>
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
+import { mapState } from 'vuex'
 
-@Component
+@Component({
+  computed: mapState(['ui']),
+})
 export default class ImageMask extends Vue {
   @Prop() data: any
+
+  ui!: any
 
   get classes() {
     return {
@@ -42,6 +47,38 @@ export default class ImageMask extends Vue {
     }
   }
 
+  // Lifecycle
+
+  beforeDestroy() {
+    if (this.ui.maskHighlight === this.data.id) {
+      this.$store.commit('updateUI', { key: 'maskHighlight', value: null })
+    }
+  }
+
+  // Interaction
+
+  interactionTimer: any = null
+
+  onInteractionStart() {
+    clearTimeout(this.interactionTimer)
+    this.$store.commit('updateUI', {
+      key: 'maskHighlight',
+      value: this.data.id,
+    })
+  }
+
+  onInteractionEnd() {
+    this.isDragging = false
+    this.isResizing = false
+    this.$emit('change')
+
+    this.interactionTimer = setTimeout(() => {
+      if (this.ui.maskHighlight === this.data.id) {
+        this.$store.commit('updateUI', { key: 'maskHighlight', value: null })
+      }
+    }, 1200)
+  }
+
   // Drag & Resize
 
   dragStartX = 0
@@ -55,21 +92,17 @@ export default class ImageMask extends Vue {
   isResizing = false
 
   onMouseup(e: MouseEvent) {
-    this.isDragging = false
-    this.isResizing = false
     document.removeEventListener('mousemove', this.onMousemoveMask)
     document.removeEventListener('mousemove', this.onMousemoveHandle)
     document.removeEventListener('mouseup', this.onMouseup)
-    this.$emit('change')
+    this.onInteractionEnd()
   }
 
   onTouchend(e: TouchEvent) {
-    this.isDragging = false
-    this.isResizing = false
     document.removeEventListener('touchmove', this.onTouchmoveMask)
     document.removeEventListener('touchmove', this.onTouchmoveHandle)
     document.removeEventListener('touchend', this.onTouchend)
-    this.$emit('change')
+    this.onInteractionEnd()
   }
 
   onDblclick() {
@@ -98,7 +131,7 @@ export default class ImageMask extends Vue {
     this.dragStartY = e.clientY
     this.maskStartX = this.data.x
     this.maskStartY = this.data.y
-
+    this.onInteractionStart()
     document.addEventListener('mousemove', this.onMousemoveMask)
     document.addEventListener('mouseup', this.onMouseup)
   }
@@ -127,7 +160,7 @@ export default class ImageMask extends Vue {
     this.dragStartY = e.touches[0].pageY
     this.maskStartX = this.data.x
     this.maskStartY = this.data.y
-
+    this.onInteractionStart()
     document.addEventListener('touchmove', this.onTouchmoveMask)
     document.addEventListener('touchend', this.onTouchend)
   }
@@ -154,7 +187,7 @@ export default class ImageMask extends Vue {
     this.dragStartY = e.clientY
     this.maskStartW = this.data.w
     this.maskStartH = this.data.h
-
+    this.onInteractionStart()
     document.addEventListener('mousemove', this.onMousemoveHandle)
     document.addEventListener('mouseup', this.onMouseup)
   }
@@ -171,7 +204,7 @@ export default class ImageMask extends Vue {
     this.dragStartY = e.touches[0].pageY
     this.maskStartW = this.data.w
     this.maskStartH = this.data.h
-
+    this.onInteractionStart()
     document.addEventListener('touchmove', this.onTouchmoveHandle)
     document.addEventListener('touchend', this.onTouchend)
   }
@@ -223,8 +256,7 @@ $mask-handle-inset: 10px;
 }
 
 .mask:hover .box,
-.mask._drawn .box,
-.mask._highlight .box {
+.mask._drawn .box {
   background-color: fade-out($mask-inner-color, 0.4);
 }
 

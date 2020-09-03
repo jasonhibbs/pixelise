@@ -28,7 +28,6 @@
 
         template(v-for="mask in value")
           image-mask(
-            :class="{ _highlight: mask.id === ui.maskHighlight}"
             :data="mask"
             @drag="onDragMask"
             @resize="onResizeMask"
@@ -198,11 +197,11 @@ export default class EditorStage extends Vue {
   }
 
   onMouseenterMask(id: number) {
-    this.$store.commit('updateUI', { key: 'maskHighlight', value: id })
+    // this.$store.commit('updateUI', { key: 'maskHighlight', value: id })
   }
 
   onMouseleaveMask(id: number) {
-    this.$store.commit('updateUI', { key: 'maskHighlight', value: null })
+    // this.$store.commit('updateUI', { key: 'maskHighlight', value: null })
   }
 }
 </script>

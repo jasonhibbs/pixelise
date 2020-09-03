@@ -18,8 +18,8 @@ export default class Loader extends Vue {}
 .loader {
   --size: 1.25em;
   --width: 1px;
-  --ring-color: var(--color-contrast-light, #{fade-out(black, 0.88)});
-  --segment-color: var(--color-contrast-darker, #{fade-out(black, 0.25)});
+  --ring-color: var(--color-contrast-50, currentColor);
+  --segment-color: var(--color-contrast-30, transparent);
   --speed: #{(1s/2)};
 
   display: flex;
@@ -32,6 +32,9 @@ export default class Loader extends Vue {}
   }
 
   .loader-spinner {
+    display: block;
+    overflow: hidden;
+
     > span {
       display: block;
       width: var(--size);
@@ -39,6 +42,8 @@ export default class Loader extends Vue {}
       border: var(--width) solid var(--ring-color);
       border-top-color: var(--segment-color) !important;
       border-radius: var(--size);
+      will-change: transform;
+      backface-visibility: hidden;
       animation: spin var(--speed) linear infinite;
     }
   }
@@ -55,14 +60,5 @@ export default class Loader extends Vue {}
       transform: rotateZ(360deg);
     }
   }
-}
-
-[data-loading] {
-  transition: opacity 0.2s;
-  will-change: opacity;
-}
-
-[data-loading='true'] {
-  opacity: (1/3);
 }
 </style>

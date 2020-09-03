@@ -5,20 +5,34 @@
   )
 
     .editor(:class="{ _preview: showingPreview,  _loading: this.ui.isLoadingPreview }")
-
+      canvas#canvas(ref="baseCanvas")
       editor-uploader(
         :hidden="images.input"
       )
-
       editor-stage(
         v-model="masks"
         @imageload="onLoadStageImage"
       )
 
-      canvas#canvas(ref="baseCanvas")
+      transition(name="fade" appear)
+        .editor-info(v-if="this.highlightedMask")
+          .bits
+            .bit
+              .bit-key X
+              .bit-value {{ this.highlightedMask.x }}
+            .bit
+              .bit-key Y
+              .bit-value {{ this.highlightedMask.y }}
+            .bit
+              .bit-key W
+              .bit-value {{ this.highlightedMask.w }}
+            .bit
+              .bit-key H
+              .bit-value {{ this.highlightedMask.h }}
 
-      transition(name="fade-delayed")
-        loader(v-if="this.ui.isLoadingPreview") Loading Preview
+      transition(name="fade-in" appear)
+        .editor-info(v-if="this.ui.isLoadingPreview")
+          loader Loading…
 
     .intro(v-if="step === 'start'")
       .layout
@@ -111,23 +125,12 @@ import IconSvg from '@/components/IconSvg.vue'
 export default class Home extends Vue {
   @Ref('baseCanvas') readonly canvasElement!: HTMLCanvasElement
 
+  // Vuex
+
   ui!: any
   settings!: any
   strings!: any
   images!: any
-
-  get step(): 'start' | 'mask' | 'save' {
-    switch (true) {
-      case !this.images.input:
-        return 'start'
-      case !this.showingPreview:
-        return 'mask'
-      case this.showingPreview:
-        return 'save'
-      default:
-        return 'start'
-    }
-  }
 
   get masks() {
     return this.$store.state.masks
@@ -143,6 +146,21 @@ export default class Home extends Vue {
 
   set pixelScale(value: number) {
     this.$store.commit('updateSetting', { key: 'pixelScale', value })
+  }
+
+  // Step
+
+  get step(): 'start' | 'mask' | 'save' {
+    switch (true) {
+      case !this.images.input:
+        return 'start'
+      case !this.showingPreview:
+        return 'mask'
+      case this.showingPreview:
+        return 'save'
+      default:
+        return 'start'
+    }
   }
 
   // Lifecycle
@@ -195,6 +213,13 @@ export default class Home extends Vue {
 
   // Layers
 
+  get highlightedMask() {
+    if (!this.ui.maskHighlight) {
+      return null
+    }
+    return this.masks.find((x: any) => x.id === this.ui.maskHighlight)
+  }
+
   getStageCentre() {
     let x = 20
     let y = 20
@@ -231,23 +256,65 @@ export default class Home extends Vue {
 @import '@/assets/scss/_util';
 
 .editor {
-  background-color: var(--color-contrast-5);
-  background-image: linear-gradient(
-    var(--color-root) 60%,
-    var(--color-contrast-10)
-  );
+  background-image: linear-gradient(transparent 60%, var(--color-contrast-10));
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  width: 100%;
   height: 100%;
-  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.editor-info {
+  background-color: var(--color-root-alpha-20);
+  backdrop-filter: brightness(300%) blur(20px);
+  pointer-events: none;
+  position: absolute;
+  top: 3.5rem;
+  padding: rem(4) rem(8);
+  border-radius: 2px;
+
+  @media (prefers-color-scheme: dark) {
+    backdrop-filter: brightness(40%) blur(20px);
+  }
+
+  .bits {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    align-items: center;
+    margin: rem(-1) 0 rem(1) rem(6);
+  }
 
   .loader {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    margin: 1rem;
+    --size: 16px;
+    font-size: em(13);
   }
+}
+
+.bit {
+  display: flex;
+  align-items: baseline;
+}
+
+.bit-key {
+  font-size: em(10);
+  line-height: 1;
+  flex: none;
+  opacity: 0.6;
+  margin-right: rem(6);
+}
+
+.bit-value {
+  flex: auto;
+  font-size: em(13);
+  line-height: (16/13);
+  margin-right: rem(10);
+  font-feature-settings: 'tnum' 1;
+  font-variant-numeric: tabular-nums;
 }
 
 #canvas {
@@ -306,7 +373,7 @@ export default class Home extends Vue {
   position: absolute;
   bottom: 0;
   width: 100%;
-  padding-bottom: clamp(max(2rem, env(safe-area-inset-bottom)), 5vw, 3rem);
+  margin-bottom: clamp(max(2rem, env(safe-area-inset-bottom)), 5vw, 3rem);
   pointer-events: none;
 }
 
@@ -320,7 +387,7 @@ export default class Home extends Vue {
   &:focus,
   &:hover {
     outline: none;
-    box-shadow: 0 0 0 3px var(--color-key-alpha-30);
+    box-shadow: 0 0 0 3px var(--color-focus);
   }
 
   &:active {
@@ -351,13 +418,16 @@ export default class Home extends Vue {
 }
 
 .context-controls {
-  pointer-events: auto;
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin: 0 1rem;
   width: 100%;
   max-width: 20rem;
+
+  > * {
+    pointer-events: auto;
+  }
 
   > *:not(:last-child) {
     margin-inline-end: rem(12);
@@ -399,7 +469,17 @@ export default class Home extends Vue {
   margin-top: 1rem;
 }
 
-.fade-delayed-enter {
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s;
+}
+
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.fade-in-enter {
   opacity: 0;
   transition: opacity 0.2s 0.2s;
 }

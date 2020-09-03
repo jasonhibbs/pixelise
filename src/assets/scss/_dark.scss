@@ -3,6 +3,7 @@
 @media (prefers-color-scheme: dark) {
   :root {
     --color-black: black;
+    --color-key: var(--color-key-40);
 
     /* grey */
 
@@ -36,47 +37,47 @@
 
     --color-root: var(--color-black);
 
-    --color-root-alpha-0: var(--color-grey-alpha-0);
-    --color-root-alpha-5: var(--color-grey-alpha-5);
-    --color-root-alpha-10: var(--color-grey-alpha-10);
-    --color-root-alpha-20: var(--color-grey-alpha-20);
-    --color-root-alpha-30: var(--color-grey-alpha-30);
-    --color-root-alpha-40: var(--color-grey-alpha-40);
-    --color-root-alpha-50: var(--color-grey-alpha-50);
-    --color-root-alpha-60: var(--color-grey-alpha-60);
-    --color-root-alpha-70: var(--color-grey-alpha-70);
-    --color-root-alpha-80: var(--color-grey-alpha-80);
-    --color-root-alpha-90: var(--color-grey-alpha-90);
-    --color-root-alpha-95: var(--color-grey-alpha-95);
-    --color-root-alpha-100: var(--color-grey-alpha-100);
+    --color-root-alpha-0: rgba(0, 0, 0, 0);
+    --color-root-alpha-5: rgba(0, 0, 0, 0.04);
+    --color-root-alpha-10: rgba(0, 0, 0, 0.08);
+    --color-root-alpha-20: rgba(0, 0, 0, 0.16);
+    --color-root-alpha-30: rgba(0, 0, 0, 0.24);
+    --color-root-alpha-40: rgba(0, 0, 0, 0.32);
+    --color-root-alpha-50: rgba(0, 0, 0, 0.4);
+    --color-root-alpha-60: rgba(0, 0, 0, 0.53);
+    --color-root-alpha-70: rgba(0, 0, 0, 0.66);
+    --color-root-alpha-80: rgba(0, 0, 0, 0.78);
+    --color-root-alpha-90: rgba(0, 0, 0, 0.89);
+    --color-root-alpha-95: rgba(0, 0, 0, 0.94);
+    --color-root-alpha-100: rgb(0, 0, 0);
 
     --color-contrast: var(--color-white);
 
-    --color-contrast-alpha-0: rgba(0, 0, 0, 0);
-    --color-contrast-alpha-5: rgba(0, 0, 0, 0.04);
-    --color-contrast-alpha-10: rgba(0, 0, 0, 0.08);
-    --color-contrast-alpha-20: rgba(0, 0, 0, 0.16);
-    --color-contrast-alpha-30: rgba(0, 0, 0, 0.24);
-    --color-contrast-alpha-40: rgba(0, 0, 0, 0.32);
-    --color-contrast-alpha-50: rgba(0, 0, 0, 0.4);
-    --color-contrast-alpha-60: rgba(0, 0, 0, 0.53);
-    --color-contrast-alpha-70: rgba(0, 0, 0, 0.66);
-    --color-contrast-alpha-80: rgba(0, 0, 0, 0.78);
-    --color-contrast-alpha-90: rgba(0, 0, 0, 0.89);
-    --color-contrast-alpha-95: rgba(0, 0, 0, 0.94);
-    --color-contrast-alpha-100: rgb(0, 0, 0);
+    --color-contrast-alpha-0: var(--color-grey-alpha-0);
+    --color-contrast-alpha-5: var(--color-grey-alpha-5);
+    --color-contrast-alpha-10: var(--color-grey-alpha-10);
+    --color-contrast-alpha-20: var(--color-grey-alpha-20);
+    --color-contrast-alpha-30: var(--color-grey-alpha-30);
+    --color-contrast-alpha-40: var(--color-grey-alpha-40);
+    --color-contrast-alpha-50: var(--color-grey-alpha-50);
+    --color-contrast-alpha-60: var(--color-grey-alpha-60);
+    --color-contrast-alpha-70: var(--color-grey-alpha-70);
+    --color-contrast-alpha-80: var(--color-grey-alpha-80);
+    --color-contrast-alpha-90: var(--color-grey-alpha-90);
+    --color-contrast-alpha-95: var(--color-grey-alpha-95);
+    --color-contrast-alpha-100: var(--color-grey-alpha-100);
 
-    --color-focus: var(--color-key-alpha-50);
+    --color-focus: var(--color-key-alpha-80);
   }
 
   ::selection {
-    background-color: var(--color-key-alpha-30);
+    background-color: var(--color-key-alpha-50);
   }
 
-  a {
+  .link {
     &:focus,
     &:hover {
-      color: var(--color-key-lighter);
+      color: var(--color-key-30);
     }
   }
 }
