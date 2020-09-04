@@ -31,7 +31,7 @@
               .bit-value {{ highlightedMask.h }}
 
       transition(name="fade-delay" appear)
-        .editor-info(v-if="ui.isLoadingPreview")
+        .editor-info._loader(v-if="ui.isLoadingPreview")
           loader Loading…
 
     .intro(v-if="step === 'start'")
@@ -47,6 +47,7 @@
           li
             h2 Save it
             p Tap next, adjust the pixels, and download your image.
+
 
     .context._masks(v-if="step === 'mask'")
       .context-controls
@@ -468,21 +469,7 @@ export default class Home extends Vue {
   margin-top: 1rem;
 }
 
-.fade-enter-active,
-.fade-leave-active,
-.fade-delay-enter-active,
-.fade-delay-leave-active {
-  transition: opacity 0.2s;
-}
-
-.fade-enter,
-.fade-leave-to,
-.fade-delay-enter,
-.fade-delay-leave-to {
-  opacity: 0;
-}
-
-.fade-delay-enter-active {
+.editor-info._loader.fade-delay-enter-active {
   transition-delay: 0.6s;
 }
 </style>
