@@ -31,27 +31,37 @@ main {
   height: 100%;
 }
 
-#app > header {
+header {
   pointer-events: none;
   position: absolute;
   top: 0;
   top: env(safe-area-inset-top);
   left: 0;
   width: 100%;
-  text-align: center;
   z-index: 2;
   padding: 1rem;
+  will-change: width;
+  transition: width 0.5s cubic-bezier(0.25, 0.83, 0.1, 1);
 
   h1 {
+    display: inline-block;
     font-size: 1.25rem;
     font-weight: 900;
     margin: 0;
-    will-change: font-size;
-    transition: font-size 0.5s cubic-bezier(0.25, 0.83, 0.1, 1);
+    transform: none;
+    will-change: font-size, margin, transform;
+    transition: font-size, margin, transform;
+    transition-duration: 0.5s;
+    transition-timing-function: cubic-bezier(0.25, 0.83, 0.1, 1);
   }
+}
 
-  &._intro h1 {
+header._intro {
+  h1 {
     font-size: 4em;
+    margin-top: 4rem;
+    margin-left: 50%;
+    transform: translateX(-50%);
   }
 }
 </style>
