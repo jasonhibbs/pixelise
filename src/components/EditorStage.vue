@@ -7,12 +7,14 @@
         @dblclick.left="onDblclickStage"
         @mousedown.left="onMousedownStage"
       )
-        img.stage-image-base(
-          ref="baseImage"
-          draggable="false"
-          :src="images.input"
-          @load="$emit('imageload', imgBase)"
-        )
+        transition(name="grow" appear)
+          img.stage-image-base(
+            v-if="images.input"
+            ref="baseImage"
+            draggable="false"
+            :src="images.input"
+            @load="$emit('imageload', imgBase)"
+          )
         img.stage-image-preview(
           ref="previewImage"
           draggable="false"
@@ -251,5 +253,13 @@ export default class EditorStage extends Vue {
     opacity: 1;
     transition: opacity 0.1s;
   }
+}
+
+.grow-enter {
+  transform: scale(0.9);
+}
+
+.grow-enter-active {
+  transition: transform 0.5s cubic-bezier(0.25, 0.83, 0.1, 1);
 }
 </style>
