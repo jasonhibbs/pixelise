@@ -4,7 +4,7 @@
     :data-step="step"
   )
 
-    .editor(:class="{ _preview: showingPreview,  _loading: this.ui.isLoadingPreview }")
+    .editor(:class="{ _preview: showingPreview,  _loading: ui.isLoadingPreview }")
       canvas#canvas(ref="baseCanvas")
       editor-uploader(
         :hidden="images.input"
@@ -15,23 +15,23 @@
       )
 
       transition(name="fade" appear)
-        .editor-info(v-if="this.highlightedMask")
+        .editor-info(v-if="!showingPreview && highlightedMask")
           .bits
             .bit
               .bit-key X
-              .bit-value {{ this.highlightedMask.x }}
+              .bit-value {{ highlightedMask.x }}
             .bit
               .bit-key Y
-              .bit-value {{ this.highlightedMask.y }}
+              .bit-value {{ highlightedMask.y }}
             .bit
               .bit-key W
-              .bit-value {{ this.highlightedMask.w }}
+              .bit-value {{ highlightedMask.w }}
             .bit
               .bit-key H
-              .bit-value {{ this.highlightedMask.h }}
+              .bit-value {{ highlightedMask.h }}
 
-      transition(name="fade-in" appear)
-        .editor-info(v-if="this.ui.isLoadingPreview")
+      transition(name="fade-delay" appear)
+        .editor-info(v-if="ui.isLoadingPreview")
           loader Loading…
 
     .intro(v-if="step === 'start'")
@@ -182,8 +182,6 @@ export default class Home extends Vue {
     this.$store.commit('updateUI', { key: 'showingPreview', value })
   }
 
-  isLoadingPreview = false
-
   onClickPreviewToggle() {
     if (!this.showingPreview) {
       this.updateOutput()
@@ -270,13 +268,14 @@ export default class Home extends Vue {
 }
 
 .editor-info {
-  background-color: var(--color-root-alpha-20);
+  background-color: var(--color-root-alpha-40);
   backdrop-filter: brightness(300%) blur(20px);
   pointer-events: none;
   position: absolute;
   top: 3.5rem;
   padding: rem(4) rem(8);
   border-radius: 2px;
+  z-index: 2;
 
   @media (prefers-color-scheme: dark) {
     backdrop-filter: brightness(40%) blur(20px);
@@ -470,17 +469,20 @@ export default class Home extends Vue {
 }
 
 .fade-enter-active,
-.fade-leave-active {
+.fade-leave-active,
+.fade-delay-enter-active,
+.fade-delay-leave-active {
   transition: opacity 0.2s;
 }
 
 .fade-enter,
-.fade-leave-to {
+.fade-leave-to,
+.fade-delay-enter,
+.fade-delay-leave-to {
   opacity: 0;
 }
 
-.fade-in-enter {
-  opacity: 0;
-  transition: opacity 0.2s 0.2s;
+.fade-delay-enter-active {
+  transition-delay: 0.6s;
 }
 </style>
