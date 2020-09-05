@@ -1,8 +1,6 @@
 <template lang="pug">
 
-  main(
-    :data-step="step"
-  )
+  main(:data-step="step")
 
     // Editor
 

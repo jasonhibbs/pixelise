@@ -1,19 +1,31 @@
 <template lang="pug">
 
-  #app(
-    :class="{ _dragging: ui.isDragging }"
-  )
-
-    header(:class="{_intro: !images.input}")
+  #app(:class="classes")
+    header
       h1 Pixelise
-
+      button.link(@click="drawerExpanded = !drawerExpanded") Menu
     router-view
-
-    transition(name="fade" appear)
-      .dropzone(v-if="ui.isDragging")
-        .dropzone-content
-          icon-svg(name="download")
-          p Drop it anywhere
+    drawer#drawer(
+      v-if="ui.drawerExpanded"
+      ref="drawer"
+      role="dialog"
+      @clickoverlay="drawerExpanded = false"
+      @overscrolldown="drawerExpanded = false"
+    )
+      template(#header)
+        button.link(
+          aria-controls="drawer"
+          :aria-expanded="ui.drawerExpanded"
+          @click="drawerExpanded = false"
+        )
+          span Close
+      template(#content)
+        footer
+          .layout
+            p Built with #[a(href="https://vuejs.org/") Vue]
+            p Powered by #[a(href="https://www.netlify.com/") Netlify]
+            p.vcard.h-card Made by #[a.p-name.u-url.fn.url(href="https://jasonhibbs.co.uk") Jason Hibbs]
+    dropzone(v-if="ui.isDragging")
 
 </template>
 
@@ -23,14 +35,33 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { mapState } from 'vuex'
 import IconSvg from '@/components/IconSvg.vue'
+import Drawer from '@/components/Drawer.vue'
+import Dropzone from '@/components/Dropzone.vue'
 
 @Component({
-  components: { IconSvg },
+  components: { IconSvg, Drawer, Dropzone },
   computed: mapState(['ui', 'images']),
 })
 export default class App extends Vue {
   images!: any
   ui!: any
+
+  get classes() {
+    return {
+      _dragging: this.ui.isDragging,
+      _intro: !this.images.input,
+    }
+  }
+
+  // Drawer
+
+  get drawerExpanded() {
+    return this.ui.drawerExpanded
+  }
+
+  set drawerExpanded(value) {
+    this.$store.commit('updateUI', { key: 'drawerExpanded', value })
+  }
 }
 </script>
 
@@ -69,60 +100,18 @@ header {
     transition-duration: 0.5s;
     transition-timing-function: cubic-bezier(0.25, 0.83, 0.1, 1);
   }
+
+  button {
+    pointer-events: auto;
+  }
 }
 
-header._intro {
+#app._intro {
   h1 {
     font-size: 4em;
     margin-top: 4rem;
     margin-left: 50%;
     transform: translateX(-50%);
-  }
-}
-
-.dropzone {
-  background: var(--color-root-alpha-80);
-  backdrop-filter: blur(20px);
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  margin: auto;
-  z-index: 10;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-
-  .icon {
-    font-size: 2em;
-  }
-
-  svg {
-    margin: auto;
-
-    path {
-      stroke-width: 1.5px;
-    }
-  }
-
-  p {
-    width: calc(100vh - 4rem);
-    max-width: 18em;
-    margin: 1.5rem auto;
-  }
-
-  &:after {
-    $inset: 1rem;
-    content: '';
-    position: absolute;
-    top: $inset;
-    right: $inset;
-    bottom: $inset;
-    left: $inset;
-    margin: auto;
-    border: 2px dashed var(--color-contrast-20);
   }
 }
 

@@ -76,7 +76,9 @@ export default class EditorUploader extends Vue {
   }
 
   onDragleaveDocument(e: DragEvent) {
-    this.isDragging = false
+    if (e.target === document.body) {
+      this.isDragging = false
+    }
   }
 
   onDragoverDocument(e: DragEvent) {

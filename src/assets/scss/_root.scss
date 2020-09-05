@@ -36,6 +36,7 @@
 
 .link {
   cursor: pointer;
+  background-color: transparent;
   color: var(--color-key);
   text-decoration: none;
   transition: color 0.1s, background-color 0.1s, outline-color 0.1s;
