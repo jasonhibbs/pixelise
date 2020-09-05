@@ -20,17 +20,16 @@ export default class IconSvg extends Vue {
 }
 </script>
 <style lang="scss">
-$size-base: (20em/16);
-
 .icon {
+  --size: (20em/16);
   display: block;
-  min-width: $size-base;
-  min-height: $size-base;
+  min-width: var(--size);
+  min-height: var(--size);
 
   svg {
     display: block;
     height: auto;
-    width: $size-base;
+    width: var(--size);
 
     path {
       stroke: currentColor;

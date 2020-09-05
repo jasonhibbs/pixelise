@@ -12,18 +12,29 @@
       @mousedown.left.stop="onMousedownMask"
       @touchstart.prevent="onTouchstartMask"
     )
+
     .handle(
       @mousedown.left.stop="onMousedownHandle"
       @touchstart.prevent.stop="onTouchstartHandle"
     )
       .handle-actual
 
+    button(
+      title="Remove Mask"
+      @mousedown.stop
+      @click.stop="onClickDelete"
+    )
+      .button
+        icon-svg(name="cross")
+
 </template>
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import { mapState } from 'vuex'
+import IconSvg from '@/components/IconSvg.vue'
 
 @Component({
+  components: { IconSvg },
   computed: mapState(['ui']),
 })
 export default class ImageMask extends Vue {
@@ -208,14 +219,26 @@ export default class ImageMask extends Vue {
     document.addEventListener('touchmove', this.onTouchmoveHandle)
     document.addEventListener('touchend', this.onTouchend)
   }
+
+  // Delete
+
+  onClickDelete() {
+    this.$store.commit('removeMask', this.data.id)
+  }
 }
 </script>
 <style lang="scss">
-$mask-inner-color: black;
-$mask-outer-color: white;
-$mask-handle-inset: 10px;
-
 .mask {
+  --mask-inner-color: black;
+  --mask-outer-color: white;
+  --mask-hover-color: #{fade-out(black, 0.4)};
+  --mask-shadow-color: #{fade-out(white, 0.2)};
+  --mask-handle-color: var(--color-key);
+  --mask-control-inset: 10px;
+  --mask-control-size: 44px;
+  --mask-handle-size: 14px;
+  --mask-button-size: 20px;
+
   position: absolute;
   will-change: opacity;
   transition: opacity 0.2s;
@@ -234,14 +257,119 @@ $mask-handle-inset: 10px;
   }
 }
 
+// Box
+
 .mask .box {
   cursor: grab;
-  background-color: $mask-inner-color;
-  box-shadow: 0 0 0 1px fade-out($mask-outer-color, 0.6);
+  background-color: var(--mask-inner-color);
+  box-shadow: 0 0 0 1px var(--mask-shadow-color);
   width: 100%;
   height: 100%;
   transition: background-color 0.2s, box-shadow 0.1s;
 }
+
+// Handle
+
+.mask .handle {
+  cursor: nwse-resize;
+  position: absolute;
+  left: 100%;
+  top: 100%;
+  z-index: -1;
+  width: var(--mask-control-size);
+  height: var(--mask-control-size);
+  margin: calc(0px - var(--mask-control-inset));
+  margin-bottom: 0;
+  margin-right: 0;
+  transition: opacity 0.4s;
+
+  &:hover {
+    --mask-handle-size: 20px;
+    opacity: 1;
+  }
+
+  &:after {
+    content: '';
+    display: block;
+    position: absolute;
+    left: var(--mask-control-inset);
+    top: var(--mask-control-inset);
+    width: calc(var(--mask-control-size) - var(--mask-handle-size));
+    height: 1.5px;
+    transform: translateX(-1px) translateY(-50%) rotateZ(45deg);
+    transform-origin: 1px 50%;
+    box-shadow: inset 0 0 0 2px var(--mask-handle-color),
+      1.5px 0 0 1px var(--mask-shadow-color);
+    transition: width 0.1s;
+    will-change: width;
+  }
+}
+
+.mask .handle-actual {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  z-index: 1;
+  width: var(--mask-handle-size);
+  height: var(--mask-handle-size);
+  background-color: var(--mask-handle-color);
+  box-shadow: 0 0 0 1px var(--mask-shadow-color);
+  border-radius: 100px;
+  transition: width 0.1s, height 0.1s;
+  will-change: width, height;
+}
+
+// Remove
+
+.mask button {
+  background: none;
+  border: none;
+  padding: 0;
+  position: absolute;
+  right: 100%;
+  bottom: 100%;
+  z-index: -1;
+  width: var(--mask-control-size);
+  height: var(--mask-control-size);
+  margin: calc(0px - var(--mask-control-inset));
+  margin-left: 0;
+  margin-top: 0;
+
+  opacity: 0;
+  transform: scale(0.9);
+  transform-origin: 100% 100%;
+  transition: opacity 0.1s ease-out, transform 0.1s ease-out;
+
+  .button {
+    background-color: var(--mask-inner-color);
+    box-shadow: 0 0 0 1px var(--mask-shadow-color);
+    color: white;
+    border-radius: var(--mask-button-size);
+    width: var(--mask-button-size);
+    height: var(--mask-button-size);
+
+    svg {
+      --size: 16px;
+      margin: 1px;
+    }
+  }
+
+  &:focus,
+  &:hover {
+    outline: none;
+
+    .button {
+      background-color: var(--color-key);
+    }
+  }
+}
+
+.mask:hover:not(._drag):not(._resize) button {
+  opacity: 1;
+  transform: scale(1);
+}
+
+// Interactive
 
 .mask:hover,
 .mask._drawn,
@@ -257,56 +385,6 @@ $mask-handle-inset: 10px;
 
 .mask:hover .box,
 .mask._drawn .box {
-  background-color: fade-out($mask-inner-color, 0.4);
-}
-
-.mask .handle {
-  --handle-touch-size: 44px;
-  --handle-dot-size: 12px;
-  cursor: nwse-resize;
-  position: absolute;
-  left: 100%;
-  top: 100%;
-  z-index: 0;
-  width: var(--handle-touch-size);
-  height: var(--handle-touch-size);
-  margin: (-$mask-handle-inset) 0 0 (-$mask-handle-inset);
-  transition: opacity 0.4s;
-
-  &:hover {
-    --handle-dot-size: 16px;
-    opacity: 1;
-  }
-
-  &:after {
-    content: '';
-    display: block;
-    position: absolute;
-    left: $mask-handle-inset;
-    top: $mask-handle-inset;
-    width: calc(var(--handle-touch-size) - var(--handle-dot-size));
-    height: 0.5px;
-    transform: translateY(-0.25px) rotateZ(45deg);
-    transform-origin: 0 50%;
-    box-shadow: inset 0 0 0 1px $mask-inner-color,
-      1px 0 0 1px fade-out($mask-outer-color, 0.4);
-
-    transition: width 0.1s;
-    will-change: width;
-  }
-}
-
-.mask .handle-actual {
-  position: absolute;
-  bottom: 2px;
-  right: 2px;
-  z-index: 1;
-  width: var(--handle-dot-size);
-  height: var(--handle-dot-size);
-  background-color: $mask-inner-color;
-  box-shadow: 0 0 0 1px fade-out($mask-outer-color, 0.4);
-  border-radius: 100px;
-  transition: width 0.1s, height 0.1s;
-  will-change: width, height;
+  background-color: var(--mask-hover-color);
 }
 </style>

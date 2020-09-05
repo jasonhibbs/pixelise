@@ -254,6 +254,12 @@ export default class Home extends Vue {
 <style lang="scss">
 @import '@/assets/scss/_util';
 
+#canvas {
+  display: none;
+}
+
+// Editor
+
 .editor {
   background-image: linear-gradient(transparent 60%, var(--color-contrast-10));
   position: fixed;
@@ -267,6 +273,8 @@ export default class Home extends Vue {
   align-items: center;
   justify-content: center;
 }
+
+// Editor Info
 
 .editor-info {
   background-color: var(--color-root-alpha-40);
@@ -295,6 +303,10 @@ export default class Home extends Vue {
   }
 }
 
+.editor-info._loader.fade-delay-enter-active {
+  transition-delay: 0.6s;
+}
+
 .bit {
   display: flex;
   align-items: baseline;
@@ -317,9 +329,7 @@ export default class Home extends Vue {
   font-variant-numeric: tabular-nums;
 }
 
-#canvas {
-  display: none;
-}
+// Intro
 
 .intro {
   position: absolute;
@@ -340,7 +350,7 @@ export default class Home extends Vue {
       vertical-align: baseline;
       position: absolute;
       bottom: 0;
-      left: rem(-40);
+      left: rem(-32);
       font-size: em(12);
       font-weight: 900;
       line-height: inherit;
@@ -366,6 +376,8 @@ export default class Home extends Vue {
     margin-bottom: rem(32);
   }
 }
+
+// Contexts
 
 .context {
   display: flex;
@@ -458,18 +470,5 @@ export default class Home extends Vue {
       width: 100%;
     }
   }
-}
-
-.layers {
-  margin: 1rem 0;
-}
-
-.fields,
-.field + .field {
-  margin-top: 1rem;
-}
-
-.editor-info._loader.fade-delay-enter-active {
-  transition-delay: 0.6s;
 }
 </style>
