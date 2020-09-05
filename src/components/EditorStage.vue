@@ -7,12 +7,14 @@
         @dblclick.left="onDblclickStage"
         @mousedown.left="onMousedownStage"
       )
-        img.stage-image-base(
-          ref="baseImage"
-          draggable="false"
-          :src="images.input"
-          @load="$emit('imageload', imgBase)"
-        )
+        transition(name="grow" appear)
+          img.stage-image-base(
+            v-if="images.input"
+            ref="baseImage"
+            draggable="false"
+            :src="images.input"
+            @load="$emit('imageload', imgBase)"
+          )
         img.stage-image-preview(
           ref="previewImage"
           draggable="false"
@@ -28,7 +30,6 @@
 
         template(v-for="mask in value")
           image-mask(
-            :class="{ _highlight: mask.id === ui.maskHighlight}"
             :data="mask"
             @drag="onDragMask"
             @resize="onResizeMask"
@@ -111,7 +112,7 @@ export default class EditorStage extends Vue {
 
       this.drawingTimeout = setTimeout(() => {
         this.isDrawing = true
-        this.$store.commit('updateUI', { key: 'isPreview', value: false })
+        this.$store.commit('updateUI', { key: 'showingPreview', value: false })
       }, 100)
     }
   }
@@ -157,13 +158,13 @@ export default class EditorStage extends Vue {
 
   onClickStage(e: MouseEvent) {
     clearTimeout(this.drawingTimeout)
-    if (this.ui.isPreview) {
-      this.$store.commit('updateUI', { key: 'isPreview', value: false })
+    if (this.ui.showingPreview) {
+      this.$store.commit('updateUI', { key: 'showingPreview', value: false })
     }
   }
 
   onDblclickStage(e: MouseEvent) {
-    this.$store.commit('updateUI', { key: 'isPreview', value: false })
+    this.$store.commit('updateUI', { key: 'showingPreview', value: false })
     this.refreshRect++
     const w = 128
     const h = 32
@@ -198,11 +199,11 @@ export default class EditorStage extends Vue {
   }
 
   onMouseenterMask(id: number) {
-    this.$store.commit('updateUI', { key: 'maskHighlight', value: id })
+    // this.$store.commit('updateUI', { key: 'maskHighlight', value: id })
   }
 
   onMouseleaveMask(id: number) {
-    this.$store.commit('updateUI', { key: 'maskHighlight', value: null })
+    // this.$store.commit('updateUI', { key: 'maskHighlight', value: null })
   }
 }
 </script>
@@ -216,18 +217,20 @@ export default class EditorStage extends Vue {
 }
 
 .stage-inner {
-  padding: 4rem 2.5rem;
-  padding-top: calc(4rem + env(safe-area-inset-top));
+  padding: calc(8rem + env(safe-area-inset-bottom)) 2.5rem;
+  padding-top: calc(8rem + env(safe-area-inset-top));
   margin: auto;
 }
 
 .stage-context {
   position: relative;
+  box-shadow: 0 0 4rem var(--color-contrast-alpha-5);
 }
 
 .stage img {
+  display: block;
   user-select: none;
-  box-shadow: 0 0 0 0.5px var(--contrast-lighter);
+  box-shadow: 0 0 0 1px var(--color-contrast-alpha-10);
 }
 
 .stage-image-base {
@@ -250,5 +253,13 @@ export default class EditorStage extends Vue {
     opacity: 1;
     transition: opacity 0.1s;
   }
+}
+
+.grow-enter {
+  transform: scale(0.9);
+}
+
+.grow-enter-active {
+  transition: transform 0.5s cubic-bezier(0.25, 0.83, 0.1, 1);
 }
 </style>

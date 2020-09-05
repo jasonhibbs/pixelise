@@ -1,83 +1,102 @@
 <template lang="pug">
 
-  main
+  main(
+    :data-step="step"
+  )
 
-    .editor(:class="{ _preview: isPreview,  _loading: this.ui.isLoadingPreview }")
-
+    .editor(:class="{ _preview: showingPreview,  _loading: ui.isLoadingPreview }")
+      canvas#canvas(ref="baseCanvas")
       editor-uploader(
         :hidden="images.input"
-      ) Choose an image or drag one here
-
+      )
       editor-stage(
         v-model="masks"
         @imageload="onLoadStageImage"
       )
 
-      canvas#canvas(ref="baseCanvas")
+      transition(name="fade" appear)
+        .editor-info(v-if="!showingPreview && highlightedMask")
+          .bits
+            .bit
+              .bit-key X
+              .bit-value {{ highlightedMask.x }}
+            .bit
+              .bit-key Y
+              .bit-value {{ highlightedMask.y }}
+            .bit
+              .bit-key W
+              .bit-value {{ highlightedMask.w }}
+            .bit
+              .bit-key H
+              .bit-value {{ highlightedMask.h }}
 
-      transition(name="fade-delayed")
-        loader(v-if="this.ui.isLoadingPreview") Loading Preview
+      transition(name="fade-delay" appear)
+        .editor-info._loader(v-if="ui.isLoadingPreview")
+          loader Loading…
 
-    .context
-
-      .context-controls
-        context-uploader(
-          v-if="images.input"
-        ) New Image
-
-        button(
-          v-if="images.input"
-          :disabled="!masks.length"
-          @click="onClickPreviewToggle"
-        )
-          span(v-if="isPreview") Edit
-          span(v-if="!isPreview") Preview
-
+    .intro(v-if="step === 'start'")
       .layout
+        ol
+          li
+            h2
+              label.link(for="input-editor") Add an image
+            p #[label.link(for="input-editor") Choose one from your device] or drag one in, any time.
+          li
+            h2 Mask it
+            p Place and size rectangles over the bits to pixelised.
+          li
+            h2 Save it
+            p Tap next, adjust the pixels, and download your image.
 
-        .starting(v-if="!images.input")
-          ol
-            li Add an image
-            li Cover it up
-            li Download
 
-        .editing(v-if="!isPreview")
+    .context._masks(v-if="step === 'mask'")
+      .context-controls
+        button(
+          v-if="!showingPreview && images.input"
+          title="Add Mask"
+          @click="onClickAddMask"
+        )
+          icon-svg(name="plus")
 
-          .layers
-            layer-mask(
-              v-for="mask in masks"
-              :key="mask.id"
-              :data="mask"
+        .tip
+
+        button._primary(
+          v-if="images.input"
+          title="Next"
+          :disabled="!masks.length"
+          @click="onClickGoToSave"
+        )
+          icon-svg(name="arrow-right")
+
+    .context._save(v-if="step === 'save'")
+      .context-controls
+        button(
+          title="Back"
+          @click="onClickBackToMask"
+        )
+          icon-svg(name="arrow-left")
+
+
+        .field.field-range
+          .field-control
+            input#input-density(
+              type="range"
+              min="0.03"
+              max="0.26"
+              step="0.01"
+              title="Pixel Density"
+              v-model="pixelScale"
+              @input="updateOutput"
             )
+          //- p.field-message(v-if="isLargeImage") Big images take longer to update
 
-          button(
-            v-if="!isPreview && images.input"
-            @click="onClickAddMask"
-          ) Add Mask
-
-        .exporting(v-if="isPreview")
-
-          .fields
-            .field
-              label.field-label(for="input-density") Pixel Density
-              .field-controls
-                input#input-density(
-                  type="range"
-                  min="0.03"
-                  max="0.26"
-                  step="0.01"
-                  v-model="pixelScale"
-                  @input="updateOutput"
-                )
-              p.field-message(v-if="isLargeImage") Big images take longer to update
-
-            .field
-              .field-controls
-                a.button(
-                  v-if="images.output"
-                  :href="images.output"
-                  :download="strings.download"
-                ) Download
+        a.button._primary(
+          title="Save Image"
+          :disabled="!images.output"
+          :href="images.output"
+          :download="strings.download"
+        )
+          icon-svg(name="download")
 
 </template>
 <script lang="ts">
@@ -90,9 +109,11 @@ import EditorUploader from '@/components/EditorUploader.vue'
 import EditorStage from '@/components/EditorStage.vue'
 import ImageMask from '@/components/ImageMask.vue'
 import LayerMask from '@/components/LayerMask.vue'
+import IconSvg from '@/components/IconSvg.vue'
 
 @Component({
   components: {
+    IconSvg,
     Loader,
     ContextUploader,
     EditorUploader,
@@ -104,6 +125,8 @@ import LayerMask from '@/components/LayerMask.vue'
 })
 export default class Home extends Vue {
   @Ref('baseCanvas') readonly canvasElement!: HTMLCanvasElement
+
+  // Vuex
 
   ui!: any
   settings!: any
@@ -126,6 +149,21 @@ export default class Home extends Vue {
     this.$store.commit('updateSetting', { key: 'pixelScale', value })
   }
 
+  // Step
+
+  get step(): 'start' | 'mask' | 'save' {
+    switch (true) {
+      case !this.images.input:
+        return 'start'
+      case !this.showingPreview:
+        return 'mask'
+      case this.showingPreview:
+        return 'save'
+      default:
+        return 'start'
+    }
+  }
+
   // Lifecycle
 
   mounted() {
@@ -137,21 +175,28 @@ export default class Home extends Vue {
 
   // Preview
 
-  get isPreview() {
-    return this.ui.isPreview
+  get showingPreview() {
+    return this.ui.showingPreview
   }
 
-  set isPreview(value: boolean) {
-    this.$store.commit('updateUI', { key: 'isPreview', value })
+  set showingPreview(value: boolean) {
+    this.$store.commit('updateUI', { key: 'showingPreview', value })
   }
-
-  isLoadingPreview = false
 
   onClickPreviewToggle() {
-    if (!this.isPreview) {
+    if (!this.showingPreview) {
       this.updateOutput()
     }
-    this.isPreview = !this.isPreview
+    this.showingPreview = !this.showingPreview
+  }
+
+  onClickGoToSave() {
+    this.updateOutput()
+    this.showingPreview = true
+  }
+
+  onClickBackToMask() {
+    this.showingPreview = false
   }
 
   // Upload
@@ -166,6 +211,13 @@ export default class Home extends Vue {
   }
 
   // Layers
+
+  get highlightedMask() {
+    if (!this.ui.maskHighlight) {
+      return null
+    }
+    return this.masks.find((x: any) => x.id === this.ui.maskHighlight)
+  }
 
   getStageCentre() {
     let x = 20
@@ -200,71 +252,223 @@ export default class Home extends Vue {
 }
 </script>
 <style lang="scss">
-.editor {
-  background-color: var(--grey-light);
-  height: 58vh;
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  .loader {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    margin: 1rem;
-  }
-}
+@import '@/assets/scss/_util';
 
 #canvas {
   display: none;
 }
 
+// Editor
+
+.editor {
+  background-image: linear-gradient(transparent 60%, var(--color-contrast-10));
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// Editor Info
+
+.editor-info {
+  background-color: var(--color-root-alpha-40);
+  backdrop-filter: brightness(300%) blur(20px);
+  pointer-events: none;
+  position: absolute;
+  top: 3.5rem;
+  padding: rem(4) rem(8);
+  border-radius: 2px;
+  z-index: 2;
+
+  @media (prefers-color-scheme: dark) {
+    backdrop-filter: brightness(40%) blur(20px);
+  }
+
+  .bits {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    align-items: center;
+    margin: rem(-1) 0 rem(1) rem(6);
+  }
+
+  .loader {
+    --size: 16px;
+    font-size: em(13);
+  }
+}
+
+.editor-info._loader.fade-delay-enter-active {
+  transition-delay: 0.6s;
+}
+
+.bit {
+  display: flex;
+  align-items: baseline;
+}
+
+.bit-key {
+  font-size: em(10);
+  line-height: 1;
+  flex: none;
+  opacity: 0.6;
+  margin-right: rem(6);
+}
+
+.bit-value {
+  flex: auto;
+  font-size: em(13);
+  line-height: (16/13);
+  margin-right: rem(10);
+  font-feature-settings: 'tnum' 1;
+  font-variant-numeric: tabular-nums;
+}
+
+// Intro
+
+.intro {
+  position: absolute;
+  top: 12rem;
+  width: 100%;
+
+  .layout {
+    max-width: em(280);
+  }
+
+  h2 {
+    position: relative;
+    line-height: 1;
+    font-weight: 900;
+    margin: 0;
+
+    &:before {
+      vertical-align: baseline;
+      position: absolute;
+      bottom: 0;
+      left: rem(-32);
+      font-size: em(12);
+      font-weight: 900;
+      line-height: inherit;
+      content: counter(counter-intro);
+    }
+  }
+
+  p {
+    line-height: (24/16);
+    margin: rem(12) 0;
+  }
+
+  ol {
+    counter-reset: counter-intro;
+    padding-left: rem(40);
+    list-style: none;
+    margin-left: rem(-20);
+  }
+
+  li {
+    position: relative;
+    counter-increment: counter-intro;
+    margin-bottom: rem(32);
+  }
+}
+
+// Contexts
+
 .context {
-  padding-bottom: 8rem;
+  display: flex;
+  justify-content: center;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  margin-bottom: clamp(max(2rem, env(safe-area-inset-bottom)), 5vw, 3rem);
+  pointer-events: none;
+}
+
+.context button,
+.context .button {
+  background-color: var(--color-root);
+  padding: em(13);
+  border-radius: rem(48);
+  box-shadow: 0 0 0 1px var(--color-contrast-alpha-10);
+
+  &:focus,
+  &:hover {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--color-focus);
+  }
+
+  &:active {
+    animation: pulse 0.2s ease 1;
+  }
+
+  &._primary {
+    color: var(--color-white);
+    background-color: var(--color-key);
+
+    &:focus,
+    &:hover {
+      background-color: var(--color-key-70);
+    }
+  }
+}
+
+@keyframes pulse {
+  30% {
+    transform: scale(0.9);
+  }
+  60% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 .context-controls {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  grid-gap: 1px;
-}
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 1rem;
+  width: 100%;
+  max-width: 20rem;
 
-.layers {
-  margin: 1rem 0;
-}
-
-.fields,
-.field + .field {
-  margin-top: 1rem;
-}
-
-@media (min-width: 768px) {
-  html,
-  body,
-  #app,
-  main {
-    height: 100%;
+  > * {
+    pointer-events: auto;
   }
 
-  main {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) 20rem;
+  > *:not(:last-child) {
+    margin-inline-end: rem(12);
   }
 
-  .editor {
-    height: 100vh;
+  .field {
+    background-color: var(--color-root);
+    border-radius: rem(48);
+    box-shadow: 0 0 0 1px var(--color-contrast-alpha-10);
+    display: flex;
+    align-items: center;
+    min-height: rem(48);
+    flex: auto;
+    padding: 0 rem(12);
   }
 
-  .context {
-    z-index: 1;
-    box-shadow: -3px 0 0 var(--contrast-lightest),
-      -0.5px 0 0 var(--contrast-lighter);
+  .field-control {
+    flex: auto;
   }
-}
 
-.fade-delayed-enter {
-  opacity: 0;
-  transition: opacity 0.2s 0.2s;
+  .field-range {
+    padding: 0 rem(18);
+
+    input {
+      padding: rem(16) 0;
+      border: none;
+      display: block;
+      width: 100%;
+    }
+  }
 }
 </style>

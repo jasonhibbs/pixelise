@@ -65,9 +65,9 @@ const updateCanvasData = (state: any) => {
 export default new Vuex.Store({
   state: {
     ui: {
-      isPreview: false,
       isDragging: false,
       isLoadingPreview: false,
+      showingPreview: false,
       hasChanges: true,
       maskHighlight: null,
     },

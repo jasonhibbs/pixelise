@@ -2,9 +2,10 @@
 
   label.editor-uploader(
     :for="id"
+    aria-label="Upload image from device"
   )
     span
-      slot Upload an image
+      slot
     input(
       :id="id"
       type="file"
@@ -109,10 +110,8 @@ export default class EditorUploader extends Vue {
 .editor-uploader {
   text-align: center;
   position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
+  top: 50%;
+  left: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
