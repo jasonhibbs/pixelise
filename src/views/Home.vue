@@ -4,6 +4,8 @@
     :data-step="step"
   )
 
+    // Editor
+
     .editor(:class="{ _preview: showingPreview,  _loading: ui.isLoadingPreview }")
       canvas#canvas(ref="baseCanvas")
       editor-uploader(
@@ -34,69 +36,21 @@
         .editor-info._loader(v-if="ui.isLoadingPreview")
           loader Loading…
 
-    .intro(v-if="step === 'start'")
-      .layout
-        ol
-          li
-            h2
-              label.link(for="input-editor") Add an image
-            p #[label.link(for="input-editor") Choose one from your device] or drag one in, any time.
-          li
-            h2 Mask it
-            p Place and size rectangles over the bits to pixelised.
-          li
-            h2 Save it
-            p Tap next, adjust the pixels, and download your image.
+    // Steps
 
+    intro(v-if="step === 'start'")
 
-    .context._masks(v-if="step === 'mask'")
-      .context-controls
-        button(
-          v-if="!showingPreview && images.input"
-          title="Add Mask"
-          @click="onClickAddMask"
-        )
-          icon-svg(name="plus")
+    context-masks(
+      v-if="step === 'mask'"
+      @masksadd="onClickAddMask"
+      @masksdone="onClickGoToSave"
+    )
 
-        .tip
-
-        button._primary(
-          v-if="images.input"
-          title="Next"
-          :disabled="!masks.length"
-          @click="onClickGoToSave"
-        )
-          icon-svg(name="arrow-right")
-
-    .context._save(v-if="step === 'save'")
-      .context-controls
-        button(
-          title="Back"
-          @click="onClickBackToMask"
-        )
-          icon-svg(name="arrow-left")
-
-
-        .field.field-range
-          .field-control
-            input#input-density(
-              type="range"
-              min="0.03"
-              max="0.26"
-              step="0.01"
-              title="Pixel Density"
-              v-model="pixelScale"
-              @input="updateOutput"
-            )
-          //- p.field-message(v-if="isLargeImage") Big images take longer to update
-
-        a.button._primary(
-          title="Save Image"
-          :disabled="!images.output"
-          :href="images.output"
-          :download="strings.download"
-        )
-          icon-svg(name="download")
+    context-save(
+      v-if="step === 'save'"
+      @masksedit="onClickBackToMask"
+      @settingschange="updateOutput"
+    )
 
 </template>
 <script lang="ts">
@@ -104,22 +58,22 @@ import { Component, Ref, Vue } from 'vue-property-decorator'
 import { mapState } from 'vuex'
 import throttle from 'lodash.throttle'
 import Loader from '@/components/Loader.vue'
-import ContextUploader from '@/components/ContextUploader.vue'
 import EditorUploader from '@/components/EditorUploader.vue'
 import EditorStage from '@/components/EditorStage.vue'
 import ImageMask from '@/components/ImageMask.vue'
-import LayerMask from '@/components/LayerMask.vue'
-import IconSvg from '@/components/IconSvg.vue'
+import Intro from '@/components/Intro.vue'
+import ContextMasks from '@/components/ContextMasks.vue'
+import ContextSave from '@/components/ContextSave.vue'
 
 @Component({
   components: {
-    IconSvg,
     Loader,
-    ContextUploader,
     EditorUploader,
     EditorStage,
     ImageMask,
-    LayerMask,
+    Intro,
+    ContextMasks,
+    ContextSave,
   },
   computed: mapState(['ui', 'settings', 'strings', 'images']),
 })
@@ -139,14 +93,6 @@ export default class Home extends Vue {
 
   set masks(value) {
     this.$store.commit('updateMasks', value)
-  }
-
-  get pixelScale() {
-    return this.settings.pixelScale
-  }
-
-  set pixelScale(value: number) {
-    this.$store.commit('updateSetting', { key: 'pixelScale', value })
   }
 
   // Step
@@ -183,12 +129,7 @@ export default class Home extends Vue {
     this.$store.commit('updateUI', { key: 'showingPreview', value })
   }
 
-  onClickPreviewToggle() {
-    if (!this.showingPreview) {
-      this.updateOutput()
-    }
-    this.showingPreview = !this.showingPreview
-  }
+  // Context
 
   onClickGoToSave() {
     this.updateOutput()
@@ -210,7 +151,7 @@ export default class Home extends Vue {
     this.addMask(x - 64, y - 16)
   }
 
-  // Layers
+  // Masks
 
   get highlightedMask() {
     if (!this.ui.maskHighlight) {
@@ -327,54 +268,6 @@ export default class Home extends Vue {
   margin-right: rem(10);
   font-feature-settings: 'tnum' 1;
   font-variant-numeric: tabular-nums;
-}
-
-// Intro
-
-.intro {
-  position: absolute;
-  top: 12rem;
-  width: 100%;
-
-  .layout {
-    max-width: em(280);
-  }
-
-  h2 {
-    position: relative;
-    line-height: 1;
-    font-weight: 900;
-    margin: 0;
-
-    &:before {
-      vertical-align: baseline;
-      position: absolute;
-      bottom: 0;
-      left: rem(-32);
-      font-size: em(12);
-      font-weight: 900;
-      line-height: inherit;
-      content: counter(counter-intro);
-    }
-  }
-
-  p {
-    line-height: (24/16);
-    margin: rem(12) 0;
-  }
-
-  ol {
-    counter-reset: counter-intro;
-    padding-left: rem(40);
-    list-style: none;
-    margin-left: rem(-20);
-  }
-
-  li {
-    position: relative;
-    counter-increment: counter-intro;
-    margin-bottom: rem(32);
-  }
 }
 
 // Contexts
