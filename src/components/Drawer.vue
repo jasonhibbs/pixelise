@@ -12,24 +12,26 @@
           @click="$emit('clickoverlay')"
         )
 
-        .drawer-card(
-          ref="card"
-          @mousewheel="onWheel"
-          @touchstart="onTouchstart"
-          @touchmove="onTouchmove"
-        )
+        focus-trap(@deactivate="$emit('dismiss')")
+          .drawer-card(
+            ref="card"
+            @mousewheel="onWheel"
+            @touchstart="onTouchstart"
+            @touchmove="onTouchmove"
+          )
 
-          .drawer-header(ref="header")
-            slot(name="header")
+            .drawer-header(ref="header")
+              slot(name="header")
 
-          .drawer-content(ref="content")
-            slot(name="content")
+            .drawer-content(ref="content")
+              slot(name="content")
 
 </template>
 <script lang="ts">
 import { Component, Ref, Vue } from 'vue-property-decorator'
+import { FocusTrap } from 'focus-trap-vue'
 
-@Component
+@Component({ components: { FocusTrap } })
 export default class Drawer extends Vue {
   @Ref('card') readonly cardElement!: HTMLElement
   @Ref('header') readonly headerElement!: HTMLElement
