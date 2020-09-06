@@ -6,7 +6,9 @@
       appear
       @after-enter="$emit('expand')"
     )
-      .drawer
+      .drawer(
+        role="dialog"
+      )
 
         .drawer-overlay(
           @click="$emit('clickoverlay')"

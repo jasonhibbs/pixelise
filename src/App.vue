@@ -10,7 +10,6 @@
     drawer#drawer(
       v-if="ui.drawerExpanded"
       ref="drawer"
-      role="dialog"
       aria-label="Pixelise Menu"
       @clickoverlay="drawerExpanded = false"
       @dismiss="drawerExpanded = false"
@@ -103,6 +102,7 @@ export default class App extends Vue {
 
   onClickClearMasks(e: Event) {
     this.$store.commit('removeAllMasks')
+    this.drawerExpanded = false
   }
 
   onClickUpload() {
@@ -115,6 +115,7 @@ export default class App extends Vue {
   onClickRestart() {
     this.$store.commit('removeAllMasks')
     this.$store.commit('updateImage', { key: 'input', value: null })
+    this.drawerExpanded = false
   }
 }
 </script>

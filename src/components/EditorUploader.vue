@@ -66,6 +66,7 @@ export default class EditorUploader extends Vue {
       key: 'download',
       value: `pixelated-${file.name}`,
     })
+    this.$store.commit('updateUI', { key: 'drawerExpanded', value: false })
   }
 
   // Dragging
