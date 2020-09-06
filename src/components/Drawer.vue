@@ -1,12 +1,13 @@
 <template lang="pug">
 
-    .drawer
 
-      .drawer-overlay(
-        @click="$emit('clickoverlay')"
-      )
+    transition(name="drawer" appear)
+      .drawer
 
-      transition(name="slide" appear)
+        .drawer-overlay(
+          @click="$emit('clickoverlay')"
+        )
+
         .drawer-card(
           ref="card"
           @mousewheel="onWheel"
@@ -93,9 +94,23 @@ export default class Drawer extends Vue {
   box-shadow: 0 0 3rem var(--color-contrast-alpha-20);
 }
 
+// Header
+
 .drawer-header {
   flex: none;
 }
+
+.drawer-header {
+  button.link {
+    display: block;
+    text-align: left;
+    width: 100%;
+    padding: rem(11) rem(14);
+    outline-offset: -3px;
+  }
+}
+
+// Content
 
 .drawer-content {
   flex: auto;
@@ -112,6 +127,36 @@ export default class Drawer extends Vue {
 
   p {
     margin: 0.5rem 0;
+  }
+}
+
+// Transition
+
+.drawer {
+  --drawer-transition-duration: 0.5s;
+}
+
+.drawer-enter-active {
+  transition: visibility var(--drawer-transition-duration);
+}
+
+.drawer-leave-active {
+  pointer-events: none;
+  transition: visibility 0s var(--drawer-transition-duration);
+}
+
+.drawer-card {
+  backface-visibility: hidden;
+  will-change: transform;
+
+  .drawer-enter-active &,
+  .drawer-leave-active & {
+    transition: transform 0.5s cubic-bezier(0.25, 0.83, 0.1, 1);
+  }
+
+  .drawer-enter &,
+  .drawer-leave-to & {
+    transform: translateX(110%);
   }
 }
 </style>
