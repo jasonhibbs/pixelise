@@ -1,7 +1,11 @@
 <template lang="pug">
 
 
-    transition(name="drawer" appear)
+    transition(
+      name="drawer"
+      appear
+      @after-enter="$emit('expand')"
+    )
       .drawer
 
         .drawer-overlay(
@@ -32,9 +36,11 @@ export default class Drawer extends Vue {
   @Ref('content') readonly contentElement!: HTMLElement
 
   focusFirstinContent() {
-    const focusable = this.contentElement.querySelectorAll(
-      '[href], button, input, select, textarea, [tabindex]:not([tabindex="-1"])'
-    )
+    const focusable = [
+      ...this.contentElement.querySelectorAll(
+        '[href], button, input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      ),
+    ].filter(el => !el.hasAttribute('disabled'))
     const first = focusable[0] as HTMLElement
     if (first) {
       first.focus()
@@ -44,15 +50,24 @@ export default class Drawer extends Vue {
   // Events
 
   onWheel(e: MouseWheelEvent) {
-    console.log(e)
+    if (e.deltaX < -42) {
+      this.$emit('dismiss')
+    }
   }
 
+  initialTouchX = 0
+
   onTouchstart(e: TouchEvent) {
-    console.log(e)
+    const firstTouch = e.touches[0]
+    this.initialTouchX = firstTouch.pageX
   }
 
   onTouchmove(e: TouchEvent) {
-    console.log(e)
+    const firstTouch = e.touches[0]
+    const delta = firstTouch.pageX - this.initialTouchX
+    if (delta > 30) {
+      this.$emit('dismiss')
+    }
   }
 }
 </script>

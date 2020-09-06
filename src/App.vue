@@ -13,7 +13,8 @@
       role="dialog"
       aria-label="Pixelise Menu"
       @clickoverlay="drawerExpanded = false"
-      @overscrolldown="drawerExpanded = false"
+      @dismiss="drawerExpanded = false"
+      @expand="onExpandDrawer"
     )
 
       template(#header)
@@ -29,11 +30,22 @@
         .buttons
           disc-button(
             :disc="{ icon: 'cross', color: 'red' }"
+            :disabled="!images.input"
             @click="onClickClearMasks"
           ) Clear all masks
           disc-button(
-            :disc="{ image: 'ko-fi' }"
+            :disc="{ icon: 'upload', color: 'orange' }"
+            @click="onClickUpload"
+          ) Upload new image
+          disc-button(
+            :disc="{ icon: 'undo', color: 'green' }"
+            :disabled="!images.input"
+            @click="onClickRestart"
+          ) Start over
+          disc-button(
+            :disc="{ image: 'svg/logo-kofi.svg' }"
             href="https://ko-fi.com/jasonhibbs"
+            target="_blank"
           ) Buy me a coffee
 
         footer
@@ -49,7 +61,7 @@
 <style lang="scss" src="@/assets/scss/style.scss"></style>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Ref, Vue } from 'vue-property-decorator'
 import { mapState } from 'vuex'
 import IconSvg from '@/components/IconSvg.vue'
 import Drawer from '@/components/Drawer.vue'
@@ -61,6 +73,8 @@ import DiscButton from '@/components/DiscButton.vue'
   computed: mapState(['ui', 'images']),
 })
 export default class App extends Vue {
+  @Ref() readonly drawer!: Drawer
+
   images!: any
   ui!: any
 
@@ -81,10 +95,26 @@ export default class App extends Vue {
     this.$store.commit('updateUI', { key: 'drawerExpanded', value })
   }
 
+  onExpandDrawer() {
+    this.drawer.focusFirstinContent()
+  }
+
   // Buttons
 
-  onClickClearMasks() {
-    console.log('clear masks')
+  onClickClearMasks(e: Event) {
+    this.$store.commit('removeAllMasks')
+  }
+
+  onClickUpload() {
+    const inputUpload = document.querySelector(
+      '#input-editor'
+    ) as HTMLInputElement
+    inputUpload?.click()
+  }
+
+  onClickRestart() {
+    this.$store.commit('removeAllMasks')
+    this.$store.commit('updateImage', { key: 'input', value: null })
   }
 }
 </script>
@@ -149,6 +179,18 @@ header {
     margin-top: 4rem;
     margin-left: 50%;
     transform: translateX(-50%);
+  }
+}
+
+// Drawer
+
+.drawer {
+  .buttons {
+    margin-top: auto;
+  }
+
+  footer {
+    margin-top: rem(8);
   }
 }
 

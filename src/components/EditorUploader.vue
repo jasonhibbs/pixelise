@@ -101,9 +101,11 @@ export default class EditorUploader extends Vue {
   // Input
 
   onFileChange(e: InputEvent) {
-    const files = (e.target as HTMLInputElement).files
+    const input = e.target as HTMLInputElement
+    const files = input.files
     if (files?.length) {
       this.updateImage(files[0])
+      input.value = ''
     }
   }
 }
