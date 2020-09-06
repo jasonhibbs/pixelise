@@ -1,40 +1,128 @@
 <template lang="pug">
 
-  #app(
-    :class="{ _dragging: ui.isDragging }"
-  )
+  #app(:class="classes")
 
-    header(:class="{_intro: !images.input}")
+    header
       h1 Pixelise
-
+      button.link(@click="drawerExpanded = !drawerExpanded") Menu
     router-view
 
-    transition(name="fade" appear)
-      .dropzone(v-if="ui.isDragging")
-        .dropzone-content
-          icon-svg(name="download")
-          p Drop it anywhere
+    drawer#drawer(
+      v-if="ui.drawerExpanded"
+      ref="drawer"
+      aria-label="Pixelise Menu"
+      @clickoverlay="drawerExpanded = false"
+      @dismiss="drawerExpanded = false"
+      @expand="onExpandDrawer"
+    )
+
+      template(#header)
+        button.link(
+          aria-controls="drawer"
+          :aria-expanded="ui.drawerExpanded"
+          @click="drawerExpanded = false"
+        )
+          span Close
+
+      template(#content)
+
+        .buttons
+          disc-button(
+            :disc="{ icon: 'cross', color: 'red' }"
+            :disabled="!images.input"
+            @click="onClickClearMasks"
+          ) Clear all masks
+          disc-button(
+            :disc="{ icon: 'upload', color: 'orange' }"
+            @click="onClickUpload"
+          ) Upload new image
+          disc-button(
+            :disc="{ icon: 'undo', color: 'green' }"
+            :disabled="!images.input"
+            @click="onClickRestart"
+          ) Start over
+          disc-button(
+            :disc="{ image: 'svg/logo-kofi.svg' }"
+            href="https://ko-fi.com/jasonhibbs"
+            target="_blank"
+          ) Buy me a coffee
+
+        footer
+          .layout
+            p Built with #[a(href="https://vuejs.org/") Vue]
+            p Powered by #[a(href="https://www.netlify.com/") Netlify]
+            p.vcard.h-card Made by #[a.p-name.u-url.fn.url(href="https://jasonhibbs.co.uk") Jason Hibbs]
+
+    dropzone(v-if="ui.isDragging")
 
 </template>
 
 <style lang="scss" src="@/assets/scss/style.scss"></style>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Ref, Vue } from 'vue-property-decorator'
 import { mapState } from 'vuex'
 import IconSvg from '@/components/IconSvg.vue'
+import Drawer from '@/components/Drawer.vue'
+import Dropzone from '@/components/Dropzone.vue'
+import DiscButton from '@/components/DiscButton.vue'
 
 @Component({
-  components: { IconSvg },
+  components: { IconSvg, DiscButton, Drawer, Dropzone },
   computed: mapState(['ui', 'images']),
 })
 export default class App extends Vue {
+  @Ref() readonly drawer!: Drawer
+
   images!: any
   ui!: any
+
+  get classes() {
+    return {
+      _dragging: this.ui.isDragging,
+      _intro: !this.images.input,
+    }
+  }
+
+  // Drawer
+
+  get drawerExpanded() {
+    return this.ui.drawerExpanded
+  }
+
+  set drawerExpanded(value) {
+    this.$store.commit('updateUI', { key: 'drawerExpanded', value })
+  }
+
+  onExpandDrawer() {
+    this.drawer.focusFirstinContent()
+  }
+
+  // Buttons
+
+  onClickClearMasks(e: Event) {
+    this.$store.commit('removeAllMasks')
+    this.drawerExpanded = false
+  }
+
+  onClickUpload() {
+    const inputUpload = document.querySelector(
+      '#input-editor'
+    ) as HTMLInputElement
+    inputUpload?.click()
+  }
+
+  onClickRestart() {
+    this.$store.commit('removeAllMasks')
+    this.$store.commit('updateImage', { key: 'input', value: null })
+    this.drawerExpanded = false
+  }
 }
 </script>
 
 <style lang="scss">
+@import '@/assets/scss/_util';
+
 html,
 body,
 #app,
@@ -42,26 +130,34 @@ main {
   height: 100%;
 }
 
+html {
+  overflow: hidden;
+}
+
 #app._dragging {
   pointer-events: none;
 }
 
+// Header
+
 header {
   pointer-events: none;
-  position: absolute;
-  top: 0;
-  top: env(safe-area-inset-top);
-  left: 0;
-  width: 100%;
+  position: relative;
   z-index: 2;
-  padding: 1rem;
-  will-change: width;
-  transition: width 0.5s cubic-bezier(0.25, 0.83, 0.1, 1);
+  display: flex;
+  width: 100%;
+  margin-top: env(safe-area-inset-top);
 
   h1 {
+    position: absolute;
+    top: 0;
+    top: env(safe-area-inset-top);
+    left: 0;
     display: inline-block;
-    font-size: 1.25rem;
+    font-size: rem(20);
     font-weight: 900;
+    line-height: 1;
+    padding: rem(11) rem(14);
     margin: 0;
     transform: none;
     will-change: font-size, margin, transform;
@@ -69,9 +165,16 @@ header {
     transition-duration: 0.5s;
     transition-timing-function: cubic-bezier(0.25, 0.83, 0.1, 1);
   }
+
+  button.link {
+    pointer-events: auto;
+    padding: rem(11) rem(14);
+    margin-left: auto;
+    outline-offset: -3px;
+  }
 }
 
-header._intro {
+#app._intro {
   h1 {
     font-size: 4em;
     margin-top: 4rem;
@@ -80,51 +183,19 @@ header._intro {
   }
 }
 
-.dropzone {
-  background: var(--color-root-alpha-80);
-  backdrop-filter: blur(20px);
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  margin: auto;
-  z-index: 10;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
+// Drawer
 
-  .icon {
-    font-size: 2em;
+.drawer {
+  .buttons {
+    margin-top: auto;
   }
 
-  svg {
-    margin: auto;
-
-    path {
-      stroke-width: 1.5px;
-    }
-  }
-
-  p {
-    width: calc(100vh - 4rem);
-    max-width: 18em;
-    margin: 1.5rem auto;
-  }
-
-  &:after {
-    $inset: 1rem;
-    content: '';
-    position: absolute;
-    top: $inset;
-    right: $inset;
-    bottom: $inset;
-    left: $inset;
-    margin: auto;
-    border: 2px dashed var(--color-contrast-20);
+  footer {
+    margin-top: rem(8);
   }
 }
+
+// Transitions
 
 .fade-enter-active,
 .fade-leave-active {

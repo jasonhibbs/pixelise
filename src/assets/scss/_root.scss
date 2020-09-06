@@ -22,6 +22,7 @@
 :after {
   box-sizing: inherit;
   font-weight: inherit;
+  outline-color: var(--color-root-alpha-0);
 }
 
 ::selection {
@@ -36,16 +37,18 @@
 
 .link {
   cursor: pointer;
+  background-color: transparent;
   color: var(--color-key);
   text-decoration: none;
   transition: color 0.1s, background-color 0.1s, outline-color 0.1s;
+  outline-offset: 3px;
 
   &:focus,
   &:hover {
     color: var(--color-key-70);
   }
 
-  @include focus-outline;
+  // @include focus-outline;
 
   &._unlink {
     &,

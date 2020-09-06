@@ -5,15 +5,16 @@
   background-color: var(--color-grey-30);
   border: 1px solid transparent;
   color: inherit;
+  outline-offset: 0;
   cursor: pointer;
   display: inline-block;
   line-height: (20/16);
   text-align: center;
-  transition: border-color 0.1s, background-color 0.1s, box-shadow 0.1s;
+  transition: border-color 0.1s, background-color 0.1s, box-shadow 0.1s,
+    outline-color 0.1s;
 
   &:focus,
   &:hover {
-    outline-offset: 0;
     text-decoration: none;
   }
 

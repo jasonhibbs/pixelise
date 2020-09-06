@@ -70,6 +70,7 @@ export default new Vuex.Store({
       showingPreview: false,
       hasChanges: true,
       maskHighlight: null,
+      drawerExpanded: false,
     },
     settings: {
       pixelScale: 0.18,

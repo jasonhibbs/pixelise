@@ -66,6 +66,7 @@ export default class EditorUploader extends Vue {
       key: 'download',
       value: `pixelated-${file.name}`,
     })
+    this.$store.commit('updateUI', { key: 'drawerExpanded', value: false })
   }
 
   // Dragging
@@ -76,7 +77,9 @@ export default class EditorUploader extends Vue {
   }
 
   onDragleaveDocument(e: DragEvent) {
-    this.isDragging = false
+    if (e.target === document.body) {
+      this.isDragging = false
+    }
   }
 
   onDragoverDocument(e: DragEvent) {
@@ -99,9 +102,11 @@ export default class EditorUploader extends Vue {
   // Input
 
   onFileChange(e: InputEvent) {
-    const files = (e.target as HTMLInputElement).files
+    const input = e.target as HTMLInputElement
+    const files = input.files
     if (files?.length) {
       this.updateImage(files[0])
+      input.value = ''
     }
   }
 }

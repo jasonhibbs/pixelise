@@ -4156,6 +4156,18 @@ flush-write-stream@^1.0.0:
     inherits "^2.0.3"
     readable-stream "^2.3.6"
 
+focus-trap-vue@^0.0.6:
+  version "0.0.6"
+  resolved "https://registry.yarnpkg.com/focus-trap-vue/-/focus-trap-vue-0.0.6.tgz#70858b2a1c659a7f44869b3294d07785afc5a04b"
+  integrity sha512-U6/Qt7kAUFHirurz1HqFMxtvjcQ397JZyShcDyRrmBLEkXu/q8sSKYtm2s+wWxO2ebE3HZySUBfc/iTfY4+UCQ==
+
+focus-trap@^6.0.1:
+  version "6.0.1"
+  resolved "https://registry.yarnpkg.com/focus-trap/-/focus-trap-6.0.1.tgz#f90725e4bb62ddab16e685b02b43b823858a4c0a"
+  integrity sha512-BOksLMPK/jlXD389jYPlZHAqiDdy9W63EBQfVIouME8s3UZsCEmq3NA53qt30S4i72sRcDjc1FHtast0TmqhRA==
+  dependencies:
+    tabbable "^5.0.0"
+
 follow-redirects@^1.0.0:
   version "1.13.0"
   resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.13.0.tgz#b42e8d93a2a7eea5ed88633676d6597bc8e384db"
@@ -8179,6 +8191,11 @@ svgo@^1.0.0:
     stable "^0.1.8"
     unquote "~1.1.1"
     util.promisify "~1.0.0"
+
+tabbable@^5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/tabbable/-/tabbable-5.0.0.tgz#862b6f33a625da45d7c648cff0262dab453d8b0c"
+  integrity sha512-+TJTMpkHRCWkMGczHHVEfzBYCsVOiBjd3vle55AT4H299BhdJDLFqcYmr7S6kt5EGhT8gAywSC5gPUBDNvtl7w==
 
 table@^5.2.3:
   version "5.4.6"

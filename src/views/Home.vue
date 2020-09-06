@@ -1,8 +1,6 @@
 <template lang="pug">
 
-  main(
-    :data-step="step"
-  )
+  main(:data-step="step")
 
     // Editor
 
@@ -202,7 +200,11 @@ export default class Home extends Vue {
 // Editor
 
 .editor {
-  background-image: linear-gradient(transparent 60%, var(--color-contrast-10));
+  background-image: linear-gradient(
+    to bottom,
+    var(--color-root) 60%,
+    var(--color-contrast-10)
+  );
   position: fixed;
   top: 0;
   right: 0;
