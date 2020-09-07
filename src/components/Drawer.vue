@@ -139,7 +139,7 @@ export default class Drawer extends Vue {
   @include font-size(13, 16);
   flex: none;
   justify-self: flex-end;
-  box-shadow: 0 -1px 0 var(--color-grey-10);
+  box-shadow: 0 -1px 0 var(--color-contrast-10);
   color: var(--color-contrast-60);
   padding: 0.5rem 0 10vh;
   margin-top: auto;

@@ -36,7 +36,7 @@ export default class Disc extends Vue {
   height: var(--size);
   border-radius: var(--size);
   overflow: hidden;
-  background-color: var(--color-grey-10);
+  background-color: var(--color-contrast-10);
 
   .disc-content {
     display: flex;
@@ -50,6 +50,10 @@ export default class Disc extends Vue {
     display: block;
   }
 
+  &[data-color='key'] {
+    background-color: var(--color-key-alpha-20);
+    color: var(--color-key);
+  }
   &[data-color='red'] {
     background-color: var(--color-red-alpha-20);
     color: var(--color-red);
