@@ -69,7 +69,7 @@ export default class Drawer extends Vue {
   onTouchmove(e: TouchEvent) {
     const firstTouch = e.touches[0]
     const delta = firstTouch.pageX - this.initialTouchX
-    if (delta > 30) {
+    if (delta > 90) {
       this.$emit('dismiss')
     }
   }
