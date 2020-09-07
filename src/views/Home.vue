@@ -38,17 +38,19 @@
 
     intro(v-if="step === 'start'")
 
-    context-masks(
-      v-if="step === 'mask'"
-      @masksadd="onClickAddMask"
-      @masksdone="onClickGoToSave"
-    )
+    transition(name="context-slide" appear)
+      context-masks(
+        v-if="step === 'mask'"
+        @masksadd="onClickAddMask"
+        @masksdone="onClickGoToSave"
+      )
 
-    context-save(
-      v-if="step === 'save'"
-      @masksedit="onClickBackToMask"
-      @settingschange="updateOutput"
-    )
+    transition(name="context-slide" appear)
+      context-save(
+        v-if="step === 'save'"
+        @masksedit="onClickBackToMask"
+        @settingschange="updateOutput"
+      )
 
 </template>
 <script lang="ts">
@@ -339,5 +341,24 @@ export default class Home extends Vue {
   > *:not(:last-child) {
     margin-inline-end: rem(12);
   }
+}
+
+.context-slide-enter-active,
+.context-slide-leave-active {
+  transition: transform, opacity;
+  transition-duration: 0.3s;
+  transition-timing-function: cubic-bezier(0.25, 0.83, 0.1, 1);
+}
+
+._save.context-slide-enter,
+._save.context-slide-leave-to {
+  opacity: 0;
+  transform: translateX(rem(54));
+}
+
+._masks.context-slide-enter,
+._masks.context-slide-leave-to {
+  opacity: 0;
+  transform: translateX(rem(-54));
 }
 </style>
