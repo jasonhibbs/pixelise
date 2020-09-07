@@ -3,7 +3,33 @@
 @media (prefers-color-scheme: dark) {
   :root {
     --color-black: black;
-    --color-key: var(--color-key-40);
+
+    /* purple */
+
+    --color-purple: #775cff;
+
+    --color-purple-5: #f2efff;
+    --color-purple-10: #e4deff;
+    --color-purple-20: #c9bfff;
+    --color-purple-30: #af9fff;
+    --color-purple-40: #947eff;
+    --color-purple-50: #775cff;
+    --color-purple-60: #604acf;
+    --color-purple-70: #4a39a1;
+    --color-purple-80: #352976;
+    --color-purple-90: #211a4d;
+    --color-purple-95: #171236;
+
+    --color-purple-alpha-0: rgba(119, 92, 255, 0);
+    --color-purple-alpha-10: rgba(119, 92, 255, 0.1);
+    --color-purple-alpha-20: rgba(119, 92, 255, 0.2);
+    --color-purple-alpha-30: rgba(119, 92, 255, 0.3);
+    --color-purple-alpha-40: rgba(119, 92, 255, 0.4);
+    --color-purple-alpha-50: rgba(119, 92, 255, 0.5);
+    --color-purple-alpha-60: rgba(119, 92, 255, 0.6);
+    --color-purple-alpha-70: rgba(119, 92, 255, 0.7);
+    --color-purple-alpha-80: rgba(119, 92, 255, 0.8);
+    --color-purple-alpha-90: rgba(119, 92, 255, 0.9);
 
     /* grey */
 
@@ -77,7 +103,7 @@
   .link {
     &:focus,
     &:hover {
-      color: var(--color-key-30);
+      color: var(--color-key-40);
     }
   }
 }
