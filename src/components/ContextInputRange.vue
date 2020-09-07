@@ -1,10 +1,6 @@
 <template lang="pug">
 
   .context-input-range(:class="classes")
-    .context-input-range-display
-      .context-input-range-track
-      .context-input-range-progress(:style="{ width: progressPercent }")
-        .context-input-range-thumb
     .context-input-range-control
       input(
         type="range"
@@ -13,7 +9,14 @@
         :value="value"
         @focus="onFocus"
         @blur="onBlur"
+        @mouseenter="onMouseenter"
+        @mouseleave="onMouseleave"
       )
+    .context-input-range-display
+      .context-input-range-track
+      .context-input-range-progress(:style="{ width: progressPercent }")
+        .context-input-range-thumb
+
 
 </template>
 <script lang="ts">
@@ -35,6 +38,7 @@ export default class ContextInputRange extends Vue {
   get classes() {
     return {
       _focus: this.isFocussed,
+      _hover: this.isHovered,
     }
   }
 
@@ -54,6 +58,7 @@ export default class ContextInputRange extends Vue {
   // Events
 
   isFocussed = false
+  isHovered = false
 
   onFocus() {
     this.isFocussed = true
@@ -61,6 +66,14 @@ export default class ContextInputRange extends Vue {
 
   onBlur() {
     this.isFocussed = false
+  }
+
+  onMouseenter() {
+    this.isHovered = true
+  }
+
+  onMouseleave() {
+    this.isHovered = false
   }
 }
 </script>
@@ -92,8 +105,9 @@ export default class ContextInputRange extends Vue {
   bottom: 0;
   left: 0;
   margin: auto;
-  padding: 0 rem(17);
+  padding: 0 rem(16);
   opacity: 0;
+  z-index: 1;
 
   input {
     border: none;
@@ -105,7 +119,8 @@ export default class ContextInputRange extends Vue {
 
 .context-input-range-display {
   width: 100%;
-  margin: 0 rem(25);
+  margin: 0 rem(24);
+  pointer-events: none;
 }
 
 .context-input-range-track {
@@ -135,6 +150,11 @@ export default class ContextInputRange extends Vue {
   border-radius: var(--thumb-size);
   background-color: var(--color-key);
   transform: translate3d(50%, -50%, 0);
+  transition: box-shadow 0.1s;
   margin-right: -5px;
+
+  .context-input-range._hover & {
+    box-shadow: 0 0 0 3px var(--color-key-alpha-40);
+  }
 }
 </style>
