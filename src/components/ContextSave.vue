@@ -14,7 +14,7 @@
         step="0.01"
         title="Pixel Density"
         v-model="pixelScale"
-
+        @input="updateOutput"
       )
 
       a.button._primary(
