@@ -22,7 +22,7 @@ export default class Disc extends Vue {
     if (!this.data.image) {
       return null
     }
-    return require(`../assets/${this.data.image}`)
+    return `./${this.data.image}`
   }
 }
 </script>
