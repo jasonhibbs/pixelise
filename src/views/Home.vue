@@ -237,7 +237,7 @@ export default class Home extends Vue {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     align-items: center;
-    margin: rem(-1) 0 rem(1) rem(6);
+    margin: 0 0 0 rem(6);
   }
 
   .loader {
