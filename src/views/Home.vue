@@ -155,7 +155,7 @@ export default class Home extends Vue {
     if (!this.ui.maskHighlight) {
       return null
     }
-    return this.masks.find((x: any) => x.id === this.ui.maskHighlight)
+    return this.masks.find((x: Mask) => x.id === this.ui.maskHighlight)
   }
 
   getStageCentre() {

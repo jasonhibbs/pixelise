@@ -3,25 +3,6 @@ import Vuex from 'vuex'
 
 Vue.use(Vuex)
 
-interface GenericMutation {
-  key: string
-  value: any
-}
-
-interface StoreImages {
-  input: FileReader['result']
-  output: string
-  context: CanvasRenderingContext2D | null
-}
-
-interface StoreMask {
-  id: number
-  x: number
-  y: number
-  w: number
-  h: number
-}
-
 const images: StoreImages = {
   input: null,
   output: '',
@@ -40,8 +21,10 @@ const drawMasks = (state: any, img: HTMLImageElement) => {
     newCanvas.width = newWidth
     newCanvas.height = newHeight
     const newContext = newCanvas.getContext('2d')
-    newContext!.drawImage(img, x, y, w, h, 0, 0, newWidth, newHeight)
-    state.images.context.drawImage(newCanvas, x, y, w, h)
+    if (newContext) {
+      newContext.drawImage(img, x, y, w, h, 0, 0, newWidth, newHeight)
+      state.images.context.drawImage(newCanvas, x, y, w, h)
+    }
   })
 }
 
@@ -49,7 +32,7 @@ const updateCanvasData = (state: any) => {
   return new Promise(resolve => {
     const ctx = state.images.context
     const img = new Image()
-    img.onload = e => {
+    img.onload = () => {
       if (ctx) {
         ctx.canvas.width = img.width
         ctx.canvas.height = img.height

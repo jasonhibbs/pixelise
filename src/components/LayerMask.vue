@@ -33,7 +33,7 @@ import { mapState } from 'vuex'
   computed: mapState(['ui']),
 })
 export default class NewComponent extends Vue {
-  @Prop() data!: any
+  @Prop() data!: Mask
 
   ui!: any
 

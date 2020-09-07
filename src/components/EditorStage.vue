@@ -33,8 +33,6 @@
             :data="mask"
             @drag="onDragMask"
             @resize="onResizeMask"
-            @mouseenter="onMouseenterMask(mask.id)"
-            @mouseleave="onMouseleaveMask(mask.id)"
             @change="$emit('change')"
           )
 
@@ -54,7 +52,7 @@ export default class EditorStage extends Vue {
   @Ref('baseImage') readonly imgBase!: HTMLImageElement
   @Ref('previewImage') readonly imgPreview!: HTMLImageElement
 
-  @Prop() value!: any[]
+  @Prop() value!: Mask[]
 
   ui!: any
   images!: any
@@ -67,19 +65,18 @@ export default class EditorStage extends Vue {
 
   // Image Rect
 
-  refreshRect = 0
+  imageRect: DOMRect = new DOMRect()
 
-  get imageRect() {
-    const refresh = this.refreshRect
-    return this.imgBase.getBoundingClientRect()
+  refreshRect() {
+    this.imageRect = this.imgBase.getBoundingClientRect()
   }
 
   // Drawing
 
   isDrawing = false
-  drawingTimeout: any = null
+  drawingTimeout = 0
 
-  drawnMask = {
+  drawnMask: DrawnMask = {
     startX: 0,
     startY: 0,
     x: 0,
@@ -100,7 +97,7 @@ export default class EditorStage extends Vue {
 
   onMousedownStage(e: MouseEvent) {
     if (this.images.input) {
-      this.refreshRect++
+      this.refreshRect()
       this.drawnMask.startX = e.clientX - this.imageRect.x
       this.drawnMask.startY = e.clientY - this.imageRect.y
       this.drawnMask.x = this.drawnMask.startX
@@ -142,7 +139,7 @@ export default class EditorStage extends Vue {
     }
   }
 
-  onMouseupDrawing(e: MouseEvent) {
+  onMouseupDrawing() {
     document.removeEventListener('mousemove', this.onMousemoveDrawing)
     document.removeEventListener('mouseup', this.onMouseupDrawing)
 
@@ -156,7 +153,7 @@ export default class EditorStage extends Vue {
 
   // Stage
 
-  onClickStage(e: MouseEvent) {
+  onClickStage() {
     clearTimeout(this.drawingTimeout)
     if (this.ui.showingPreview) {
       this.$store.commit('updateUI', { key: 'showingPreview', value: false })
@@ -165,7 +162,7 @@ export default class EditorStage extends Vue {
 
   onDblclickStage(e: MouseEvent) {
     this.$store.commit('updateUI', { key: 'showingPreview', value: false })
-    this.refreshRect++
+    this.refreshRect()
     const w = 128
     const h = 32
     const maxX = this.imgBase.width - w
@@ -179,8 +176,11 @@ export default class EditorStage extends Vue {
 
   // Masks
 
-  onDragMask(e: any) {
+  onDragMask(e: Mask) {
     const mask = this.value.find(x => x.id === e.id)
+    if (mask === undefined) {
+      return
+    }
     const maxX = this.imgBase.width - mask.w
     const maxY = this.imgBase.height - mask.h
     mask.x = Math.max(0, Math.min(maxX, Math.floor(e.x)))
@@ -188,22 +188,17 @@ export default class EditorStage extends Vue {
     this.$emit('input', this.value)
   }
 
-  onResizeMask(e: any) {
+  onResizeMask(e: Mask) {
     const mask = this.value.find(x => x.id === e.id)
+    if (mask === undefined) {
+      return
+    }
     const min = 10
     const maxW = this.imgBase.width - mask.x
     const maxH = this.imgBase.height - mask.y
     mask.w = Math.max(min, Math.min(maxW, Math.floor(e.w)))
     mask.h = Math.max(min, Math.min(maxH, Math.floor(e.h)))
     this.$emit('input', this.value)
-  }
-
-  onMouseenterMask(id: number) {
-    // this.$store.commit('updateUI', { key: 'maskHighlight', value: id })
-  }
-
-  onMouseleaveMask(id: number) {
-    // this.$store.commit('updateUI', { key: 'maskHighlight', value: null })
   }
 }
 </script>

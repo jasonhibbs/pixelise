@@ -38,7 +38,7 @@ import IconSvg from '@/components/IconSvg.vue'
   computed: mapState(['ui']),
 })
 export default class ImageMask extends Vue {
-  @Prop() data: any
+  @Prop() data!: Mask
 
   ui!: any
 
@@ -68,10 +68,10 @@ export default class ImageMask extends Vue {
 
   // Interaction
 
-  interactionTimer: any = null
+  interactionTimeout = 0
 
   onInteractionStart() {
-    clearTimeout(this.interactionTimer)
+    clearTimeout(this.interactionTimeout)
     this.$store.commit('updateUI', {
       key: 'maskHighlight',
       value: this.data.id,
@@ -83,7 +83,7 @@ export default class ImageMask extends Vue {
     this.isResizing = false
     this.$emit('change')
 
-    this.interactionTimer = setTimeout(() => {
+    this.interactionTimeout = setTimeout(() => {
       if (this.ui.maskHighlight === this.data.id) {
         this.$store.commit('updateUI', { key: 'maskHighlight', value: null })
       }
@@ -102,14 +102,14 @@ export default class ImageMask extends Vue {
   isDragging = false
   isResizing = false
 
-  onMouseup(e: MouseEvent) {
+  onMouseup() {
     document.removeEventListener('mousemove', this.onMousemoveMask)
     document.removeEventListener('mousemove', this.onMousemoveHandle)
     document.removeEventListener('mouseup', this.onMouseup)
     this.onInteractionEnd()
   }
 
-  onTouchend(e: TouchEvent) {
+  onTouchend() {
     document.removeEventListener('touchmove', this.onTouchmoveMask)
     document.removeEventListener('touchmove', this.onTouchmoveHandle)
     document.removeEventListener('touchend', this.onTouchend)
@@ -124,7 +124,7 @@ export default class ImageMask extends Vue {
 
   emitFromDragCoordinates(x: number, y: number) {
     this.$emit('drag', {
-      id: this.data.id,
+      ...this.data,
       x: this.maskStartX + (x - this.dragStartX),
       y: this.maskStartY + (y - this.dragStartY),
     })
@@ -154,14 +154,14 @@ export default class ImageMask extends Vue {
   }
 
   dblclickTouchAwait = false
-  dblclickTouchTimer: any
+  dblclickTouchTimeout = 0
 
   onTouchstartMask(e: TouchEvent) {
     if (this.dblclickTouchAwait) {
       this.onDblclick()
     } else {
       this.dblclickTouchAwait = true
-      this.dblclickTouchTimer = setTimeout(() => {
+      this.dblclickTouchTimeout = setTimeout(() => {
         this.dblclickTouchAwait = false
       }, 200)
     }
@@ -180,7 +180,7 @@ export default class ImageMask extends Vue {
 
   emitFromResizeCoordinates(x: number, y: number) {
     this.$emit('resize', {
-      id: this.data.id,
+      ...this.data,
       w: this.maskStartW + (x - this.dragStartX),
       h: this.maskStartH + (y - this.dragStartY),
     })
