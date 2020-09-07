@@ -54,6 +54,7 @@ export default class EditorUploader extends Vue {
 
   onLoadReader(result: FileReader['result']) {
     this.$store.commit('updateImage', { key: 'input', value: result })
+    this.$store.commit('updateUI', { key: 'showingPreview', value: false })
   }
 
   updateImage(file: File) {
@@ -62,6 +63,7 @@ export default class EditorUploader extends Vue {
       this.onLoadReader(reader.result)
     }
     reader.readAsDataURL(file)
+    this.$store.commit('updateImage', { key: 'type', value: file.type })
     this.$store.commit('updateString', {
       key: 'download',
       value: `pixelised-${file.name}`,

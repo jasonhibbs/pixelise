@@ -7,6 +7,7 @@ const images: StoreImages = {
   input: null,
   output: '',
   context: null,
+  type: '',
 }
 
 const masks: StoreMask[] = []
@@ -38,7 +39,7 @@ const updateCanvasData = (state: any) => {
         ctx.canvas.height = img.height
         ctx.drawImage(img, 0, 0)
         drawMasks(state, img)
-        resolve(ctx.canvas.toDataURL())
+        resolve(ctx.canvas.toDataURL(state.images.type))
       }
     }
     img.src = state.images.input as string

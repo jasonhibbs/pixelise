@@ -28,6 +28,7 @@ interface StoreImages {
   input: FileReader['result']
   output: string
   context: CanvasRenderingContext2D | null
+  type: string
 }
 
 interface StoreMask extends Mask {}

@@ -25,7 +25,7 @@
       a.button._primary(
         title="Save Image"
         :disabled="!images.output"
-        :href="images.output"
+        :href="downloadHref"
         :download="strings.download"
       )
         icon-svg(name="download")
@@ -47,6 +47,11 @@ export default class ContextSave extends Vue {
   settings!: any
   strings!: any
   images!: any
+
+  get downloadHref() {
+    const uri = this.images.output.replace(/^data:image\/\w+;base64,/, '')
+    return `data:application/octet-stream;base64,${uri}`
+  }
 
   get pixelScale() {
     return this.settings.pixelScale
