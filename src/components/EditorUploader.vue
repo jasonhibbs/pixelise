@@ -58,7 +58,7 @@ export default class EditorUploader extends Vue {
 
   updateImage(file: File) {
     const reader = new FileReader()
-    reader.onload = e => {
+    reader.onload = () => {
       this.onLoadReader(reader.result)
     }
     reader.readAsDataURL(file)

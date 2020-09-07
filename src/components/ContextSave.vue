@@ -34,8 +34,6 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import { mapState } from 'vuex'
-
-import throttle from 'lodash.throttle'
 import IconSvg from '@/components/IconSvg.vue'
 
 @Component({

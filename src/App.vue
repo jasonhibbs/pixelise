@@ -101,7 +101,7 @@ export default class App extends Vue {
 
   // Buttons
 
-  onClickClearMasks(e: Event) {
+  onClickClearMasks() {
     this.$store.commit('removeAllMasks')
     this.$store.commit('updateUI', { key: 'showingPreview', value: false })
     this.drawerExpanded = false
