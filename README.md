@@ -1,4 +1,4 @@
-# pixelator
+# pixelise
 
 ## Project setup
 ```

@@ -53,7 +53,7 @@ export default class ContextUploader extends Vue {
     reader.readAsDataURL(file)
     this.$store.commit('updateString', {
       key: 'download',
-      value: `pixelated-${file.name}`,
+      value: `pixelised-${file.name}`,
     })
   }
 

@@ -64,7 +64,7 @@ export default class EditorUploader extends Vue {
     reader.readAsDataURL(file)
     this.$store.commit('updateString', {
       key: 'download',
-      value: `pixelated-${file.name}`,
+      value: `pixelised-${file.name}`,
     })
     this.$store.commit('updateUI', { key: 'drawerExpanded', value: false })
   }

@@ -59,7 +59,7 @@ export default new Vuex.Store({
       pixelScale: 0.18,
     },
     strings: {
-      download: 'pixelated',
+      download: 'pixelised',
     },
     images,
     masks,
