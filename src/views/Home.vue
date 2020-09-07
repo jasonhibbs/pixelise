@@ -339,31 +339,5 @@ export default class Home extends Vue {
   > *:not(:last-child) {
     margin-inline-end: rem(12);
   }
-
-  .field {
-    background-color: var(--color-root);
-    border-radius: rem(48);
-    box-shadow: 0 0 0 1px var(--color-contrast-alpha-10);
-    display: flex;
-    align-items: center;
-    min-height: rem(48);
-    flex: auto;
-    padding: 0 rem(12);
-  }
-
-  .field-control {
-    flex: auto;
-  }
-
-  .field-range {
-    padding: 0 rem(18);
-
-    input {
-      padding: rem(16) 0;
-      border: none;
-      display: block;
-      width: 100%;
-    }
-  }
 }
 </style>

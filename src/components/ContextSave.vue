@@ -8,19 +8,14 @@
       )
         icon-svg(name="arrow-left")
 
+      context-input-range#input-density(
+        min="0.03"
+        max="0.26"
+        step="0.01"
+        title="Pixel Density"
+        v-model="pixelScale"
 
-      .field.field-range
-        .field-control
-          input#input-density(
-            type="range"
-            min="0.03"
-            max="0.26"
-            step="0.01"
-            title="Pixel Density"
-            v-model="pixelScale"
-            @input="updateOutput"
-          )
-        //- p.field-message(v-if="isLargeImage") Big images take longer to update
+      )
 
       a.button._primary(
         title="Save Image"
@@ -35,10 +30,12 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { mapState } from 'vuex'
 import IconSvg from '@/components/IconSvg.vue'
+import ContextInputRange from '@/components/ContextInputRange.vue'
 
 @Component({
   components: {
     IconSvg,
+    ContextInputRange,
   },
   computed: mapState(['ui', 'strings', 'settings', 'images']),
 })
