@@ -49,6 +49,7 @@
 
         footer
           .layout
+            p Set in #[a(href="https://rsms.me/inter/") Inter]
             p Built with #[a(href="https://vuejs.org/") Vue]
             p Powered by #[a(href="https://www.netlify.com/") Netlify]
             p.vcard.h-card Made by #[a.p-name.u-url.fn.url(href="https://jasonhibbs.co.uk") Jason Hibbs]
@@ -102,6 +103,7 @@ export default class App extends Vue {
 
   onClickClearMasks(e: Event) {
     this.$store.commit('removeAllMasks')
+    this.$store.commit('updateUI', { key: 'showingPreview', value: false })
     this.drawerExpanded = false
   }
 
@@ -130,7 +132,8 @@ main {
   height: 100%;
 }
 
-html {
+html,
+body {
   overflow: hidden;
 }
 
@@ -154,14 +157,15 @@ header {
     top: env(safe-area-inset-top);
     left: 0;
     display: inline-block;
-    font-size: rem(20);
+    font-size: em(20);
     font-weight: 900;
     line-height: 1;
     padding: rem(11) rem(14);
     margin: 0;
-    transform: none;
-    will-change: font-size, margin, transform;
-    transition: font-size, margin, transform;
+    width: 0;
+    text-align: center;
+    will-change: font-size, width;
+    transition: font-size, width;
     transition-duration: 0.5s;
     transition-timing-function: cubic-bezier(0.25, 0.83, 0.1, 1);
   }
@@ -176,10 +180,9 @@ header {
 
 #app._intro {
   h1 {
-    font-size: 4em;
+    font-size: em(64);
+    width: 100%;
     margin-top: 4rem;
-    margin-left: 50%;
-    transform: translateX(-50%);
   }
 }
 

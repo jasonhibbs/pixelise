@@ -6,7 +6,7 @@
         li
           h2
             label.link(for="input-editor") Add an image
-          p #[label.link(for="input-editor") Choose one from your device] or drag one in, any time.
+          p #[label.link(for="input-editor") Choose one from your device], or drag one in any time.
         li
           h2 Mask it
           p Place and size rectangles over the bits to pixelised.
@@ -32,7 +32,7 @@ export default class Intro extends Vue {}
   width: 100%;
 
   .layout {
-    max-width: em(280);
+    max-width: em(260);
   }
 
   h2 {

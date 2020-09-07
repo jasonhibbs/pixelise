@@ -21,7 +21,7 @@ export default class IconSvg extends Vue {
 </script>
 <style lang="scss">
 .icon {
-  --size: (20em/16);
+  --size: 1.25em;
   display: block;
   min-width: var(--size);
   min-height: var(--size);
