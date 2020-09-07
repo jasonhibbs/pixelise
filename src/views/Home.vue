@@ -87,7 +87,7 @@ export default class Home extends Vue {
   strings!: any
   images!: any
 
-  get masks() {
+  get masks(): Mask[] {
     return this.$store.state.masks
   }
 
@@ -147,42 +147,59 @@ export default class Home extends Vue {
   onLoadStageImage(image: HTMLImageElement) {
     this.isLargeImage = image.width > 999 || image.height > 999
     this.$store.commit('removeAllMasks')
-    const { x, y } = this.getStageCentre()
-    this.addMask(x - 64, y - 16)
+    this.addMaskAtCentre()
   }
 
   // Masks
+
+  addMask(x = 36, y = 36, w = 144, h = 36) {
+    this.$store.commit('addMask', { x, y, w, h })
+  }
 
   get highlightedMask() {
     if (!this.ui.maskHighlight) {
       return null
     }
-    return this.masks.find((x: Mask) => x.id === this.ui.maskHighlight)
+    return this.masks.find(x => x.id === this.ui.maskHighlight)
   }
 
   getStageCentre() {
-    let x = 20
-    let y = 20
+    let x = 36
+    let y = 36
+    let right = 144
+    let bottom = 144
     const stage = document.querySelector('.stage') as HTMLElement
     const context = document
       .querySelector('.stage-context')
       ?.getBoundingClientRect()
     if (stage && context) {
+      console.log(stage, context)
       const stageCentreX = stage.clientWidth / 2
       const stageCentreY = stage.clientHeight / 2
       x = Math.floor(stageCentreX - context.x)
       y = Math.floor(stageCentreY - context.y)
+      right = stage.clientWidth - context.x
+      bottom = stage.clientHeight - context.y
     }
-    return { x, y }
+    return { x, y, right, bottom }
   }
 
-  addMask(x = 40, y = 40, w = 128, h = 32) {
-    this.$store.commit('addMask', { x, y, w, h })
+  addMaskAtCentre() {
+    const { x, y, right, bottom } = this.getStageCentre()
+    const target = { x: x - 72, y: y - 18 }
+    this.masks.forEach(mask => {
+      if (mask.x === target.x && target.x < right - 180) {
+        target.x = target.x + 6
+      }
+      if (mask.y === target.y && target.y < bottom - 72) {
+        target.y = target.y + 6
+      }
+    })
+    this.addMask(target.x, target.y)
   }
 
   onClickAddMask() {
-    const { x, y } = this.getStageCentre()
-    this.addMask(x - 64, y - 16)
+    this.addMaskAtCentre()
   }
 
   // Output
@@ -346,19 +363,19 @@ export default class Home extends Vue {
 .context-slide-enter-active,
 .context-slide-leave-active {
   transition: transform, opacity;
-  transition-duration: 0.3s;
+  transition-duration: 0.4s;
   transition-timing-function: cubic-bezier(0.25, 0.83, 0.1, 1);
 }
 
 ._save.context-slide-enter,
 ._save.context-slide-leave-to {
   opacity: 0;
-  transform: translateX(rem(54));
+  transform: translateX(rem(60));
 }
 
 ._masks.context-slide-enter,
 ._masks.context-slide-leave-to {
   opacity: 0;
-  transform: translateX(rem(-54));
+  transform: translateX(rem(-60));
 }
 </style>

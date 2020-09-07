@@ -91,7 +91,7 @@ export default new Vuex.Store({
       state.masks = masks
       state.ui.hasChanges = true
     },
-    addMask(state, { x = 10, y = 10, w = 128, h = 32 }) {
+    addMask(state, { x = 36, y = 36, w = 144, h = 36 }) {
       state.masks.push({ id: new Date().getTime(), x, y, w, h })
       state.ui.hasChanges = true
     },
