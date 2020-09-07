@@ -178,8 +178,8 @@ export default class Home extends Vue {
       const stageCentreY = stage.clientHeight / 2
       x = Math.floor(stageCentreX - context.x)
       y = Math.floor(stageCentreY - context.y)
-      right = stage.clientWidth - context.x
-      bottom = stage.clientHeight - context.y
+      right = Math.min(stage.clientWidth - context.x, context.width)
+      bottom = Math.min(stage.clientHeight - context.y, context.height)
     }
     return { x, y, right, bottom }
   }
@@ -188,6 +188,9 @@ export default class Home extends Vue {
     const { x, y, right, bottom } = this.getStageCentre()
     const target = { x: x - 72, y: y - 18 }
     this.masks.forEach(mask => {
+      if (mask.x !== target.x || mask.y !== target.y) {
+        return true
+      }
       if (mask.x === target.x && target.x < right - 180) {
         target.x = target.x + 6
       }
