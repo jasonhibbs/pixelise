@@ -9,13 +9,16 @@
 }
 
 @function rem($value: 16) {
+  @return (1rem / 16) * $value;
   @return #{'calc((1rem/16) * '} $value #{')'};
 }
 @function -rem($value: 16) {
+  @return (-1rem / 16) * $value;
   @return #{'calc((-1rem/16) * '} $value #{')'};
 }
 
 @function em($value: 16, $context: 16) {
+  @return (1em / $context) * $value;
   @return #{'calc((1em /'} $context #{') * '} $value #{')'};
 }
 
@@ -56,5 +59,14 @@
   &:focus {
     outline-width: $width;
     outline-color: $color;
+  }
+}
+
+%backdrop-blur {
+  background-color: var(--color-root-alpha-40);
+  backdrop-filter: brightness(200%) blur(20px);
+
+  @media (prefers-color-scheme: dark) {
+    backdrop-filter: brightness(40%) blur(20px);
   }
 }
