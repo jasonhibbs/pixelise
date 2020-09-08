@@ -3,7 +3,7 @@
   .context._save
     .context-controls
       button(
-        title="Back"
+        title="Edit Masks"
         @click="onClickBackToMask"
       )
         icon-svg(name="arrow-left")

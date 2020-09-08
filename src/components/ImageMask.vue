@@ -1,31 +1,32 @@
 <template lang="pug">
 
-  .mask(
-    :data-id="data.id"
-    :class="classes"
-    :style="styles"
-    @mouseenter="$emit('mouseenter')"
-    @mouseleave="$emit('mouseleave')"
-    @dblclick.stop="onDblclick"
-  )
-    .box(
-      @mousedown.left.stop="onMousedownMask"
-      @touchstart.prevent="onTouchstartMask"
+  transition(name="mask-pop" appear)
+    .mask(
+      :data-id="data.id"
+      :class="classes"
+      :style="styles"
+      @mouseenter="$emit('mouseenter')"
+      @mouseleave="$emit('mouseleave')"
+      @dblclick.stop="onDblclick"
     )
+      .box(
+        @mousedown.left.stop="onMousedownMask"
+        @touchstart.prevent="onTouchstartMask"
+      )
 
-    .handle(
-      @mousedown.left.stop="onMousedownHandle"
-      @touchstart.prevent.stop="onTouchstartHandle"
-    )
-      .handle-actual
+      .handle(
+        @mousedown.left.stop="onMousedownHandle"
+        @touchstart.prevent.stop="onTouchstartHandle"
+      )
+        .handle-actual
 
-    button(
-      title="Remove Mask"
-      @mousedown.stop
-      @click.stop="onClickDelete"
-    )
-      .button
-        icon-svg(name="cross")
+      button(
+        title="Remove Mask"
+        @mousedown.stop
+        @click.stop="onClickDelete"
+      )
+        .button
+          icon-svg(name="cross")
 
 </template>
 <script lang="ts">
@@ -240,6 +241,8 @@ export default class ImageMask extends Vue {
   --mask-button-size: 20px;
 
   position: absolute;
+  transform: scale(1);
+  backface-visibility: hidden;
   will-change: opacity;
   transition: opacity 0.2s;
 
@@ -386,5 +389,23 @@ export default class ImageMask extends Vue {
 .mask:hover .box,
 .mask._drawn .box {
   background-color: var(--mask-hover-color);
+}
+
+// Transition
+
+.mask-pop-enter-active,
+.mask-pop-leave-active {
+  transition: transform, opacity;
+  transition-duration: 66ms;
+  transition-timing-function: ease-out;
+}
+
+.mask-pop-enter {
+  transform: scale(1.2);
+  opacity: 0;
+}
+.mask-pop-leave-to {
+  transform: scale(0.8);
+  opacity: 0;
 }
 </style>

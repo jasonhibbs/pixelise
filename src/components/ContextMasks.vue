@@ -13,7 +13,7 @@
 
       button._primary(
         v-if="images.input"
-        title="Next"
+        title="Preview Pixels"
         :disabled="!masks.length"
         @click="onClickGoToSave"
       )

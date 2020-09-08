@@ -154,7 +154,7 @@ export default class ContextInputRange extends Vue {
   margin-right: -5px;
 
   .context-input-range._hover & {
-    box-shadow: 0 0 0 3px var(--color-key-alpha-40);
+    box-shadow: 0 0 0 3px var(--color-focus);
   }
 }
 </style>

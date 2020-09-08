@@ -173,7 +173,6 @@ export default class Home extends Vue {
       .querySelector('.stage-context')
       ?.getBoundingClientRect()
     if (stage && context) {
-      console.log(stage, context)
       const stageCentreX = stage.clientWidth / 2
       const stageCentreY = stage.clientHeight / 2
       x = Math.floor(stageCentreX - context.x)
@@ -304,6 +303,8 @@ export default class Home extends Vue {
   width: 100%;
   margin-bottom: clamp(max(2rem, env(safe-area-inset-bottom)), 5vw, 3rem);
   pointer-events: none;
+  will-change: transform;
+  backface-visibility: hidden;
 }
 
 .context button,

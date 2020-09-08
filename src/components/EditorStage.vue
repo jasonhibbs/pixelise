@@ -31,6 +31,7 @@
         template(v-for="mask in value")
           image-mask(
             :data="mask"
+            :key="mask.id"
             @drag="onDragMask"
             @resize="onResizeMask"
             @change="$emit('change')"
