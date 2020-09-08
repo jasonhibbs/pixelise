@@ -164,6 +164,7 @@ header {
     margin: 0;
     width: 0;
     text-align: center;
+    user-select: none;
     will-change: font-size, width;
     transition: font-size, width;
     transition-duration: 0.5s;

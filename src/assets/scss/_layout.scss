@@ -3,23 +3,6 @@
 :root {
   --layout-measure: #{em(640)};
   --layout-base: calc(100% - 2rem);
-
-  --space-hairline: 1;
-  --space-smallest: 2;
-  --space-smaller: 4;
-  --space-small: 8;
-  --space-mid: 16;
-  --space-big: 24;
-  --space-bigger: 32;
-  --space-biggest: 48;
-
-  --rem-space-smallest: #{rem(var(--space-smallest))};
-  --rem-space-smaller: #{rem(var(--space-smaller))};
-  --rem-space-small: #{rem(var(--space-small))};
-  --rem-space-mid: #{rem(var(--space-mid))};
-  --rem-space-big: #{rem(var(--space-big))};
-  --rem-space-bigger: #{rem(var(--space-bigger))};
-  --rem-space-biggest: #{rem(var(--space-biggest))};
 }
 
 .layout {

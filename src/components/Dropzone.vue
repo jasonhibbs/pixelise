@@ -4,7 +4,7 @@
     .dropzone
       .dropzone-content
         disc(:data="{ icon: 'download' }")
-        p Drop it anywhere
+        p Drop it anywhere to upload
 
 </template>
 <script lang="ts">

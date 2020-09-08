@@ -9,7 +9,8 @@
       )
         icon-svg(name="plus")
 
-      .tip
+      context-message(v-if="!this.masks.length")
+        p #[strong No masks:] Add one #[span.nowrap to&nbsp;continue]
 
       button._primary(
         v-if="images.input"
@@ -24,10 +25,12 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { mapState } from 'vuex'
 import IconSvg from '@/components/IconSvg.vue'
+import ContextMessage from '@/components/ContextMessage.vue'
 
 @Component({
   components: {
     IconSvg,
+    ContextMessage,
   },
   computed: mapState(['ui', 'masks', 'strings', 'images']),
 })

@@ -211,6 +211,7 @@ export default class Home extends Vue {
   }, 100)
 }
 </script>
+
 <style lang="scss">
 @import '@/assets/scss/_util';
 
@@ -241,18 +242,14 @@ export default class Home extends Vue {
 // Editor Info
 
 .editor-info {
-  background-color: var(--color-root-alpha-40);
-  backdrop-filter: brightness(300%) blur(20px);
+  @extend %backdrop-blur;
   pointer-events: none;
   position: absolute;
   top: 3.5rem;
   padding: rem(4) rem(8);
   border-radius: 2px;
   z-index: 2;
-
-  @media (prefers-color-scheme: dark) {
-    backdrop-filter: brightness(40%) blur(20px);
-  }
+  user-select: none;
 
   .bits {
     display: grid;
@@ -300,10 +297,11 @@ export default class Home extends Vue {
   justify-content: center;
   position: absolute;
   bottom: 0;
+  z-index: 9;
   width: 100%;
   margin-bottom: clamp(max(2rem, env(safe-area-inset-bottom)), 5vw, 3rem);
   pointer-events: none;
-  will-change: transform;
+  // will-change: transform; // prevents backdrop-filter
   backface-visibility: hidden;
 }
 
@@ -359,10 +357,16 @@ export default class Home extends Vue {
     pointer-events: auto;
   }
 
+  .context-message {
+    pointer-events: none;
+  }
+
   > *:not(:last-child) {
     margin-inline-end: rem(12);
   }
 }
+
+// Transitions
 
 .context-slide-enter-active,
 .context-slide-leave-active {
