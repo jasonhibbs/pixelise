@@ -1,0 +1,30 @@
+// Font ————————————————————————————————————————————————————————————————
+
+$src: 'https://rsms.me/inter/font-files';
+$rev: 'v=3.15';
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('#{$src}/Inter-Regular.woff2?#{$rev}') format('woff2'),
+    url('#{$src}/Inter-Regular.woff?#{$rev}') format('woff');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('#{$src}/Inter-Bold.woff2?#{$rev}') format('woff2'),
+    url('#{$src}/Inter-Bold.woff?#{$rev}') format('woff');
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url('#{$src}/Inter-Black.woff2?#{$rev}') format('woff2'),
+    url('#{$src}/Inter-Black.woff?#{$rev}') format('woff');
+}
