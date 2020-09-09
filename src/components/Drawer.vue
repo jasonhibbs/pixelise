@@ -141,7 +141,7 @@ export default class Drawer extends Vue {
   justify-self: flex-end;
   box-shadow: 0 -1px 0 var(--color-contrast-10);
   color: var(--color-contrast-60);
-  padding: 0.5rem 0 10vh;
+  padding: 0.5rem 0 5vh;
   margin-top: auto;
 
   p {
@@ -165,6 +165,8 @@ export default class Drawer extends Vue {
 }
 
 .drawer-card {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   backface-visibility: hidden;
   will-change: transform;
 

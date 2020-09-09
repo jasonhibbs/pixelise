@@ -3,7 +3,8 @@
   #app(:class="classes")
 
     header
-      h1 Pixelise
+      logo
+      h1.title Pixelise
       button.link(@click="drawerExpanded = !drawerExpanded") Menu
     router-view
 
@@ -23,6 +24,8 @@
           @click="drawerExpanded = false"
         )
           span Close
+
+        .title Pixelise
 
       template(#content)
 
@@ -63,13 +66,14 @@
 <script lang="ts">
 import { Component, Ref, Vue } from 'vue-property-decorator'
 import { mapState } from 'vuex'
+import Logo from '@/components/Logo.vue'
 import IconSvg from '@/components/IconSvg.vue'
 import Drawer from '@/components/Drawer.vue'
 import Dropzone from '@/components/Dropzone.vue'
 import DiscButton from '@/components/DiscButton.vue'
 
 @Component({
-  components: { IconSvg, DiscButton, Drawer, Dropzone },
+  components: { IconSvg, Logo, DiscButton, Drawer, Dropzone },
   computed: mapState(['ui', 'images']),
 })
 export default class App extends Vue {
@@ -141,6 +145,11 @@ body {
   pointer-events: none;
 }
 
+.title {
+  font-weight: 900;
+  line-height: 1;
+}
+
 // Header
 
 header {
@@ -148,25 +157,31 @@ header {
   position: relative;
   z-index: 2;
   display: flex;
+  align-items: center;
   width: 100%;
   margin-top: env(safe-area-inset-top);
+
+  .logo {
+    --size: #{em(21)};
+    padding: 1rem 1rem;
+    padding-bottom: 0;
+    margin-right: auto;
+  }
 
   h1 {
     position: absolute;
     top: 0;
-    top: env(safe-area-inset-top);
     left: 0;
     display: inline-block;
     font-size: em(20);
-    font-weight: 900;
-    line-height: 1;
     padding: rem(11) rem(14);
-    margin: 0;
-    width: 0;
+    margin: 0 auto;
+    width: 100%;
     text-align: center;
     user-select: none;
-    will-change: font-size, width;
-    transition: font-size, width;
+    opacity: 0;
+    will-change: font-size, margin, opacity;
+    transition: font-size, margin, opacity;
     transition-duration: 0.5s;
     transition-timing-function: cubic-bezier(0.25, 0.83, 0.1, 1);
   }
@@ -182,7 +197,7 @@ header {
 #app._intro {
   h1 {
     font-size: em(64);
-    width: 100%;
+    opacity: 1;
     margin-top: 4rem;
   }
 }
@@ -190,6 +205,11 @@ header {
 // Drawer
 
 .drawer {
+  .title {
+    font-size: em(48);
+    padding: 0.5rem 1rem;
+  }
+
   .buttons {
     margin-top: auto;
   }
