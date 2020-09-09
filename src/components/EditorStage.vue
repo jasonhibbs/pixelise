@@ -1,6 +1,9 @@
 <template lang="pug">
 
-  .stage(:class="classes")
+  .stage(
+    ref="stage"
+    :class="classes"
+  )
     .stage-inner
       .stage-context(
         @click.left="onClickStage"
@@ -13,7 +16,7 @@
             ref="baseImage"
             draggable="false"
             :src="images.input"
-            @load="$emit('imageload', imgBase)"
+            @load="onImageLoad"
           )
         img.stage-image-preview(
           ref="previewImage"
@@ -50,6 +53,7 @@ import ImageMask from '@/components/ImageMask.vue'
   computed: mapState(['ui', 'images']),
 })
 export default class EditorStage extends Vue {
+  @Ref('stage') readonly stage!: HTMLDivElement
   @Ref('baseImage') readonly imgBase!: HTMLImageElement
   @Ref('previewImage') readonly imgPreview!: HTMLImageElement
 
@@ -62,6 +66,14 @@ export default class EditorStage extends Vue {
     return {
       _drawing: this.isDrawing,
     }
+  }
+
+  // New Image
+
+  onImageLoad() {
+    this.stage.scrollTop = 0
+    this.stage.scrollLeft = 0
+    this.$emit('imageload', this.imgBase)
   }
 
   // Image Rect
