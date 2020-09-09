@@ -82,10 +82,53 @@ export default class App extends Vue {
   images!: any
   ui!: any
 
+  queryDarkMode = window.matchMedia('(prefers-color-scheme: dark)')
+  isStandalone = window.matchMedia('(display-mode: standalone)').matches
+  isIos = /iPhone|iPad|iPod/.test(navigator.userAgent)
+
   get classes() {
     return {
       _dragging: this.ui.isDragging,
       _intro: !this.images.input,
+    }
+  }
+
+  // Lifecycle
+
+  created() {
+    if (this.isStandalone) {
+      document.documentElement.classList.add('is-app')
+    }
+    if (this.isIos) {
+      document.documentElement.classList.add('is-ios')
+    }
+    document.addEventListener('workerupdated', this.onWorkerUpdated)
+  }
+
+  mounted() {
+    this.onDarkModeChange(this.queryDarkMode)
+    this.queryDarkMode.addListener(this.onDarkModeChange)
+  }
+
+  // Worker
+
+  onWorkerUpdated() {
+    this.$store.commit('updateUI', {
+      key: 'updateAvailable',
+      value: true,
+    })
+  }
+
+  // Changes
+
+  onDarkModeChange(query: any) {
+    const metaThemeColor = document.querySelector('meta[name="theme-color"]')
+    if (metaThemeColor) {
+      if (query.matches) {
+        metaThemeColor.setAttribute('content', '#000')
+      } else {
+        metaThemeColor.setAttribute('content', '#fff')
+      }
     }
   }
 

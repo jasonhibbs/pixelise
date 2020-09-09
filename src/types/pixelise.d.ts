@@ -31,4 +31,4 @@ interface StoreImages {
   type: string
 }
 
-interface StoreMask extends Mask {}
+type StoreMask = Mask

@@ -55,6 +55,8 @@ export default new Vuex.Store({
       hasChanges: true,
       maskHighlight: null,
       drawerExpanded: false,
+      updateAvailable: false,
+      isReloading: false,
     },
     settings: {
       pixelScale: 0.18,
