@@ -27,8 +27,8 @@ export default class Intro extends Vue {}
 // Intro
 
 .intro {
-  position: absolute;
-  top: 12rem;
+  margin-top: 9rem;
+  padding-bottom: 5vh;
   width: 100%;
 
   .layout {

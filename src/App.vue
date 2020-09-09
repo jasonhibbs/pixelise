@@ -160,6 +160,8 @@ header {
   align-items: center;
   width: 100%;
   margin-top: env(safe-area-inset-top);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
 
   .logo {
     --size: #{em(21)};
@@ -195,6 +197,13 @@ header {
 }
 
 #app._intro {
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+
+  main {
+    height: auto;
+  }
+
   h1 {
     font-size: em(64);
     opacity: 1;
