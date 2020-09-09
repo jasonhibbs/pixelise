@@ -9,7 +9,7 @@
     input(
       :id="id"
       type="file"
-      accept="image/*"
+      accept="image/png, image/jpeg"
       @change="onFileChange"
     )
 
