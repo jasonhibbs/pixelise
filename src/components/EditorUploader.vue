@@ -94,7 +94,8 @@ export default class EditorUploader extends Vue {
 
     if (e.dataTransfer?.items) {
       const item = e.dataTransfer?.items[0]
-      const file = item.type.includes('image/') && item.getAsFile()
+      const acceptableImageTypes = RegExp(/^(image\/)(png|jpeg)$/g)
+      const file = acceptableImageTypes.test(item.type) && item.getAsFile()
       if (file) {
         this.updateImage(file)
       }
