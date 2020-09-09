@@ -20,7 +20,7 @@ module.exports = {
     themeColor: '#fff',
     appleMobileWebAppCapable: 'yes',
     iconPaths: {
-      appleTouchIcon: 'img/icons/apple-touch-icon-precomposed.png',
+      appleTouchIcon: 'img/icons/apple-touch-icon.png',
       msTileImage: 'img/icons/mstile-150x150.png',
     },
     workboxPluginMode: 'InjectManifest',
