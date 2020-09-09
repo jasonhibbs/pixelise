@@ -13,7 +13,7 @@ import InlineSvg from 'vue-inline-svg'
 })
 export default class IconSvg extends Vue {
   get src() {
-    return `./svg/logo.svg`
+    return `./img/svg/logo.svg`
   }
 }
 </script>
@@ -29,6 +29,10 @@ export default class IconSvg extends Vue {
     height: auto;
     width: var(--size);
     overflow: visible;
+
+    g {
+      fill: var(--color-key);
+    }
   }
 }
 </style>

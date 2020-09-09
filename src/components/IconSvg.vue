@@ -15,7 +15,7 @@ export default class IconSvg extends Vue {
   @Prop() readonly name!: string
 
   get src() {
-    return `./svg/icon-${this.name}.svg`
+    return `./img/svg/icon-${this.name}.svg`
   }
 }
 </script>
