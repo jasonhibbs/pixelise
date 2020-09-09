@@ -45,7 +45,7 @@
             @click="onClickRestart"
           ) Start over
           disc-button(
-            :disc="{ image: 'svg/logo-kofi.svg' }"
+            :disc="{ image: 'img/svg/logo-kofi.svg' }"
             href="https://ko-fi.com/jasonhibbs"
             target="_blank"
           ) Buy me a coffee
