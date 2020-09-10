@@ -31,6 +31,13 @@
 
         .buttons
           disc-button(
+            v-if="ui.updateAvailable"
+            :disc="{ icon: 'redo', color: 'key' }"
+            @click="onClickUpdate"
+          ) Update App
+
+        .buttons._end
+          disc-button(
             :disc="{ icon: 'cross', color: 'red' }"
             :disabled="!images.input"
             @click="onClickClearMasks"
@@ -98,17 +105,11 @@ export default class App extends Vue {
   created() {
     if (this.isStandalone) {
       document.documentElement.classList.add('is-standalone')
-      this.$store.commit('updateUI', {
-        key: 'isStandalone',
-        value: true,
-      })
+      this.$store.commit('updateUI', { key: 'isStandalone', value: true })
     }
     if (this.isIos) {
       document.documentElement.classList.add('is-ios')
-      this.$store.commit('updateUI', {
-        key: 'isIos',
-        value: true,
-      })
+      this.$store.commit('updateUI', { key: 'isIos', value: true })
     }
     document.addEventListener('workerupdated', this.onWorkerUpdated)
   }
@@ -116,15 +117,21 @@ export default class App extends Vue {
   mounted() {
     this.onDarkModeChange(this.queryDarkMode)
     this.queryDarkMode.addListener(this.onDarkModeChange)
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (this.ui.isReloading) return
+        this.$store.commit('updateUI', { key: 'isReloading', value: true })
+        location.reload()
+      })
+    }
   }
 
   // Worker
 
-  onWorkerUpdated() {
-    this.$store.commit('updateUI', {
-      key: 'updateAvailable',
-      value: true,
-    })
+  onWorkerUpdated(e: any) {
+    this.$store.commit('updateUI', { key: 'worker', value: e.detail })
+    this.$store.commit('updateUI', { key: 'updateAvailable', value: true })
   }
 
   // Changes
@@ -155,6 +162,11 @@ export default class App extends Vue {
   }
 
   // Buttons
+
+  onClickUpdate() {
+    if (!this.ui.worker || !this.ui.worker) return
+    this.ui.worker.waiting.postMessage({ type: 'SKIP_WAITING' })
+  }
 
   onClickClearMasks() {
     this.$store.commit('removeAllMasks')
@@ -270,7 +282,7 @@ header {
     padding: 0.5rem 1rem;
   }
 
-  .buttons {
+  .buttons._end {
     margin-top: auto;
   }
 
