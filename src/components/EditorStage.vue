@@ -228,7 +228,7 @@ export default class EditorStage extends Vue {
 }
 
 .stage-inner {
-  padding: calc(8rem + env(safe-area-inset-bottom)) 2.5rem;
+  padding: calc(8rem + env(safe-area-inset-bottom)) 3.25rem;
   padding-top: calc(8rem + env(safe-area-inset-top));
   margin: auto;
 }
