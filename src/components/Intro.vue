@@ -9,7 +9,7 @@
           p #[label.link(for="input-editor") Choose one from your device], or drag one in any time.
         li
           h2 Mask it
-          p Place and size rectangles over the bits to pixelised.
+          p Place and size rectangles over the bits to be pixelised.
         li
           h2 Save it
           p Tap next, adjust the pixels, and download your image.
