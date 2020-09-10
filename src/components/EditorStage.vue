@@ -109,6 +109,9 @@ export default class EditorStage extends Vue {
   }
 
   onMousedownStage(e: MouseEvent) {
+    if (this.ui.isApp && this.ui.isIos && this.ui.showingPreview) {
+      return
+    }
     if (this.images.input) {
       this.refreshRect()
       this.drawnMask.startX = e.clientX - this.imageRect.x

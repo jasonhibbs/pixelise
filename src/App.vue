@@ -97,10 +97,18 @@ export default class App extends Vue {
 
   created() {
     if (this.isStandalone) {
-      document.documentElement.classList.add('is-app')
+      document.documentElement.classList.add('is-standalone')
+      this.$store.commit('updateUI', {
+        key: 'isStandalone',
+        value: true,
+      })
     }
     if (this.isIos) {
       document.documentElement.classList.add('is-ios')
+      this.$store.commit('updateUI', {
+        key: 'isIos',
+        value: true,
+      })
     }
     document.addEventListener('workerupdated', this.onWorkerUpdated)
   }

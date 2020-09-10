@@ -51,12 +51,14 @@ export default new Vuex.Store({
     ui: {
       isDragging: false,
       isLoadingPreview: false,
+      isReloading: false,
+      isStandalone: false,
+      isIos: false,
       showingPreview: false,
       hasChanges: true,
       maskHighlight: null,
       drawerExpanded: false,
       updateAvailable: false,
-      isReloading: false,
     },
     settings: {
       pixelScale: 0.18,
