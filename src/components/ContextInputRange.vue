@@ -83,6 +83,7 @@ export default class ContextInputRange extends Vue {
 .context-input-range {
   --thumb-size: 24px;
 
+  user-select: none;
   position: relative;
   background-color: var(--color-root);
   border-radius: rem(48);
