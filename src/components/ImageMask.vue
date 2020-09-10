@@ -298,11 +298,11 @@ export default class ImageMask extends Vue {
     left: var(--mask-control-inset);
     top: var(--mask-control-inset);
     width: calc(var(--mask-control-size) - var(--mask-handle-size));
-    height: 1.5px;
+    height: 2px;
     transform: translateX(-1px) translateY(-50%) rotateZ(45deg);
     transform-origin: 1px 50%;
     box-shadow: inset 0 0 0 2px var(--mask-handle-color),
-      1.5px 0 0 1px var(--mask-shadow-color);
+      1.4142px 0 0 1px var(--mask-shadow-color);
     transition: width 0.1s;
     will-change: width;
   }
