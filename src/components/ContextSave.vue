@@ -32,6 +32,9 @@ import { mapState } from 'vuex'
 import IconSvg from '@/components/IconSvg.vue'
 import ContextInputRange from '@/components/ContextInputRange.vue'
 
+// * Current download link in iOS PWA opens a web view with an image icon
+// * It does not seem possible to peak an image to save it in iOS PWA
+
 @Component({
   components: {
     IconSvg,
@@ -46,6 +49,9 @@ export default class ContextSave extends Vue {
   images!: any
 
   get downloadHref() {
+    if (this.ui.isIos && this.ui.isStandalone) {
+      return this.images.output
+    }
     const uri = this.images.output.replace(/^data:image\/\w+;base64,/, '')
     return `data:application/octet-stream;base64,${uri}`
   }
