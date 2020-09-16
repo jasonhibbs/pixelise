@@ -1,16 +1,13 @@
 <template lang="pug">
 
-  label.editor-uploader(
-    :for="id"
-    aria-label="Upload image from device"
-  )
-    span
-      slot
+  .editor-uploader
     input(
       :id="id"
       type="file"
       accept="image/png, image/jpeg"
       @change="onFileChange"
+      @focus="onFocus"
+      @blur="onBlur"
     )
 
 </template>
@@ -111,6 +108,18 @@ export default class EditorUploader extends Vue {
       this.updateImage(files[0])
       input.value = ''
     }
+  }
+
+  // Events
+
+  onFocus() {
+    const label = document.querySelector(`label[for="${this.id}"]`)
+    label?.classList.add('focus-visible')
+  }
+
+  onBlur() {
+    const labels = document.querySelectorAll(`label[for="${this.id}"]`)
+    labels.forEach(label => label.classList.remove('focus-visible'))
   }
 }
 </script>

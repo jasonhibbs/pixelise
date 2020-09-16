@@ -29,8 +29,13 @@
   background-color: var(--color-key-alpha-20);
 }
 
-:focus {
+:focus,
+.focus-visible {
   outline: 3px solid var(--color-focus);
+}
+
+.js-focus-visible :focus:not(.focus-visible) {
+  outline: none;
 }
 
 // Links
