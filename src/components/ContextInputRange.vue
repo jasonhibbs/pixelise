@@ -91,7 +91,7 @@ export default class ContextInputRange extends Vue {
   align-items: center;
   min-height: rem(48);
   flex: auto;
-  box-shadow: 0 0 0 1px var(--color-contrast-alpha-10);
+  box-shadow: 0 0 0 2px var(--color-contrast-alpha-10);
   transition: box-shadow 0.1s;
 
   &._focus {

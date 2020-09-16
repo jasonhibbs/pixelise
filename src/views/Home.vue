@@ -310,7 +310,7 @@ export default class Home extends Vue {
   background-color: var(--color-root);
   padding: em(13);
   border-radius: rem(48);
-  box-shadow: 0 0 0 1px var(--color-contrast-alpha-10);
+  box-shadow: 0 0 0 2px var(--color-contrast-alpha-10);
 
   &:focus,
   &:hover {
