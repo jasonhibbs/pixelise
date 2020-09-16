@@ -29,9 +29,8 @@
 
       template(#content)
 
-        .buttons
+        .buttons(v-if="ui.updateAvailable")
           disc-button(
-            v-if="ui.updateAvailable"
             :disc="{ icon: 'redo', color: 'key' }"
             @click="onClickUpdate"
           ) Update App
@@ -282,8 +281,14 @@ header {
     padding: 0.5rem 1rem;
   }
 
-  .buttons._end {
-    margin-top: auto;
+  .buttons {
+    margin-top: rem(12);
+  }
+
+  .buttons + .buttons {
+    box-shadow: 0 -1px 0 var(--color-contrast-10);
+    margin-top: rem(8);
+    padding-top: rem(8);
   }
 
   footer {

@@ -80,6 +80,7 @@ export default class Drawer extends Vue {
 
 .drawer {
   position: absolute;
+  height: 100vh;
   top: 0;
   right: 0;
   bottom: 0;
@@ -141,11 +142,11 @@ export default class Drawer extends Vue {
   justify-self: flex-end;
   box-shadow: 0 -1px 0 var(--color-contrast-10);
   color: var(--color-contrast-60);
-  padding: 0.5rem 0 5vh;
+  padding: rem(8) 0 5vh;
   margin-top: auto;
 
   p {
-    margin: 0.5rem 0;
+    margin: rem(8) 0;
   }
 }
 
