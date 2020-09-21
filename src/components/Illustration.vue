@@ -25,6 +25,10 @@ export default class Illustration extends Vue {
     }, 1600)
   }
 
+  beforeDestroy() {
+    clearInterval(this.tickInterval)
+  }
+
   getRandomColor() {
     const l = ~~(Math.random() * 80) + 0
     return `hsl(0, 0%, ${l}%)`
