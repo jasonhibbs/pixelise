@@ -48,7 +48,7 @@ export default class Illustration extends Vue {
 </script>
 <style lang="scss">
 .illustration {
-  margin: 0 max(-10vw, -200px);
+  margin: 0 max(-12vw, -200px);
 
   svg {
     position: relative;
