@@ -216,7 +216,7 @@ body {
 
 header {
   pointer-events: none;
-  position: relative;
+  position: fixed;
   z-index: 2;
   display: flex;
   align-items: center;
@@ -269,7 +269,7 @@ header {
   h1 {
     font-size: em(64);
     opacity: 1;
-    margin-top: 4rem;
+    margin-top: 3rem;
   }
 }
 

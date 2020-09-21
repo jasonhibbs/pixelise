@@ -2,6 +2,7 @@
 
   .intro
     .layout
+      illustration
       ol
         li
           h2
@@ -17,8 +18,11 @@
 </template>
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
+import Illustration from '@/components/Illustration.vue'
 
-@Component
+@Component({
+  components: { Illustration },
+})
 export default class Intro extends Vue {}
 </script>
 <style lang="scss">
@@ -27,7 +31,7 @@ export default class Intro extends Vue {}
 // Intro
 
 .intro {
-  margin-top: 9rem;
+  margin-top: 8.5rem;
   padding-bottom: 5vh;
   width: 100%;
 
