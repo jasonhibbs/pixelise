@@ -296,7 +296,7 @@ export default class EditorStage extends Vue {
   display: block;
   user-select: none;
   box-shadow: 0 0 0 1px var(--color-contrast-alpha-10);
-  max-width: min(120vw, 1200px);
+  max-width: min(120vw, 80rem);
   height: auto;
 }
 

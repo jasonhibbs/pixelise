@@ -244,7 +244,7 @@ export default class ImageMask extends Vue {
   transform: scale(1);
   backface-visibility: hidden;
   will-change: opacity;
-  transition: opacity 0.2s;
+  transition: opacity (1s/6);
 
   ._preview & {
     pointer-events: none;
