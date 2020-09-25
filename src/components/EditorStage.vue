@@ -10,7 +10,11 @@
         @dblclick.left="onDblclickStage"
         @mousedown.left="onMousedownStage"
       )
-        transition(name="grow" appear)
+        transition(
+          name="grow"
+          appear
+          @after-enter="onAfterEnter"
+        )
           img.stage-image-base(
             v-if="images.input"
             ref="baseImage"
@@ -76,12 +80,18 @@ export default class EditorStage extends Vue {
     this.$emit('imageload', this.imgBase)
   }
 
+  onAfterEnter() {
+    this.refreshRect()
+  }
+
   // Image Rect
 
   imageRect: DOMRect = new DOMRect()
 
   refreshRect() {
     this.imageRect = this.imgBase.getBoundingClientRect()
+    console.log(this.imageRect.width)
+    this.$store.commit('updateUI', { key: 'imageRect', value: this.imageRect })
   }
 
   // Drawing
@@ -242,6 +252,8 @@ export default class EditorStage extends Vue {
   display: block;
   user-select: none;
   box-shadow: 0 0 0 1px var(--color-contrast-alpha-10);
+  max-width: min(120vw, 1200px);
+  height: auto;
 }
 
 .stage-image-base {

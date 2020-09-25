@@ -12,12 +12,19 @@ const images: StoreImages = {
 
 const masks: StoreMask[] = []
 
-const drawMasks = (state: any, img: HTMLImageElement) => {
+const drawMasks = (state: any, img: HTMLImageElement, factor: number) => {
+  console.log(factor)
   state.images.context.imageSmoothingEnabled = false
+  const pixelScale = state.settings.pixelScale / factor
+
   state.masks.forEach((mask: any) => {
-    const { x, y, w, h } = mask
-    const newWidth = Math.max(1, w * state.settings.pixelScale)
-    const newHeight = Math.max(1, h * state.settings.pixelScale)
+    let { x, y, w, h } = mask
+    x = Math.floor(x * factor)
+    y = Math.floor(y * factor)
+    w = Math.floor(w * factor)
+    h = Math.floor(h * factor)
+    const newWidth = Math.max(1, w * pixelScale)
+    const newHeight = Math.max(1, h * pixelScale)
     const newCanvas = document.createElement('canvas')
     newCanvas.width = newWidth
     newCanvas.height = newHeight
@@ -33,12 +40,14 @@ const updateCanvasData = (state: any) => {
   return new Promise(resolve => {
     const ctx = state.images.context
     const img = new Image()
+    const stageWidth = state.ui.imageRect.width
     img.onload = () => {
       if (ctx) {
         ctx.canvas.width = img.width
         ctx.canvas.height = img.height
         ctx.drawImage(img, 0, 0)
-        drawMasks(state, img)
+        const factor = ctx.canvas.width / stageWidth
+        drawMasks(state, img, factor)
         resolve(ctx.canvas.toDataURL(state.images.type))
       }
     }
@@ -59,6 +68,7 @@ export default new Vuex.Store({
       maskHighlight: null,
       drawerExpanded: false,
       updateAvailable: false,
+      imageRect: null,
     },
     settings: {
       pixelScale: 0.18,
