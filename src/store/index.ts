@@ -39,13 +39,11 @@ const updateCanvasData = (state: any) => {
   return new Promise(resolve => {
     const ctx = state.images.context
     const img = new Image()
-    const stageWidth = state.ui.imageRect.width
     img.onload = () => {
       if (ctx) {
         ctx.canvas.width = img.width
         ctx.canvas.height = img.height
         ctx.drawImage(img, 0, 0)
-        const factor = ctx.canvas.width / stageWidth
         drawMasks(state, img)
         resolve(ctx.canvas.toDataURL(state.images.type))
       }
@@ -131,6 +129,21 @@ export default new Vuex.Store({
       })
       commit('updateUI', { key: 'isLoadingPreview', value: false })
       commit('updateUI', { key: 'hasChanges', value: false })
+    },
+    resizeMasks({ commit, state }, scale) {
+      if (scale === 1) {
+        return
+      }
+      const masks = state.masks.map(mask => {
+        return {
+          ...mask,
+          x: mask.x / scale,
+          y: mask.y / scale,
+          w: mask.w / scale,
+          h: mask.h / scale,
+        }
+      })
+      commit('updateMasks', masks)
     },
   },
   modules: {},

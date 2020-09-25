@@ -126,8 +126,17 @@ export default class EditorStage extends Vue {
 
   onResizeDebounce = debounce(() => {
     document.documentElement.classList.remove('_resizing')
-    this.refreshRect()
+    this.onResizeEnd()
   }, 400)
+
+  onResizeEnd() {
+    if (!this.imgBase) {
+      return
+    }
+    const oldWidth = this.imageRect.width
+    this.refreshRect()
+    this.$store.dispatch('resizeMasks', oldWidth / this.imageRect.width)
+  }
 
   // Drawing
 
