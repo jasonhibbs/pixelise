@@ -48,6 +48,8 @@
 <script lang="ts">
 import { Component, Prop, Ref, Vue } from 'vue-property-decorator'
 import { mapState } from 'vuex'
+import debounce from 'lodash.debounce'
+import throttle from 'lodash.throttle'
 import ImageMask from '@/components/ImageMask.vue'
 
 @Component({
@@ -70,6 +72,16 @@ export default class EditorStage extends Vue {
     return {
       _drawing: this.isDrawing,
     }
+  }
+
+  mounted() {
+    window.addEventListener('resize', this.onResizeThrottle)
+    window.addEventListener('resize', this.onResizeDebounce)
+  }
+
+  beforeDestroy() {
+    window.removeEventListener('resize', this.onResizeThrottle)
+    window.removeEventListener('resize', this.onResizeDebounce)
   }
 
   // New Image
@@ -100,6 +112,17 @@ export default class EditorStage extends Vue {
     console.log(this.imageRect.width)
     this.$store.commit('updateUI', { key: 'imageRect', value: this.imageRect })
   }
+
+  // Resize
+
+  onResizeThrottle = throttle(() => {
+    document.documentElement.classList.add('_resizing')
+  }, 200)
+
+  onResizeDebounce = debounce(() => {
+    document.documentElement.classList.remove('_resizing')
+    this.refreshRect()
+  }, 400)
 
   // Drawing
 
@@ -283,6 +306,10 @@ export default class EditorStage extends Vue {
     opacity: 1;
     transition: opacity 0.1s;
   }
+}
+
+._resizing .mask {
+  opacity: 0;
 }
 
 .grow-enter {

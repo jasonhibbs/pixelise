@@ -13,7 +13,6 @@ const images: StoreImages = {
 const masks: StoreMask[] = []
 
 const drawMasks = (state: any, img: HTMLImageElement, factor: number) => {
-  console.log(factor)
   state.images.context.imageSmoothingEnabled = false
   const pixelScale = state.settings.pixelScale / factor
 
