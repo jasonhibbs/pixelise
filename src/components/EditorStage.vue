@@ -74,14 +74,21 @@ export default class EditorStage extends Vue {
 
   // New Image
 
+  isFirstImage = true
+
   onImageLoad() {
     this.stage.scrollTop = 0
     this.stage.scrollLeft = 0
     this.$emit('imageload', this.imgBase)
+
+    if (!this.isFirstImage) {
+      this.refreshRect()
+    }
   }
 
   onAfterEnter() {
     this.refreshRect()
+    this.isFirstImage = false
   }
 
   // Image Rect
