@@ -19,16 +19,16 @@
           .bits
             .bit
               .bit-key X
-              .bit-value {{ highlightedMask.x }}
+              .bit-value {{ Math.floor(highlightedMask.x * ui.imageScale) }}
             .bit
               .bit-key Y
-              .bit-value {{ highlightedMask.y }}
+              .bit-value {{ Math.floor(highlightedMask.y * ui.imageScale) }}
             .bit
               .bit-key W
-              .bit-value {{ highlightedMask.w }}
+              .bit-value {{ Math.floor(highlightedMask.w * ui.imageScale) }}
             .bit
               .bit-key H
-              .bit-value {{ highlightedMask.h }}
+              .bit-value {{ Math.floor(highlightedMask.h * ui.imageScale) }}
 
       transition(name="fade-delay" appear)
         .editor-info._loader(v-if="ui.isLoadingPreview")

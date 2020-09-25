@@ -106,10 +106,15 @@ export default class EditorStage extends Vue {
   // Image Rect
 
   imageRect: DOMRect = new DOMRect()
+  imageScale = 1
 
   refreshRect() {
     this.imageRect = this.imgBase.getBoundingClientRect()
-    console.log(this.imageRect.width)
+    this.imageScale = this.imgBase.naturalWidth / this.imageRect.width
+    this.$store.commit('updateUI', {
+      key: 'imageScale',
+      value: this.imageScale,
+    })
     this.$store.commit('updateUI', { key: 'imageRect', value: this.imageRect })
   }
 
