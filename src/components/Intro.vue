@@ -5,15 +5,17 @@
       illustration
       ol
         li
-          h2
-            label.link(for="input-editor") Add an image
-          p #[label.link(for="input-editor") Choose one from your device], or drag one in any time.
+          h2 #[label.link(for="input-editor") Add an image]
+          p #[label.link(for="input-editor") Upload] or drag one in any time.
         li
           h2 Mask it
-          p Place and size rectangles over the bits to be pixelised.
+          p Cover bits with rectangles.
         li
           h2 Save it
-          p Tap next, adjust the pixels, and download your image.
+          p Set your pixels and save them.
+
+    label.button(for="input-editor")
+      span Upload Image
 
 </template>
 <script lang="ts">
@@ -31,11 +33,16 @@ export default class Intro extends Vue {}
 // Intro
 
 .intro {
+  position: relative;
   margin-top: 8.5rem;
   width: 100%;
 
   .layout {
-    max-width: em(260);
+    max-width: em(280);
+  }
+
+  .illustration {
+    margin: 0 max(-5vw, -200px);
   }
 
   h2 {
@@ -58,20 +65,41 @@ export default class Intro extends Vue {}
 
   p {
     line-height: (24/16);
-    margin: rem(12) 0;
+    margin: rem(8) 0;
   }
 
   ol {
     counter-reset: counter-intro;
     padding-left: rem(40);
     list-style: none;
+    margin: rem(24) 0;
     margin-left: rem(-20);
   }
 
   li {
     position: relative;
     counter-increment: counter-intro;
-    margin-bottom: rem(32);
+    margin-bottom: rem(24);
+  }
+
+  .button {
+    display: block;
+    background-color: var(--color-key);
+    color: var(--color-white);
+    padding: rem(14) rem(12);
+    border-radius: rem(10);
+    margin: rem(36) rem(24);
+    margin-bottom: max(env(safe-area-inset-bottom), rem(24));
+
+    &:hover,
+    &.focus-visible {
+      background-color: var(--color-key-60);
+    }
+
+    &.focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 3px var(--color-focus);
+    }
   }
 }
 </style>

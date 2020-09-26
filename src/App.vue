@@ -219,15 +219,14 @@ header {
   position: fixed;
   z-index: 2;
   display: flex;
-  align-items: center;
   width: 100%;
   margin-top: env(safe-area-inset-top);
   padding-left: env(safe-area-inset-left);
   padding-right: env(safe-area-inset-right);
 
   .logo {
-    --size: #{em(21)};
-    padding: 1rem 1rem;
+    --size: #{em(22)};
+    padding: rem(16);
     padding-bottom: 0;
     margin-right: auto;
   }
@@ -269,7 +268,7 @@ header {
   h1 {
     font-size: em(64);
     opacity: 1;
-    margin-top: 3rem;
+    margin-top: rem(44);
   }
 }
 

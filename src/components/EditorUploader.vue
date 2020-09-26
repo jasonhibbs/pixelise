@@ -113,12 +113,12 @@ export default class EditorUploader extends Vue {
   // Events
 
   onFocus() {
-    const label = document.querySelector(`label[for="${this.id}"]`)
+    const label = document.querySelector(`.button[for="${this.id}"]`)
     label?.classList.add('focus-visible')
   }
 
   onBlur() {
-    const labels = document.querySelectorAll(`label[for="${this.id}"]`)
+    const labels = document.querySelectorAll(`.button[for="${this.id}"]`)
     labels.forEach(label => label.classList.remove('focus-visible'))
   }
 }
