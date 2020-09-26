@@ -21,7 +21,7 @@ export default class Illustration extends Vue {
   pixels: string[] = Array(15).fill('black')
 
   mounted() {
-    const rate = 1000 / 16
+    const rate = 1000 / 12
     this.tickInterval = setInterval(() => {
       this.tick++
     }, rate)
@@ -32,9 +32,9 @@ export default class Illustration extends Vue {
   }
 
   getRandomColor() {
-    const max = 72
+    const max = 10
     const lightness = ~~(Math.random() * max) + 0
-    return `hsl(0, 0%, ${lightness}%)`
+    return `hsl(0, 0%, ${lightness * 8}%)`
   }
 
   get pixelVars() {
@@ -68,7 +68,7 @@ export default class Illustration extends Vue {
   }
 
   #pixels path {
-    transition: opacity 400ms, fill 100ms linear;
+    transition: opacity 400ms, fill 200ms linear;
   }
 
   @for $i from 1 through 15 {
@@ -80,7 +80,7 @@ export default class Illustration extends Vue {
   #pixels:hover path {
     opacity: 0.4;
     fill: black;
-    transition: opacity 0.2s, fill 200ms;
+    transition: opacity 0.2s, fill 0.2s;
   }
 }
 
