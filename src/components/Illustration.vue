@@ -18,11 +18,13 @@ export default class Illustration extends Vue {
 
   tick = 0
   tickInterval = 0
+  pixels: string[] = Array(15).fill('black')
 
   mounted() {
+    const rate = 1000 / 16
     this.tickInterval = setInterval(() => {
       this.tick++
-    }, 1600)
+    }, rate)
   }
 
   beforeDestroy() {
@@ -30,19 +32,31 @@ export default class Illustration extends Vue {
   }
 
   getRandomColor() {
-    const l = ~~(Math.random() * 80) + 0
-    return `hsl(0, 0%, ${l}%)`
+    const max = 72
+    const lightness = ~~(Math.random() * max) + 0
+    return `hsl(0, 0%, ${lightness}%)`
   }
 
-  get styles() {
-    const tick = this.tick
+  get pixelVars() {
+    const tick = this.tick % 6
     const pixels: any = {}
 
-    for (let i = 0; i < 15; i++) {
-      pixels[`--color-pixel-${i + 1}`] = this.getRandomColor()
+    const a = tick
+    const b = tick + 6
+    const c = tick + 12
+    this.pixels[a] = this.getRandomColor()
+    this.pixels[b] = this.getRandomColor()
+    this.pixels[c] = this.getRandomColor()
+
+    for (let i = 0; i < this.pixels.length; i++) {
+      pixels[`--color-pixel-${i + 1}`] = this.pixels[i]
     }
 
     return pixels
+  }
+
+  get styles() {
+    return this.pixelVars
   }
 }
 </script>
@@ -54,7 +68,7 @@ export default class Illustration extends Vue {
   }
 
   #pixels path {
-    transition: opacity 400ms, fill 400ms linear;
+    transition: opacity 400ms, fill 100ms linear;
   }
 
   @for $i from 1 through 15 {
