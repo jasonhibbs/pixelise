@@ -13,9 +13,9 @@
         li
           h2 Save it
           p Set your pixels and save them.
-
-    label.button(for="input-editor")
-      span Upload Image
+    .cta
+      label.button(for="input-editor")
+        span Upload Image
 
 </template>
 <script lang="ts">
@@ -82,14 +82,19 @@ export default class Intro extends Vue {}
     margin-bottom: rem(24);
   }
 
+  .cta {
+    margin: rem(36) rem(24);
+    margin-bottom: max(env(safe-area-inset-bottom), rem(24));
+  }
+
   .button {
     display: block;
     background-color: var(--color-key);
     color: var(--color-white);
     padding: rem(14) rem(12);
     border-radius: rem(10);
-    margin: rem(36) rem(24);
-    margin-bottom: max(env(safe-area-inset-bottom), rem(24));
+    margin: 0 auto;
+    max-width: rem(320);
 
     &:hover,
     &.focus-visible {
