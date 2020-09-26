@@ -299,10 +299,14 @@ export default class Home extends Vue {
   bottom: 0;
   z-index: 9;
   width: 100%;
-  margin-bottom: clamp(max(2rem, env(safe-area-inset-bottom)), 5vw, 3rem);
+  margin-bottom: clamp(4rem, 9vw, 5rem);
   pointer-events: none;
-  // will-change: transform; // prevents backdrop-filter
   backface-visibility: hidden;
+  // will-change: transform; // prevents backdrop-filter
+
+  @media (orientation: landscape) {
+    margin-bottom: clamp(max(1rem, env(safe-area-inset-bottom)), 8vh, 5rem);
+  }
 }
 
 .context button,
