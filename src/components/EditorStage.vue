@@ -247,7 +247,7 @@ export default class EditorStage extends Vue {
   // Masks
 
   onDragMask(e: Mask) {
-    const mask = this.value.find(x => x.id === e.id)
+    const mask = this.value.find((x) => x.id === e.id)
     if (mask === undefined) {
       return
     }
@@ -259,7 +259,7 @@ export default class EditorStage extends Vue {
   }
 
   onResizeMask(e: Mask) {
-    const mask = this.value.find(x => x.id === e.id)
+    const mask = this.value.find((x) => x.id === e.id)
     if (mask === undefined) {
       return
     }

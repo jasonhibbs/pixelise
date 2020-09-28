@@ -160,7 +160,7 @@ export default class Home extends Vue {
     if (!this.ui.maskHighlight) {
       return null
     }
-    return this.masks.find(x => x.id === this.ui.maskHighlight)
+    return this.masks.find((x) => x.id === this.ui.maskHighlight)
   }
 
   getStageCentre() {
@@ -186,7 +186,7 @@ export default class Home extends Vue {
   addMaskAtCentre() {
     const { x, y, right, bottom } = this.getStageCentre()
     const target = { x: x - 72, y: y - 18 }
-    this.masks.forEach(mask => {
+    this.masks.forEach((mask) => {
       if (mask.x !== target.x || mask.y !== target.y) {
         return true
       }

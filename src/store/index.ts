@@ -36,7 +36,7 @@ const drawMasks = (state: any, img: HTMLImageElement) => {
 }
 
 const updateCanvasData = (state: any) => {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     const ctx = state.images.context
     const img = new Image()
     img.onload = () => {
@@ -108,7 +108,7 @@ export default new Vuex.Store({
       state.ui.hasChanges = true
     },
     removeMask(state, id: number) {
-      const i = state.masks.findIndex(x => x.id === id)
+      const i = state.masks.findIndex((x) => x.id === id)
       state.masks.splice(i, 1)
       state.ui.hasChanges = true
     },
@@ -134,7 +134,7 @@ export default new Vuex.Store({
       if (scale === 1) {
         return
       }
-      const masks = state.masks.map(mask => {
+      const masks = state.masks.map((mask) => {
         return {
           ...mask,
           x: mask.x / scale,

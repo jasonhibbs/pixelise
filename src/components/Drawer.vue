@@ -44,7 +44,7 @@ export default class Drawer extends Vue {
       ...this.contentElement.querySelectorAll(
         '[href], button, input, select, textarea, [tabindex]:not([tabindex="-1"])'
       ),
-    ].filter(el => !el.hasAttribute('disabled'))
+    ].filter((el) => !el.hasAttribute('disabled'))
     const first = focusable[0] as HTMLElement
     if (first) {
       first.focus()
@@ -53,7 +53,7 @@ export default class Drawer extends Vue {
 
   // Events
 
-  onWheel(e: MouseWheelEvent) {
+  onWheel(e: WheelEvent) {
     if (e.deltaX < -42) {
       this.$emit('dismiss')
     }
