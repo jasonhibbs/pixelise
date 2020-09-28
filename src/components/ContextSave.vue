@@ -9,9 +9,9 @@
         icon-svg(name="arrow-left")
 
       context-input-range#input-density(
-        min="0.03"
-        max="0.26"
-        step="0.01"
+        min="16"
+        max="256"
+        step="8"
         title="Pixel Density"
         v-model="pixelScale"
         @input="updateOutput"

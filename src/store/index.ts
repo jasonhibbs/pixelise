@@ -14,7 +14,7 @@ const masks: StoreMask[] = []
 
 const drawMasks = (state: any, img: HTMLImageElement) => {
   state.images.context.imageSmoothingEnabled = false
-  const pixelScale = state.settings.pixelScale / state.ui.imageScale
+  const pixelScale = state.settings.pixelScale / img.width
 
   state.masks.forEach((mask: any) => {
     let { x, y, w, h } = mask
@@ -69,7 +69,7 @@ export default new Vuex.Store({
       imageScale: 1,
     },
     settings: {
-      pixelScale: 0.18,
+      pixelScale: 96,
     },
     strings: {
       download: 'pixelised',
