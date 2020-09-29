@@ -90,7 +90,7 @@ export default class Illustration extends Vue {
   }
 
   &:hover #pupils {
-    transform: translateX(0);
+    transform: translate3d(0, 0, 0);
     transition: transform 80ms 200ms ease-out;
   }
 }
