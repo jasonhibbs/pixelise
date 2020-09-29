@@ -19,6 +19,7 @@ export default class Illustration extends Vue {
   tick = 0
   tickInterval = 0
   pixels: string[] = Array(15).fill('black')
+  isHovering = false
 
   mounted() {
     const rate = 1000 / 12
@@ -77,10 +78,20 @@ export default class Illustration extends Vue {
     }
   }
 
-  #pixels:hover path {
+  #pupils {
+    transform: translate3d(-1.2%, 0.4%, 0);
+    transition: transform 0.6s;
+  }
+
+  &:hover #pixels path {
     opacity: 0.4;
     fill: black;
     transition: opacity 0.2s, fill 0.2s;
+  }
+
+  &:hover #pupils {
+    transform: translateX(0);
+    transition: transform 80ms 200ms ease-out;
   }
 }
 
