@@ -19,7 +19,7 @@ export default class Loader extends Vue {}
   --size: 1.25em;
   --width: 1px;
   --ring-color: var(--color-contrast-50, currentColor);
-  --segment-color: var(--color-contrast-30, transparent);
+  --segment-color: var(--color-contrast-20, transparent);
   --speed: #{(1s/2)};
 
   display: flex;
